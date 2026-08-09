@@ -17,8 +17,13 @@ struct RootView: View {
             }
         }
         .task {
-            let stored = try? await container.user.load()
-            hasProfile = stored != nil
+            // `try?` here would nest the optional and make "no profile yet"
+            // indistinguishable from "profile found".
+            do {
+                hasProfile = try await container.user.load() != nil
+            } catch {
+                hasProfile = false
+            }
         }
     }
 }

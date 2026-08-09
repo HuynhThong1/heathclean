@@ -8,7 +8,13 @@ struct MealHistoryView: View {
     var body: some View {
         Group {
             if let model {
-                if model.days.isEmpty {
+                if let message = model.errorMessage {
+                    ContentUnavailableView(
+                        "Couldn't load history",
+                        systemImage: "exclamationmark.triangle",
+                        description: Text(message)
+                    )
+                } else if model.days.isEmpty {
                     ContentUnavailableView(
                         "No meals yet",
                         systemImage: "fork.knife",

@@ -1,3 +1,5 @@
+import Foundation
+
 /// The warning engine. Language stays neutral and informative — never
 /// instructional about whether the user should eat.
 public struct EvaluateCalorieBudgetUseCase: Sendable {
@@ -15,7 +17,8 @@ public struct EvaluateCalorieBudgetUseCase: Sendable {
 
     /// `nil` below the first threshold — there is nothing worth saying yet.
     public func message(for budget: DailyCalorieBudget) -> String? {
-        let magnitude = Int(abs(budget.remaining).rounded())
+        // Grouped so four-figure totals read the same as they do on screen.
+        let magnitude = Int(abs(budget.remaining).rounded()).formatted()
 
         switch execute(budget: budget) {
         case .normal:

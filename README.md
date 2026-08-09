@@ -9,52 +9,45 @@ dashboard, and the warning engine. No AI, no HealthKit — those are Phases 2–
 ```
 Package.swift          SwiftPM package "HeathFirstKit"
 Sources/Domain/        pure Swift — entities, use cases, repository protocols
-Sources/DomainCheck/   executable check runner for the Domain layer
+Tests/DomainTests/     swift-testing suites
 App/                   the iOS app target (SwiftData + SwiftUI)
+AppUITests/            XCUITest walkthrough of the Phase 1 flow
+HeathFirst.xcodeproj   iOS 17+ app target, consumes the local package
 ```
 
 The Domain layer is a separate SwiftPM module so the compiler enforces
 `plan.md` §11: it imports nothing but the Swift standard library and
 Foundation. `App/` depends on it, never the other way round.
 
-## Verifying the Domain layer
-
-This works with Command Line Tools alone — no Xcode required:
+## Running the tests
 
 ```bash
-swift build
-swift run DomainCheck
+swift test                                  # 25 Domain tests, no simulator needed
+
+xcodebuild -scheme HeathFirst \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test
 ```
 
-`DomainCheck` prints one line per check and exits non-zero if any fail. It
-covers BMI values and category boundaries, the Mifflin-St Jeor variants,
-activity multipliers, goal offsets, both calorie floors, the macro split, every
-warning threshold boundary, and meal/summary aggregation.
+The Domain suite covers BMI values and category boundaries, the Mifflin-St Jeor
+variants, activity multipliers, goal offsets, both calorie floors, the macro
+split, every warning threshold boundary, and meal/summary aggregation.
 
-Once Xcode is installed, replace it with a real `Tests/DomainTests` target
-using `import Testing` and `#expect` — the assertions translate one for one —
-and delete `Sources/DomainCheck/`. It exists only because neither `XCTest` nor
-`Testing` ships with the Command Line Tools.
+The UI suite drives the real app: onboarding produces the expected target,
+logging a meal moves the dashboard, and crossing 70% / 100% surfaces the
+warning copy.
 
-## Building the app
-
-`App/` has no `.xcodeproj` yet — it could not be generated or verified on a
-machine without Xcode. To wire it up:
-
-1. Create a new iOS App target named `HeathFirst`, minimum deployment iOS 17.
-2. Delete the generated `ContentView.swift` and `*App.swift`; add the `App/`
-   directory to the target instead.
-3. **File → Add Package Dependencies… → Add Local…** and select this repo's
-   root, then add the `Domain` library product to the target.
-4. Build and run:
+## Building and running the app
 
 ```bash
 xcodebuild -scheme HeathFirst \
-  -destination 'platform=iOS Simulator,name=iPhone 16' build
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
 ```
 
-No Info.plist entries are needed for Phase 1; HealthKit usage strings arrive
-with Phase 2.
+Or open `HeathFirst.xcodeproj` and run. No Info.plist entries are needed for
+Phase 1; HealthKit usage strings arrive with Phase 2.
+
+The project file uses file-system-synchronized groups, so files added under
+`App/` or `AppUITests/` are picked up with no project edits.
 
 ## Calorie model
 

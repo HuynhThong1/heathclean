@@ -51,6 +51,7 @@ struct MealEntryView: View {
             ForEach($model.drafts) { $draft in
                 Section {
                     TextField("Food", text: $draft.name)
+                        .accessibilityIdentifier("field.food")
                     NumberField(title: "Weight", unit: "g", value: $draft.weightGrams)
                     NumberField(title: "Calories", unit: "kcal", value: $draft.calories)
                     NumberField(title: "Protein", unit: "g", value: $draft.protein)
@@ -100,6 +101,7 @@ private struct NumberField: View {
                 TextField(title, value: $value, format: .number)
                     .keyboardType(.decimalPad)
                     .multilineTextAlignment(.trailing)
+                    .accessibilityIdentifier("field.\(title.lowercased())")
                 Text(unit)
                     .foregroundStyle(.secondary)
             }

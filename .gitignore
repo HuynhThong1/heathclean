@@ -11,3 +11,6 @@ DerivedData/
 
 # macOS
 .DS_Store
+
+# Xcode project user state
+*.xcodeproj/project.xcworkspace/

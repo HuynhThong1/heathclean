@@ -2,37 +2,28 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Toolchain constraint — read this first
-
-This machine has **Command Line Tools only, no Xcode**. Verified limits:
-
-| | |
-| --- | --- |
-| `swift build` / `swift run` on `Sources/` | works |
-| `swift test` | **impossible** — neither `XCTest` nor `Testing` is in the CLT SDK |
-| SwiftData `@Model` | **impossible** — the `SwiftDataMacros` plugin is not shipped with CLT |
-| iOS SDK, simulator, `xcodebuild` | absent — macOS SDKs only |
-
-Consequence: `Sources/` can be compiled and executed; **`App/` cannot be compiled at
-all**. Never report anything under `App/` as working or verified. Say it is unverified.
-
 ## Commands
 
 ```bash
-swift build            # compiles Domain + DomainCheck
-swift run DomainCheck  # the test suite; exits non-zero on any failure
+swift build            # compiles the Domain library
+swift test             # 25 Domain tests (swift-testing) — fast, no simulator
+
+xcodebuild -scheme HeathFirst \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
+
+xcodebuild -scheme HeathFirst \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test   # + 4 UI tests
 ```
 
-There is no `swift test`. `Sources/DomainCheck/` is a hand-rolled assert runner that
-exists solely because no test framework is installable here. It is the success
-criterion for any Domain change — a change is not done until it exits 0.
+Run one Domain test: `swift test --filter "macros re-sum"` (matches the `@Test`
+display name). Run one UI test:
+`-only-testing:HeathFirstUITests/Phase1FlowTests/testLoggingAMealMovesTheDashboard`.
 
-To run a subset, comment out the relevant `run*Checks(runner)` call in
-`Sources/DomainCheck/main.swift`; there is no filter flag.
+`xcodebuild` output is enormous — redirect to a file and grep, rather than piping
+through `head`, which can kill the build with SIGPIPE (exit 137).
 
-Once Xcode is installed, convert `Sources/DomainCheck/` to a `Tests/DomainTests`
-target using `import Testing` / `#expect` (the assertions map one for one), delete
-the harness, and switch verification to `swift test`.
+Prefer `swift test` while working on `Sources/Domain/`; it needs no simulator and
+runs in well under a second. Reach for `xcodebuild` only when `App/` changes.
 
 ## Architecture
 
@@ -40,17 +31,21 @@ Clean Architecture with the dependency rule enforced by the module boundary rath
 than by convention:
 
 ```
-Sources/Domain/   SwiftPM library — pure Swift, imports only stdlib + Foundation
-Sources/DomainCheck/  executable check runner, depends on Domain
-App/              iOS app target — SwiftData + SwiftUI, depends on Domain
+Sources/Domain/    SwiftPM library — pure Swift, imports only stdlib + Foundation
+Tests/DomainTests/ swift-testing suites for the whole Domain layer
+App/               iOS app target — SwiftData + SwiftUI, depends on Domain
+AppUITests/        XCUITest walkthrough of the Phase 1 flow
 ```
 
 `Domain` must never import SwiftUI, SwiftData, HealthKit, CoreML, or AVFoundation.
 Because it is a separate module, a violation is a compile error, not a review catch.
 Keep it that way.
 
-`App/` has **no `.xcodeproj`** — it could not be generated without Xcode. `README.md`
-has the steps to create the target and link the local package.
+`HeathFirst.xcodeproj` was hand-written (no XcodeGen/Tuist here) and uses
+`PBXFileSystemSynchronizedRootGroup`, so **new files under `App/` and `AppUITests/`
+are picked up automatically** — do not add file references. It consumes the root
+package via an `XCLocalSwiftPackageReference` with `relativePath = .`, which works
+even though project and package share a directory.
 
 ### Data flow
 
@@ -62,7 +57,8 @@ SwiftUI view → `@Observable` model (`App/Presentation/*/`) → use case
 `@Model` classes exist only in the Data layer and convert to Domain structs at the
 repository boundary via `entity.meal` / `entity.profile` style computed properties.
 SwiftData types never travel upward. `DependencyContainer` is the single place
-protocols are bound to implementations and models are constructed.
+protocols are bound to implementations and models are constructed; its `init` is
+`nonisolated` so it can be built in a stored-property initializer.
 
 ### Calorie model — the non-obvious parts
 
@@ -74,7 +70,7 @@ activity and goal. BMI is deliberately **not** an input; it is health context on
 - Floor: `max(adjusted, max(BMR, 1200))`. A deficit never prescribes below the
   user's own basal rate. **This visibly weakens the deficit for sedentary users**
   (reference profile gets 1780 kcal instead of 1636) and is intentional; the
-  `calorieGoal/deficit-clamped-to-bmr` check pins it.
+  "a deficit never drops below the user's own basal rate" test pins it.
 - Macros: protein 1.8 g/kg when losing else 1.6 g/kg, fat 25% of energy,
   carbohydrates take the remainder. They re-sum to the calorie target exactly.
 
@@ -83,15 +79,30 @@ Warning thresholds (`EvaluateCalorieBudgetUseCase`) are boundary-sensitive:
 `>1.00 exceeded`. Message copy stays neutral and informative by design — `plan.md`
 §18 explicitly rules out instructing the user whether to eat.
 
-### DomainCheck conventions
+### Testing conventions
 
-- Use `expectClose` for every `Double`; `expect` is exact equality only. They are
-  separate names on purpose, so a float can never silently take the exact path.
-- The runner and all `run*Checks` functions are `@MainActor` — async closures
-  crossing to a nonisolated function trip Swift 6 sendability errors.
-- Fixtures live in `Sources/DomainCheck/Fixtures.swift`. `makeProfile()` defaults to
-  male, 80 kg, 180 cm, 30 y → BMR exactly 1780, which most expected values assume.
-- `referenceDate` is a fixed instant; do not introduce `Date()` into checks.
+- Use `expectClose` for every `Double` (`Tests/DomainTests/Support.swift`); plain
+  `#expect(a == b)` is for exact types only. Separate names on purpose, so a float
+  can never silently take the exact path.
+- `makeProfile()` defaults to male, 80 kg, 180 cm, 30 y → BMR exactly 1780, which
+  most expected values assume. `referenceDate` is a fixed instant; never introduce
+  `Date()` into a test.
+- UI tests launch with `-uiTesting`, which makes `DependencyContainer` use an
+  in-memory store so every run starts at onboarding.
+- Query UI elements by `accessibilityIdentifier`, never by label: `LabeledContent`
+  merges label and value into one element ("Breakfast, 0 kcal"). Identifiers follow
+  `mealRow.<rawValue>` and `field.<name>`.
+- Numeric `TextField`s report `value` as an `Int`, and tapping puts the caret at the
+  **start** — use `doubleTap()` to select before typing, or digits merge with the
+  existing value.
+- Totals render with locale grouping ("2.378"), so build expected strings with
+  `.formatted()` rather than hardcoding separators.
+
+### SwiftUI gotcha already hit once
+
+A `Button` with `.buttonStyle(.plain)` wrapping a `LabeledContent` only hit-tests
+where text is drawn — the gap between label and value is dead space. Add
+`.contentShape(Rectangle())` to the label. The dashboard meal rows do this.
 
 ## Scope
 

@@ -1,5 +1,22 @@
 import Domain
 import Foundation
+import Testing
+
+/// Floating point comparison. Kept under its own name so a `Double` is never
+/// compared with `==` by accident.
+func expectClose(
+    _ actual: Double,
+    _ expected: Double,
+    _ comment: Comment? = nil,
+    tolerance: Double = 0.01,
+    sourceLocation: SourceLocation = #_sourceLocation
+) {
+    #expect(
+        abs(actual - expected) <= tolerance,
+        comment ?? "expected \(expected), got \(actual)",
+        sourceLocation: sourceLocation
+    )
+}
 
 /// Reference profile: male, 80 kg, 180 cm, 30 years old.
 /// Mifflin-St Jeor BMR = 10·80 + 6.25·180 − 5·30 + 5 = 1780 kcal.
@@ -39,7 +56,7 @@ func makeFoodItem(
     )
 }
 
-/// A fixed instant so checks never depend on the wall clock.
+/// A fixed instant so tests never depend on the wall clock.
 let referenceDate = Date(timeIntervalSince1970: 1_700_000_000)
 
 actor InMemoryMealRepository: MealRepository {

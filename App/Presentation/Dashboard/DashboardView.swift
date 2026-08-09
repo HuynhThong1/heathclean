@@ -11,6 +11,12 @@ struct DashboardView: View {
             Group {
                 if let model, let summary = model.summary {
                     content(model: model, summary: summary)
+                } else if let message = model?.errorMessage {
+                    ContentUnavailableView(
+                        "Couldn't load today",
+                        systemImage: "exclamationmark.triangle",
+                        description: Text(message)
+                    )
                 } else {
                     ProgressView()
                 }
@@ -64,8 +70,12 @@ struct DashboardView: View {
                             Text("\(Int(calories.rounded())) kcal")
                                 .foregroundStyle(.secondary)
                         }
+                        // Without this the gap between label and value is dead
+                        // space and the row only responds on the text itself.
+                        .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
+                    .accessibilityIdentifier("mealRow.\(type.rawValue)")
                 }
             }
 
@@ -106,7 +116,9 @@ private struct CalorieRing: View {
 
     private var remainingLabel: String {
         let remaining = summary.budget.remaining
-        let magnitude = Int(abs(remaining).rounded())
+        // `.formatted()` so this groups digits the same way the interpolated
+        // totals elsewhere on this screen do.
+        let magnitude = Int(abs(remaining).rounded()).formatted()
         return remaining >= 0 ? "\(magnitude) kcal remaining" : "\(magnitude) kcal over"
     }
 }

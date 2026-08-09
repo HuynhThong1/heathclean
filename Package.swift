@@ -9,6 +9,6 @@ let package = Package(
     ],
     targets: [
         .target(name: "Domain"),
-        .executableTarget(name: "DomainCheck", dependencies: ["Domain"])
+        .testTarget(name: "DomainTests", dependencies: ["Domain"])
     ]
 )
