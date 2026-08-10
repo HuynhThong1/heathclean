@@ -234,7 +234,7 @@ What was measured on this machine, so it need not be rediscovered:
 
 | | |
 | --- | --- |
-| Python | 3.9.6 (system). `mlx-vlm` may need 3.10+ — check before planning MLX. |
+| Python | 3.9.6 (system). Fine for FastAPI; `mlx-vlm` may need 3.10+. |
 | `uv` / `poetry` | absent; only `pip3` |
 | `ollama`, `llama-server`, `lms` | none installed |
 | Model API keys | none set (no `GEMINI_*`, `DASHSCOPE_*`, `HF_TOKEN`, …) |
@@ -244,6 +244,10 @@ What was measured on this machine, so it need not be rediscovered:
 So with the machine as it stands, only a mock provider can be verified end to
 end. The Qwen and Gemini paths can be written but not run. Plan the work that
 way, or install a model first.
+
+If a local model is wanted, prefer **ollama** over MLX: it is a standalone
+binary, so it sidesteps the Python 3.9.6 problem entirely. `brew` is present and
+ollama.com is reachable. MLX would mean installing a newer Python first.
 
 The contract to build against is §25 (`POST /v1/meals/analyze`) and the Domain
 seam is `FoodRecognitionRepository` from `plan.md` §9 — which does not exist yet.
