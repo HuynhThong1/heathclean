@@ -79,6 +79,32 @@ struct DashboardView: View {
             }
             .dsRow()
 
+            if let health = model.health, !health.isEmpty {
+                Section {
+                    if let steps = health.steps {
+                        DSValueRow(name: "Steps", value: steps.formatted())
+                    }
+                    if let active = health.activeEnergyKcal {
+                        DSValueRow(name: "Active", value: "\(Int(active.rounded())) kcal")
+                    }
+                    if let total = health.totalEnergyBurnedKcal, health.basalEnergyKcal != nil {
+                        DSValueRow(name: "Total burned", value: "\(Int(total.rounded())) kcal")
+                    }
+                    if let sleep = health.sleepDuration {
+                        DSValueRow(name: "Sleep", value: Self.sleepText(sleep))
+                    }
+                    if let weight = health.weightKg {
+                        DSValueRow(
+                            name: "Weight",
+                            value: weight.formatted(.number.precision(.fractionLength(1))) + " kg"
+                        )
+                    }
+                } header: {
+                    DSSectionHeader(title: "Activity")
+                }
+                .dsRow()
+            }
+
             if let bmi = model.bmi {
                 Section {
                     BMILine(bmi: bmi)
@@ -121,6 +147,14 @@ struct DashboardView: View {
                 }
             }
         }
+    }
+
+    /// "7h 32m", matching plan.md §6.
+    private static func sleepText(_ duration: TimeInterval) -> String {
+        let totalMinutes = Int((duration / 60).rounded())
+        let hours = totalMinutes / 60
+        let minutes = totalMinutes % 60
+        return hours > 0 ? "\(hours)h \(minutes)m" : "\(minutes)m"
     }
 
     private func remainingLabel(for summary: DailyNutritionSummary) -> String {

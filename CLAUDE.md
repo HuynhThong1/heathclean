@@ -6,13 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 swift build            # compiles the Domain library
-swift test             # 25 Domain tests (swift-testing) — fast, no simulator
+swift test             # 30 Domain tests (swift-testing) — fast, no simulator
 
 xcodebuild -scheme HeathFirst \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
 
 xcodebuild -scheme HeathFirst \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test   # + 4 UI tests
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test   # + 5 UI tests
 ```
 
 Run one Domain test: `swift test --filter "macros re-sum"` (matches the `@Test`
@@ -98,6 +98,36 @@ Warning thresholds (`EvaluateCalorieBudgetUseCase`) are boundary-sensitive:
 - Totals render with locale grouping ("2.378"), so build expected strings with
   `.formatted()` rather than hardcoding separators.
 
+### HealthKit (Phase 2)
+
+`HealthRepository` (Domain protocol) → `HealthKitHealthRepository`
+(`App/Data/HealthKit/`), an actor because `HKHealthStore` is not `Sendable`.
+
+- **A denied read is indistinguishable from no data** — HealthKit returns an
+  empty result either way, deliberately, so an app cannot detect that a user
+  declined. Hence every field on `HealthSnapshot` is optional, per-type read
+  failures are swallowed, and the protocol has no `authorizationStatus`. One
+  unreadable type must never cost the others (`plan.md` §14).
+- Health never fails the dashboard: `loadHealth()` is a separate step and its
+  errors are dropped, because meals and targets must render regardless.
+- `NSPredicate` is not `Sendable`, so queries take `Date` bounds and build their
+  own predicate — sharing one across `async let` children is a compile error.
+- Sleep sums only the `asleep*` categories; `inBed` overlaps them and would
+  double count.
+- Two build settings make this work and are easy to lose:
+  `CODE_SIGN_ENTITLEMENTS = Config/HeathFirst.entitlements` and
+  `NSHealthShareUsageDescription` in `Config/Info.plist`. The app reads only —
+  there is no `NSHealthUpdateUsageDescription` and `toShare` is empty.
+- Checking embedded entitlements on a simulator build is misleading:
+  `HeathFirst.app.xcent` is empty (no provisioning profile configured), while
+  `HeathFirst.app-Simulated.xcent` is the one actually used and does carry
+  `com.apple.developer.healthkit`. A device build needs a profile with the
+  HealthKit capability.
+- **Unverified:** the Activity section rendering real values. The simulator has
+  no health data and the app requests no write access, so only the authorization
+  path has been exercised end to end. Observer queries and background delivery
+  are explicitly Phase 2 "later" work and are not implemented.
+
 ### Design system
 
 `App/Presentation/DesignSystem/` is a hand port of the **FPT IS Design System**
@@ -141,12 +171,24 @@ where text is drawn — the gap between label and value is dead space. Add
 `plan.md` is the product spec — 31 sections, 8 phases. It is the source of truth and
 should not be edited as a side effect of implementation work.
 
-Only **Phase 1** is built: profile, BMI, calorie/macro targets, manual meal entry,
-meal history, dashboard, warning engine, SwiftData. Explicitly not present and not
-to be added without being asked: HealthKit, camera/AVFoundation, any AI provider,
-nutrition APIs (USDA, Open Food Facts), notifications, CloudKit.
+**Phase 1** is complete: profile, BMI, calorie/macro targets, manual meal entry,
+meal history, dashboard, warning engine, SwiftData.
 
-Two deviations from `plan.md` already made: `UserProfile` gains `biologicalSex` and
-`activityLevel` (§13 omitted them but Mifflin-St Jeor needs them), and
-`UserRepository` is `load()` / `save(profile:goal:)` as one unit rather than four
-separate accessors, so a goal can never be stored without a profile.
+**Phase 2** is partially done: HealthKit authorization and reads (weight, height,
+steps, active and basal energy, sleep) plus the dashboard Activity section. Not
+done, and listed as "later" in §26 itself: observer queries and background
+delivery.
+
+Explicitly not present and not to be added without being asked:
+camera/AVFoundation, any AI provider, nutrition APIs (USDA, Open Food Facts),
+notifications, CloudKit.
+
+Deviations from `plan.md` already made:
+
+- `UserProfile` gains `biologicalSex` and `activityLevel` (§13 omitted them but
+  Mifflin-St Jeor needs them).
+- `UserRepository` is `load()` / `save(profile:goal:)` as one unit rather than
+  four separate accessors, so a goal can never be stored without a profile.
+- `HealthRepository` is one `snapshot(on:)` rather than §14's per-metric getters,
+  so the dashboard makes a single call instead of six, and there is no
+  `SyncHealthDataUseCase` — it would have been a pure passthrough.

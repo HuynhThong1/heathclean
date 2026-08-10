@@ -16,18 +16,53 @@ final class OnboardingModel {
     private(set) var isSaving = false
 
     private let userRepository: any UserRepository
+    private let healthRepository: any HealthRepository
     private let calculateBMI: CalculateBMIUseCase
     private let calculateCalorieGoal: CalculateCalorieGoalUseCase
 
     init(
         userRepository: any UserRepository,
+        healthRepository: any HealthRepository,
         calculateBMI: CalculateBMIUseCase,
         calculateCalorieGoal: CalculateCalorieGoalUseCase
     ) {
         self.userRepository = userRepository
+        self.healthRepository = healthRepository
         self.calculateBMI = calculateBMI
         self.calculateCalorieGoal = calculateCalorieGoal
     }
+
+    // MARK: Apple Health
+
+    /// Hidden where there is no health store at all, e.g. iPad.
+    var isHealthAvailable: Bool { healthRepository.isAvailable }
+
+    private(set) var isConnectingHealth = false
+    /// Set once the permission sheet has been through. It does **not** mean
+    /// access was granted — HealthKit deliberately never reveals that for reads.
+    private(set) var hasRequestedHealth = false
+
+    /// Connecting is optional; declining must not block onboarding, so a failure
+    /// here is recorded and moved past rather than surfaced as an error.
+    func connectAppleHealth() async {
+        guard !isConnectingHealth else { return }
+        isConnectingHealth = true
+        defer { isConnectingHealth = false }
+
+        do {
+            try await healthRepository.requestAuthorization()
+            // Only on success. Declining inside the sheet still succeeds here —
+            // HealthKit never reports a denied read — but a thrown error means
+            // the request itself failed, and claiming "connected" would be a lie.
+            hasRequestedHealth = true
+        } catch {
+            healthMessage = "Apple Health isn't available right now. You can connect it later."
+        }
+    }
+
+    /// Shown only when the request itself failed; declining inside the sheet is
+    /// silent by design.
+    var healthMessage: String?
 
     var profile: UserProfile {
         UserProfile(

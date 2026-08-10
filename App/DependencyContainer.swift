@@ -11,6 +11,7 @@ final class DependencyContainer {
 
     private let userRepository: any UserRepository
     private let mealRepository: any MealRepository
+    private let healthRepository: any HealthRepository
 
     /// `nonisolated` so it can be built in a stored-property initializer, and
     /// because nothing it touches is main-actor bound.
@@ -27,6 +28,7 @@ final class DependencyContainer {
 
         userRepository = SwiftDataUserRepository(modelContainer: modelContainer)
         mealRepository = SwiftDataMealRepository(modelContainer: modelContainer)
+        healthRepository = HealthKitHealthRepository()
     }
 
     var calculateBMI: CalculateBMIUseCase { CalculateBMIUseCase() }
@@ -46,6 +48,7 @@ final class DependencyContainer {
     func makeOnboardingModel() -> OnboardingModel {
         OnboardingModel(
             userRepository: userRepository,
+            healthRepository: healthRepository,
             calculateBMI: calculateBMI,
             calculateCalorieGoal: calculateCalorieGoal
         )
@@ -54,6 +57,7 @@ final class DependencyContainer {
     func makeDashboardModel() -> DashboardModel {
         DashboardModel(
             userRepository: userRepository,
+            healthRepository: healthRepository,
             getDailySummary: getDailySummary,
             evaluateCalorieBudget: evaluateCalorieBudget,
             calculateBMI: calculateBMI

@@ -99,6 +99,19 @@ private struct OnboardingForm: View {
                 DSSectionHeader(title: "Your daily targets")
             }
 
+            if model.isHealthAvailable {
+                Section {
+                    appleHealthRow
+                } header: {
+                    DSSectionHeader(title: "Apple Health")
+                } footer: {
+                    Text("Optional. Lets the dashboard show your steps, energy burned and sleep. Your health data never leaves the device.")
+                        .font(DSType.caption)
+                        .foregroundStyle(DSColor.textMuted)
+                }
+                .dsRow()
+            }
+
             Section {
                 Text("BMI is health context only — your calorie target comes from your age, height, weight, activity and goal.")
                     .font(DSType.caption)
@@ -130,6 +143,35 @@ private struct OnboardingForm: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text(model.errorMessage ?? "")
+        }
+    }
+
+    @ViewBuilder
+    private var appleHealthRow: some View {
+        if model.hasRequestedHealth {
+            HStack(spacing: Space.s3) {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundStyle(DSColor.success)
+                Text("Apple Health connected")
+                    .font(DSType.body)
+                    .foregroundStyle(DSColor.textBody)
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Apple Health connected")
+        } else {
+            VStack(alignment: .leading, spacing: Space.s2) {
+                Button("Connect Apple Health") {
+                    Task { await model.connectAppleHealth() }
+                }
+                .buttonStyle(.ds(.secondary, fullWidth: true))
+                .disabled(model.isConnectingHealth)
+
+                if let message = model.healthMessage {
+                    DSFieldMessage(text: message, isError: true)
+                }
+            }
+            .listRowInsets(EdgeInsets(top: Space.s2, leading: Space.s4,
+                                      bottom: Space.s2, trailing: Space.s4))
         }
     }
 

@@ -8,18 +8,23 @@ final class DashboardModel {
     private(set) var profile: UserProfile?
     private(set) var errorMessage: String?
 
+    private(set) var health: HealthSnapshot?
+
     private let userRepository: any UserRepository
+    private let healthRepository: any HealthRepository
     private let getDailySummary: GetDailySummaryUseCase
     private let evaluateCalorieBudget: EvaluateCalorieBudgetUseCase
     private let calculateBMI: CalculateBMIUseCase
 
     init(
         userRepository: any UserRepository,
+        healthRepository: any HealthRepository,
         getDailySummary: GetDailySummaryUseCase,
         evaluateCalorieBudget: EvaluateCalorieBudgetUseCase,
         calculateBMI: CalculateBMIUseCase
     ) {
         self.userRepository = userRepository
+        self.healthRepository = healthRepository
         self.getDailySummary = getDailySummary
         self.evaluateCalorieBudget = evaluateCalorieBudget
         self.calculateBMI = calculateBMI
@@ -48,5 +53,15 @@ final class DashboardModel {
         } catch {
             errorMessage = "Could not load today's meals."
         }
+
+        await loadHealth()
+    }
+
+    /// Health is loaded separately and never fails the screen. It is
+    /// supplementary — meals and targets must render whether or not the user
+    /// shared anything.
+    private func loadHealth() async {
+        guard healthRepository.isAvailable else { return }
+        health = try? await healthRepository.snapshot(on: Date())
     }
 }
