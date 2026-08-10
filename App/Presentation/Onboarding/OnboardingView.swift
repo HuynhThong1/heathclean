@@ -32,8 +32,14 @@ private struct OnboardingForm: View {
                     .font(DSType.body)
                     .foregroundStyle(DSColor.textBody)
 
-                MeasurementField(title: "Height", unit: "cm", value: $model.heightCm)
-                MeasurementField(title: "Weight", unit: "kg", value: $model.weightKg)
+                MeasurementField(
+                    title: "Height", unit: "cm", value: $model.heightCm,
+                    error: model.heightError
+                )
+                MeasurementField(
+                    title: "Weight", unit: "kg", value: $model.weightKg,
+                    error: model.weightError
+                )
 
                 Picker("Biological sex", selection: $model.biologicalSex) {
                     Text("Prefer not to say").tag(BiologicalSex?.none)
@@ -74,7 +80,8 @@ private struct OnboardingForm: View {
                         value: Binding(
                             get: { model.targetWeightKg ?? model.weightKg },
                             set: { model.targetWeightKg = $0 }
-                        )
+                        ),
+                        hint: model.targetWeightHint
                     )
                 }
             } header: {
@@ -127,7 +134,27 @@ private struct OnboardingForm: View {
     }
 
     private var targetsCard: some View {
-        DSCard(padding: .medium, accent: .blue) {
+        DSCard(padding: .medium, accent: model.isValid ? .blue : nil) {
+            if model.isValid {
+                validTargets
+            } else {
+                // Height and weight feed every number here, so out-of-range
+                // input produces confident nonsense (500 kg reads as 9,043 kcal
+                // and BMI 173). Withhold the figures rather than show them.
+                VStack(alignment: .leading, spacing: Space.s2) {
+                    Text("Targets unavailable")
+                        .font(DSType.h4)
+                        .foregroundStyle(DSColor.textStrong)
+                    Text("Enter a height and weight in range and your daily targets will appear here.")
+                        .font(DSType.bodySmall)
+                        .foregroundStyle(DSColor.textMuted)
+                }
+            }
+        }
+    }
+
+    private var validTargets: some View {
+        Group {
             VStack(alignment: .leading, spacing: Space.s3) {
                 DSStatBlock(
                     value: Int(model.nutritionGoal.calories.rounded()).formatted(),
@@ -170,8 +197,21 @@ private struct MeasurementField: View {
     let title: String
     let unit: String
     @Binding var value: Double
+    var error: String?
+    var hint: String?
 
     var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            field
+            if let error {
+                DSFieldMessage(text: error, isError: true)
+            } else if let hint {
+                DSFieldMessage(text: hint)
+            }
+        }
+    }
+
+    private var field: some View {
         LabeledContent {
             HStack {
                 TextField(title, value: $value, format: .number)

@@ -45,10 +45,41 @@ final class OnboardingModel {
     var nutritionGoal: NutritionGoal { calculateCalorieGoal.execute(profile: profile) }
 
     /// Onboarding cannot produce a sensible target outside these ranges.
+    static let heightRange = 100.0...250.0
+    static let weightRange = 25.0...400.0
+    static let ageRange = 13...120
+
     var isValid: Bool {
-        (13...120).contains(age)
-            && (100.0...250.0).contains(heightCm)
-            && (25.0...400.0).contains(weightKg)
+        heightError == nil && weightError == nil && Self.ageRange.contains(age)
+    }
+
+    /// `nil` while the value is usable. The Continue button is disabled on the
+    /// same conditions, so without these the user would see it grey out with no
+    /// explanation.
+    var heightError: String? {
+        Self.heightRange.contains(heightCm)
+            ? nil
+            : "Enter a height between \(Int(Self.heightRange.lowerBound)) and \(Int(Self.heightRange.upperBound)) cm"
+    }
+
+    var weightError: String? {
+        Self.weightRange.contains(weightKg)
+            ? nil
+            : "Enter a weight between \(Int(Self.weightRange.lowerBound)) and \(Int(Self.weightRange.upperBound)) kg"
+    }
+
+    /// Target weight is optional, but a value pointing the wrong way is worth
+    /// flagging — it silently produces a goal the user did not intend.
+    var targetWeightHint: String? {
+        guard let target = targetWeightKg else { return nil }
+        switch goal {
+        case .lose where target >= weightKg:
+            return "For a weight-loss goal this is usually below your current weight."
+        case .gain where target <= weightKg:
+            return "For a weight-gain goal this is usually above your current weight."
+        default:
+            return nil
+        }
     }
 
     /// Shown when the user leaves sex unspecified, so the lower confidence of

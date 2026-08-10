@@ -31,6 +31,29 @@ final class Phase1FlowTests: XCTestCase {
         XCTAssertTrue(app.staticTexts["\(kcal(2378)) kcal remaining"].exists)
     }
 
+    func testOutOfRangeWeightExplainsWhyContinueIsDisabled() {
+        XCTAssertTrue(app.navigationBars["Set up"].waitForExistence(timeout: 30))
+
+        let weight = app.textFields["field.weight"]
+        weight.doubleTap()
+        weight.typeText("500")
+        // `TextField(value:format:)` commits on end-editing, so move focus off.
+        app.staticTexts["Height"].tap()
+
+        // DSFieldMessage prefixes its accessibility label with "Error: " so
+        // VoiceOver distinguishes an error from a hint.
+        XCTAssertTrue(
+            app.staticTexts["Error: Enter a weight between 25 and 400 kg"]
+                .waitForExistence(timeout: 10)
+        )
+        XCTAssertFalse(app.buttons["Continue"].isEnabled)
+
+        // The targets are derived from weight, so they must not be shown at all
+        // rather than shown as confident nonsense.
+        XCTAssertTrue(app.staticTexts["Targets unavailable"].exists)
+        XCTAssertFalse(app.staticTexts["kcal per day"].exists)
+    }
+
     func testLoggingAMealMovesTheDashboard() {
         reachDashboard()
 
