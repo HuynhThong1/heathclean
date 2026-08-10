@@ -4,6 +4,7 @@ import SwiftUI
 /// Meal history — handoff §6.11.
 struct MealHistoryView: View {
     @Environment(DependencyContainer.self) private var container
+    @Environment(\.dismiss) private var dismiss
     @State private var model: MealHistoryModel?
 
     var body: some View {
@@ -44,14 +45,20 @@ struct MealHistoryView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: DS.s1) {
-            Text("LỊCH SỬ · HISTORY")
-                .hfStyle(HFType.eyebrow)
-                .foregroundStyle(DS.textSubtle)
-            Text("Bữa ăn đã ghi")
-                .font(.custom(DSFontName.extrabold, size: 29))
-                .tracking(-0.725)
-                .foregroundStyle(DS.textStrong)
+        HStack(alignment: .top, spacing: DS.s3) {
+            HFBackChip { dismiss() }
+                .accessibilityIdentifier("history.back")
+
+            VStack(alignment: .leading, spacing: DS.s1) {
+                Text("LỊCH SỬ · HISTORY")
+                    .hfStyle(HFType.eyebrow)
+                    .foregroundStyle(DS.textSubtle)
+                Text("Bữa ăn đã ghi")
+                    .font(.custom(DSFontName.extrabold, size: 29))
+                    .tracking(-0.725)
+                    .foregroundStyle(DS.textStrong)
+            }
+            Spacer(minLength: 0)
         }
     }
 

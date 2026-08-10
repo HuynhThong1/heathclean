@@ -45,7 +45,11 @@ struct RootView: View {
         case .health:
             // Carries the same model, so the types chosen here belong to the
             // profile that was just filled in.
-            HealthPermissionView(model: onboardingOrNew) { hasProfile = true }
+            HealthPermissionView(
+                model: onboardingOrNew,
+                onBack: { stage = .onboarding },
+                onFinished: { hasProfile = true }
+            )
         }
     }
 

@@ -51,12 +51,17 @@ enum HealthDataKind: String, CaseIterable, Identifiable {
 struct HealthPermissionView: View {
     @Bindable var model: OnboardingModel
 
+    /// Returns to onboarding's last step, so the goal can still be changed
+    /// after seeing it.
+    let onBack: () -> Void
     let onFinished: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(alignment: .leading, spacing: DS.s5) {
+                    HFBackChip { onBack() }
+                        .accessibilityIdentifier("health.back")
                     heading
                     permissionCard
                     GrayNote(

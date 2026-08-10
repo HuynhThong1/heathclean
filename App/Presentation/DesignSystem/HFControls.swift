@@ -215,3 +215,30 @@ struct BMIScaleBar: View {
         .accessibilityHidden(true)
     }
 }
+
+/// The 32×32 back chip from §6.2's onboarding shell, shared by every screen
+/// that draws its own header instead of using a navigation bar.
+///
+/// Drawn at 32pt but padded to a 44pt hit target, per §4.
+struct HFBackChip: View {
+    var isEnabled = true
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: "chevron.left")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(isEnabled ? DS.textBody : DS.neutral300)
+                .frame(width: 32, height: 32)
+                .background(
+                    DS.surfaceSunken,
+                    in: RoundedRectangle(cornerRadius: 8, style: .continuous)
+                )
+        }
+        .buttonStyle(.plain)
+        .disabled(!isEnabled)
+        .frame(width: 44, height: 44)
+        .contentShape(Rectangle())
+        .accessibilityLabel("Quay lại")
+    }
+}

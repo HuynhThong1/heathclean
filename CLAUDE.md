@@ -204,6 +204,11 @@ next items are camera/AI (§6.6–6.9) and Insights/Profile (§6.12–6.13).
 has no weight history — `UserProfile` holds one current value. Building it means
 adding a weight-log entity and repository first.
 
+Screens that draw their own header instead of a navigation bar must supply
+`HFBackChip` themselves — hiding the navigation bar also hides the system back
+button, and edge-swipe alone is not a visible affordance. History and Apple
+Health both needed one. `testEveryScreenHasAWayBack` guards this.
+
 Two things §6 specifies that are deliberately absent: Welcome's "Tôi đã có tài
 khoản" link, because there is no account system to sign into and a link that
 cannot do what it says is worse than none; and the §5 tab bar. Three of its four destinations

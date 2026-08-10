@@ -51,21 +51,8 @@ private struct OnboardingShell: View {
 
     private var progressHeader: some View {
         HStack(spacing: DS.s3) {
-            Button {
-                model.goBack()
-            } label: {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(model.step.previous == nil ? DS.neutral300 : DS.textBody)
-                    .frame(width: 32, height: 32)
-                    .background(DS.surfaceSunken, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-            }
-            .buttonStyle(.plain)
-            .disabled(model.step.previous == nil)
-            .frame(width: 44, height: 44)
-            .contentShape(Rectangle())
-            .accessibilityLabel("Quay lại")
-            .accessibilityIdentifier("onboarding.back")
+            HFBackChip(isEnabled: model.step.previous != nil) { model.goBack() }
+                .accessibilityIdentifier("onboarding.back")
 
             HStack(spacing: DS.s1) {
                 ForEach(OnboardingStep.allCases) { step in

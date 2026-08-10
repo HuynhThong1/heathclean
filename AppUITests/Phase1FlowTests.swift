@@ -66,6 +66,30 @@ final class Phase1FlowTests: XCTestCase {
         XCTAssertFalse(app.buttons["health.allow"].isEnabled)
     }
 
+    func testEveryScreenHasAWayBack() {
+        // History is pushed from the dashboard but draws its own header, so it
+        // needs an explicit back control — swipe-from-edge is not an
+        // affordance anyone can see.
+        reachDashboard()
+        app.buttons["Lịch sử, History"].tap()
+        XCTAssertTrue(app.buttons["history.back"].waitForExistence(timeout: 30))
+        app.buttons["history.back"].tap()
+        XCTAssertTrue(app.buttons["mealRow.breakfast"].waitForExistence(timeout: 30))
+    }
+
+    func testAppleHealthCanReturnToTheGoalStep() {
+        XCTAssertTrue(app.buttons["onboarding.cta"].waitForExistence(timeout: 30))
+        for _ in 0..<4 {
+            app.buttons["onboarding.cta"].tap()
+        }
+        XCTAssertTrue(app.buttons["health.back"].waitForExistence(timeout: 30))
+
+        // Going back must land on step 4, so the goal can still be changed
+        // after seeing what it produced.
+        app.buttons["health.back"].tap()
+        XCTAssertEqual(app.staticTexts["onboarding.counter"].label, "4/4")
+    }
+
     func testGoingBackReturnsToTheEarlierStep() {
         XCTAssertTrue(app.buttons["onboarding.cta"].waitForExistence(timeout: 30))
         app.buttons["onboarding.cta"].tap()
