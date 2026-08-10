@@ -94,13 +94,13 @@ final class OnboardingModel {
     var heightError: String? {
         Self.heightRange.contains(heightCm)
             ? nil
-            : "Enter a height between \(Int(Self.heightRange.lowerBound)) and \(Int(Self.heightRange.upperBound)) cm"
+            : "Nhập chiều cao từ \(Int(Self.heightRange.lowerBound)) đến \(Int(Self.heightRange.upperBound)) cm"
     }
 
     var weightError: String? {
         Self.weightRange.contains(weightKg)
             ? nil
-            : "Enter a weight between \(Int(Self.weightRange.lowerBound)) and \(Int(Self.weightRange.upperBound)) kg"
+            : "Nhập cân nặng từ \(Int(Self.weightRange.lowerBound)) đến \(Int(Self.weightRange.upperBound)) kg"
     }
 
     /// Target weight is optional, but a value pointing the wrong way is worth
@@ -109,12 +109,45 @@ final class OnboardingModel {
         guard let target = targetWeightKg else { return nil }
         switch goal {
         case .lose where target >= weightKg:
-            return "For a weight-loss goal this is usually below your current weight."
+            return "Mục tiêu giảm cân thường thấp hơn cân nặng hiện tại."
         case .gain where target <= weightKg:
-            return "For a weight-gain goal this is usually above your current weight."
+            return "Mục tiêu tăng cân thường cao hơn cân nặng hiện tại."
         default:
             return nil
         }
+    }
+
+    // MARK: Step navigation
+
+    /// Which of the four steps is showing. The shell is one screen (§6.2).
+    var step: OnboardingStep = .body
+
+    /// Only step 1 can be invalid — every later step is a choice among valid
+    /// options — so the CTA is gated on validity solely there.
+    var canAdvance: Bool {
+        step == .body ? isValid : true
+    }
+
+    func advance() {
+        guard let next = step.next else { return }
+        step = next
+    }
+
+    func goBack() {
+        guard let previous = step.previous else { return }
+        step = previous
+    }
+
+    /// The formula line under the result, e.g. "BMR 1.735 × vận động ×1,375 −500 kcal".
+    var formulaLine: String {
+        let bmr = CalculateCalorieGoalUseCase.basalMetabolicRate(profile: profile)
+        let multiplier = activityLevel.multiplier
+            .formatted(.number.precision(.fractionLength(0...3)).locale(Locale(identifier: "vi_VN")))
+        let delta = goal.dailyCalorieDelta
+        let deltaText = delta == 0
+            ? "±0 kcal"
+            : (delta < 0 ? "−\(VNNumber.int(abs(delta))) kcal" : "+\(VNNumber.int(delta)) kcal")
+        return "BMR \(VNNumber.int(bmr)) × vận động ×\(multiplier) \(deltaText)"
     }
 
     /// Shown when the user leaves sex unspecified, so the lower confidence of

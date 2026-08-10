@@ -46,6 +46,65 @@ extension MealType {
     }
 }
 
+extension ActivityLevel {
+    var vi: String {
+        switch self {
+        case .sedentary: "Ít vận động"
+        case .light: "Nhẹ — 1–3 ngày/tuần"
+        case .moderate: "Trung bình — 3–5 ngày/tuần"
+        case .active: "Tích cực — 6–7 ngày/tuần"
+        case .veryActive: "Rất tích cực — việc thể lực"
+        }
+    }
+
+    var en: String {
+        switch self {
+        case .sedentary: "Almost no exercise"
+        case .light: "Light"
+        case .moderate: "Moderate"
+        case .active: "Active"
+        case .veryActive: "Very active"
+        }
+    }
+
+    /// "×1,375" — the multiplier as shown on the activity cards (§6.2 step 2).
+    var multiplierText: String {
+        "×" + multiplier.formatted(
+            .number.precision(.fractionLength(0...3)).locale(Locale(identifier: "vi_VN"))
+        )
+    }
+}
+
+extension WeightGoal {
+    var vi: String {
+        switch self {
+        case .lose: "Giảm"
+        case .maintain: "Duy trì"
+        case .gain: "Tăng"
+        }
+    }
+
+    /// "−500 kcal" / "±0 kcal" / "+350 kcal".
+    @MainActor
+    var deltaText: String {
+        switch self {
+        case .lose: "−\(VNNumber.int(abs(dailyCalorieDelta))) kcal"
+        case .maintain: "±0 kcal"
+        case .gain: "+\(VNNumber.int(dailyCalorieDelta)) kcal"
+        }
+    }
+}
+
+extension BiologicalSex {
+    var vi: String {
+        switch self {
+        case .male: "Nam"
+        case .female: "Nữ"
+        case .preferNotToSay: "Không nói"
+        }
+    }
+}
+
 extension BMICategory {
     var vi: String {
         switch self {

@@ -1,6 +1,7 @@
 import Domain
 import SwiftUI
 
+/// Onboarding — handoff §6.2. One shell, four steps, a sticky bottom CTA.
 struct OnboardingView: View {
     @Environment(DependencyContainer.self) private var container
     @State private var model: OnboardingModel?
@@ -8,9 +9,9 @@ struct OnboardingView: View {
     let onComplete: () -> Void
 
     var body: some View {
-        NavigationStack {
+        Group {
             if let model {
-                OnboardingForm(model: model, onComplete: onComplete)
+                OnboardingShell(model: model, onComplete: onComplete)
             } else {
                 ProgressView()
             }
@@ -21,120 +22,30 @@ struct OnboardingView: View {
     }
 }
 
-private struct OnboardingForm: View {
+private struct OnboardingShell: View {
     @Bindable var model: OnboardingModel
     let onComplete: () -> Void
 
     var body: some View {
-        Form {
-            Section {
-                Stepper("Age: \(model.age)", value: $model.age, in: 13...120)
-                    .font(DSType.body)
-                    .foregroundStyle(DSColor.textBody)
+        VStack(spacing: 0) {
+            progressHeader
 
-                MeasurementField(
-                    title: "Height", unit: "cm", value: $model.heightCm,
-                    error: model.heightError
-                )
-                MeasurementField(
-                    title: "Weight", unit: "kg", value: $model.weightKg,
-                    error: model.weightError
-                )
-
-                Picker("Biological sex", selection: $model.biologicalSex) {
-                    Text("Prefer not to say").tag(BiologicalSex?.none)
-                    Text("Female").tag(BiologicalSex?.some(.female))
-                    Text("Male").tag(BiologicalSex?.some(.male))
+            ScrollView {
+                VStack(alignment: .leading, spacing: DS.s5) {
+                    stepHeader
+                    stepBody
                 }
-                .font(DSType.body)
-            } header: {
-                DSSectionHeader(title: "About you")
+                .padding(.horizontal, 20)
+                .padding(.top, DS.s4)
+                .padding(.bottom, DS.s6)
             }
-            .dsRow()
+            .scrollIndicators(.hidden)
 
-            Section {
-                Picker("Typical week", selection: $model.activityLevel) {
-                    ForEach(ActivityLevel.allCases, id: \.self) { level in
-                        Text(level.title).tag(level)
-                    }
-                }
-                .pickerStyle(.menu)
-                .font(DSType.body)
-            } header: {
-                DSSectionHeader(title: "Activity")
-            }
-            .dsRow()
-
-            Section {
-                Picker("I want to", selection: $model.goal) {
-                    ForEach(WeightGoal.allCases, id: \.self) { goal in
-                        Text(goal.title).tag(goal)
-                    }
-                }
-                .pickerStyle(.segmented)
-
-                if model.goal != .maintain {
-                    MeasurementField(
-                        title: "Target weight",
-                        unit: "kg",
-                        value: Binding(
-                            get: { model.targetWeightKg ?? model.weightKg },
-                            set: { model.targetWeightKg = $0 }
-                        ),
-                        hint: model.targetWeightHint
-                    )
-                }
-            } header: {
-                DSSectionHeader(title: "Goal")
-            }
-            .dsRow()
-
-            Section {
-                targetsCard
-                    .listRowInsets(EdgeInsets(top: Space.s2, leading: Space.s4,
-                                              bottom: Space.s2, trailing: Space.s4))
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
-            } header: {
-                DSSectionHeader(title: "Your daily targets")
-            }
-
-            if model.isHealthAvailable {
-                Section {
-                    appleHealthRow
-                } header: {
-                    DSSectionHeader(title: "Apple Health")
-                } footer: {
-                    Text("Optional. Lets the dashboard show your steps, energy burned and sleep. Your health data never leaves the device.")
-                        .font(DSType.caption)
-                        .foregroundStyle(DSColor.textMuted)
-                }
-                .dsRow()
-            }
-
-            Section {
-                Text("BMI is health context only — your calorie target comes from your age, height, weight, activity and goal.")
-                    .font(DSType.caption)
-                    .foregroundStyle(DSColor.textMuted)
-            }
-            .dsRow()
+            bottomBar
         }
-        .navigationTitle("Set up")
-        .dsScreen()
-        .safeAreaInset(edge: .bottom) {
-            Button("Continue") {
-                Task {
-                    if await model.save() { onComplete() }
-                }
-            }
-            .buttonStyle(.ds(.primary, size: .large, fullWidth: true))
-            .disabled(!model.isValid || model.isSaving)
-            .padding(.horizontal, Space.s4)
-            .padding(.vertical, Space.s3)
-            .background(.bar)
-        }
+        .background(DS.surfacePage)
         .alert(
-            "Something went wrong",
+            "Có lỗi xảy ra",
             isPresented: Binding(
                 get: { model.errorMessage != nil },
                 set: { if !$0 { model.errorMessage = nil } }
@@ -146,130 +57,372 @@ private struct OnboardingForm: View {
         }
     }
 
+    // MARK: Shell chrome
+
+    private var progressHeader: some View {
+        HStack(spacing: DS.s3) {
+            Button {
+                model.goBack()
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(model.step.previous == nil ? DS.neutral300 : DS.textBody)
+                    .frame(width: 32, height: 32)
+                    .background(DS.surfaceSunken, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            }
+            .buttonStyle(.plain)
+            .disabled(model.step.previous == nil)
+            .frame(width: 44, height: 44)
+            .contentShape(Rectangle())
+            .accessibilityLabel("Quay lại")
+            .accessibilityIdentifier("onboarding.back")
+
+            HStack(spacing: DS.s1) {
+                ForEach(OnboardingStep.allCases) { step in
+                    Capsule()
+                        .fill(step.rawValue <= model.step.rawValue ? DS.blue : DS.neutral200)
+                        .frame(height: 4)
+                }
+            }
+
+            Text(model.step.counter)
+                .font(.custom(DSFontName.semibold, size: 12.5))
+                .foregroundStyle(DS.textSubtle)
+                .accessibilityIdentifier("onboarding.counter")
+        }
+        .padding(.horizontal, 20)
+        .padding(.bottom, DS.s2)
+        .background(DS.surfacePage)
+    }
+
+    private var stepHeader: some View {
+        VStack(alignment: .leading, spacing: DS.s2) {
+            Text(model.step.eyebrow)
+                .hfStyle(HFType.eyebrow)
+                .foregroundStyle(DS.blue)
+            Text(model.step.title)
+                .font(.custom(DSFontName.extrabold, size: 27))
+                .tracking(-0.54)
+                .foregroundStyle(DS.textStrong)
+                .fixedSize(horizontal: false, vertical: true)
+            Text(model.step.subtitle)
+                .hfStyle(HFType.body)
+                .foregroundStyle(DS.textMuted)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("onboarding.stepTitle.\(model.step.rawValue)")
+    }
+
     @ViewBuilder
-    private var appleHealthRow: some View {
-        if model.hasRequestedHealth {
-            HStack(spacing: Space.s3) {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundStyle(DSColor.success)
-                Text("Apple Health connected")
-                    .font(DSType.body)
-                    .foregroundStyle(DSColor.textBody)
-            }
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Apple Health connected")
-        } else {
-            VStack(alignment: .leading, spacing: Space.s2) {
-                Button("Connect Apple Health") {
-                    Task { await model.connectAppleHealth() }
-                }
-                .buttonStyle(.ds(.secondary, fullWidth: true))
-                .disabled(model.isConnectingHealth)
-
-                if let message = model.healthMessage {
-                    DSFieldMessage(text: message, isError: true)
-                }
-            }
-            .listRowInsets(EdgeInsets(top: Space.s2, leading: Space.s4,
-                                      bottom: Space.s2, trailing: Space.s4))
+    private var stepBody: some View {
+        switch model.step {
+        case .body: BodyStep(model: model)
+        case .activity: ActivityStep(model: model)
+        case .goal: GoalStep(model: model)
+        case .result: ResultStep(model: model)
         }
     }
 
-    private var targetsCard: some View {
-        DSCard(padding: .medium, accent: model.isValid ? .blue : nil) {
-            if model.isValid {
-                validTargets
-            } else {
-                // Height and weight feed every number here, so out-of-range
-                // input produces confident nonsense (500 kg reads as 9,043 kcal
-                // and BMI 173). Withhold the figures rather than show them.
-                VStack(alignment: .leading, spacing: Space.s2) {
-                    Text("Targets unavailable")
-                        .font(DSType.h4)
-                        .foregroundStyle(DSColor.textStrong)
-                    Text("Enter a height and weight in range and your daily targets will appear here.")
-                        .font(DSType.bodySmall)
-                        .foregroundStyle(DSColor.textMuted)
-                }
+    private var bottomBar: some View {
+        VStack(spacing: DS.s2) {
+            Button(model.step.cta) {
+                Task { await primaryAction() }
             }
+            .buttonStyle(.ds(.primary, size: .large, fullWidth: true))
+            .disabled(!model.canAdvance || model.isSaving || model.isConnectingHealth)
+            .accessibilityIdentifier("onboarding.cta")
+
+            if model.step == .result {
+                Button("Để sau") {
+                    Task { await finish() }
+                }
+                .buttonStyle(.ds(.ghost, size: .medium))
+                .accessibilityIdentifier("onboarding.skipHealth")
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, DS.s3)
+        .padding(.bottom, DS.s2)
+        .background(DS.surfaceCard)
+        .overlay(alignment: .top) {
+            Rectangle().fill(DS.borderSubtle).frame(height: 1)
         }
     }
 
-    private var validTargets: some View {
-        Group {
-            VStack(alignment: .leading, spacing: Space.s3) {
-                DSStatBlock(
-                    value: Int(model.nutritionGoal.calories.rounded()).formatted(),
-                    label: "kcal per day",
-                    tone: .blue
+    private func primaryAction() async {
+        guard model.step == .result else {
+            model.advance()
+            return
+        }
+        await model.connectAppleHealth()
+        await finish()
+    }
+
+    /// The profile is saved once, at the end — nothing is persisted while the
+    /// user is still moving between steps.
+    private func finish() async {
+        if await model.save() { onComplete() }
+    }
+}
+
+// MARK: - Step 1
+
+private struct BodyStep: View {
+    @Bindable var model: OnboardingModel
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: DS.s4) {
+            HFCard(padding: 0) {
+                VStack(spacing: 0) {
+                    row {
+                        LabelPair(vi: "Tuổi", en: "Age")
+                        Spacer(minLength: DS.s2)
+                        HFStepper(
+                            value: model.age,
+                            range: OnboardingModel.ageRange,
+                            identifier: "field.age"
+                        ) { model.age = $0 }
+                    }
+                    separator
+                    row {
+                        LabelPair(vi: "Chiều cao", en: "Height")
+                        Spacer(minLength: DS.s2)
+                        HFNumericField(
+                            value: $model.heightCm, suffix: "cm", identifier: "field.height"
+                        )
+                    }
+                    if let error = model.heightError { messageRow(error) }
+                    separator
+                    row {
+                        LabelPair(vi: "Cân nặng", en: "Weight")
+                        Spacer(minLength: DS.s2)
+                        HFNumericField(
+                            value: $model.weightKg, suffix: "kg", identifier: "field.weight"
+                        )
+                    }
+                    if let error = model.weightError { messageRow(error) }
+                }
+            }
+
+            VStack(alignment: .leading, spacing: DS.s2) {
+                LabelPair(vi: "Giới tính sinh học", en: "Dùng cho công thức Mifflin-St Jeor")
+                HFSegments(
+                    options: [
+                        (BiologicalSex?.some(.male), BiologicalSex.male.vi, "sex.male"),
+                        (BiologicalSex?.some(.female), BiologicalSex.female.vi, "sex.female"),
+                        (BiologicalSex?.none, BiologicalSex.preferNotToSay.vi, "sex.unspecified")
+                    ],
+                    selection: $model.biologicalSex
                 )
+            }
 
-                Divider().overlay(DSColor.borderSubtle)
+            if model.usesEstimatedSexConstant {
+                GrayNote(
+                    text: "Không có giới tính sinh học, mục tiêu sẽ dùng giá trị trung bình nên kém chính xác hơn."
+                )
+            }
+        }
+    }
 
-                BMILine(bmi: model.bmi)
-                MacroLine(name: "Protein", grams: model.nutritionGoal.protein)
-                MacroLine(name: "Carbs", grams: model.nutritionGoal.carbohydrates)
-                MacroLine(name: "Fat", grams: model.nutritionGoal.fat)
+    private func row<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        HStack(spacing: DS.s3) { content() }
+            .padding(.horizontal, DS.s4)
+            .frame(minHeight: 58)
+    }
 
-                if model.usesEstimatedSexConstant {
-                    Text(
-                        """
-                        Without a biological sex these targets use an average \
-                        estimate, so they are less precise.
-                        """
-                    )
-                    .font(DSType.caption)
-                    .foregroundStyle(DSColor.textMuted)
+    private func messageRow(_ text: String) -> some View {
+        DSFieldMessage(text: text, isError: true)
+            .padding(.horizontal, DS.s4)
+            .padding(.bottom, DS.s2)
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var separator: some View {
+        Rectangle().fill(DS.borderSubtle).frame(height: 1).padding(.leading, DS.s4)
+    }
+}
+
+// MARK: - Step 2
+
+private struct ActivityStep: View {
+    @Bindable var model: OnboardingModel
+
+    var body: some View {
+        VStack(spacing: 9) {
+            ForEach(ActivityLevel.allCases, id: \.self) { level in
+                HFRadioCard(
+                    vi: level.vi,
+                    en: level.en,
+                    meta: level.multiplierText,
+                    isSelected: model.activityLevel == level,
+                    identifier: "activity.\(level.rawValue)"
+                ) {
+                    model.activityLevel = level
                 }
             }
         }
     }
 }
 
-private struct MacroLine: View {
-    let name: String
-    let grams: Double
+// MARK: - Step 3
+
+private struct GoalStep: View {
+    @Bindable var model: OnboardingModel
 
     var body: some View {
-        DSValueRow(name: name, value: "\(Int(grams.rounded())) g")
-    }
-}
-
-private struct MeasurementField: View {
-    let title: String
-    let unit: String
-    @Binding var value: Double
-    var error: String?
-    var hint: String?
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            field
-            if let error {
-                DSFieldMessage(text: error, isError: true)
-            } else if let hint {
-                DSFieldMessage(text: hint)
+        VStack(alignment: .leading, spacing: DS.s4) {
+            HStack(spacing: DS.s2) {
+                ForEach(WeightGoal.allCases, id: \.self) { goal in
+                    goalTile(goal)
+                }
             }
+
+            if model.goal != .maintain {
+                HFCard(padding: 0) {
+                    HStack(spacing: DS.s3) {
+                        LabelPair(vi: "Cân nặng mục tiêu", en: "Target weight")
+                        Spacer(minLength: DS.s2)
+                        HFNumericField(
+                            value: Binding(
+                                get: { model.targetWeightKg ?? model.weightKg },
+                                set: { model.targetWeightKg = $0 }
+                            ),
+                            suffix: "kg",
+                            identifier: "field.targetWeight"
+                        )
+                    }
+                    .padding(.horizontal, DS.s4)
+                    .frame(minHeight: 58)
+                }
+
+                if let hint = model.targetWeightHint {
+                    DSFieldMessage(text: hint)
+                }
+            }
+
+            GrayNote(
+                text: "Mức thiếu hụt không bao giờ đưa bạn xuống dưới chuyển hóa cơ bản của chính bạn."
+            )
         }
     }
 
-    private var field: some View {
-        LabeledContent {
-            HStack {
-                TextField(title, value: $value, format: .number)
-                    .keyboardType(.decimalPad)
-                    .multilineTextAlignment(.trailing)
-                    .font(DSType.bodyMedium)
-                    .foregroundStyle(DSColor.textStrong)
-                    .accessibilityIdentifier("field.\(title.lowercased())")
-                Text(unit)
-                    .font(DSType.bodySmall)
-                    .foregroundStyle(DSColor.textSubtle)
-            }
+    private func goalTile(_ goal: WeightGoal) -> some View {
+        let isSelected = model.goal == goal
+        return Button {
+            model.goal = goal
         } label: {
-            Text(title)
-                .font(DSType.body)
-                .foregroundStyle(DSColor.textBody)
+            VStack(spacing: DS.s1) {
+                Text(goal.vi)
+                    .font(.custom(DSFontName.bold, size: 15))
+                    .foregroundStyle(isSelected ? DS.blue700 : DS.textStrong)
+                Text(goal.deltaText)
+                    .hfStyle(HFType.subLabel)
+                    .foregroundStyle(DS.textSubtle)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, DS.s4)
+            .background(isSelected ? DS.blue50 : DS.surfaceCard)
+            .overlay {
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .strokeBorder(
+                        isSelected ? DS.blue : DS.borderSubtle,
+                        lineWidth: isSelected ? 1.5 : 1
+                    )
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("goal.\(goal.rawValue)")
+        .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
+    }
+}
+
+// MARK: - Step 4
+
+private struct ResultStep: View {
+    @Bindable var model: OnboardingModel
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: DS.s4) {
+            HFCard(padding: DS.s5, radius: 18, accent: DS.blue) {
+                VStack(alignment: .leading, spacing: DS.s3) {
+                    Text("CALO MỖI NGÀY")
+                        .hfStyle(HFType.eyebrow)
+                        .foregroundStyle(DS.textSubtle)
+
+                    HStack(alignment: .firstTextBaseline, spacing: DS.s2) {
+                        Text(VNNumber.int(model.nutritionGoal.calories))
+                            .font(.custom(DSFontName.extrabold, size: 46))
+                            .tracking(-1.38)
+                            .foregroundStyle(DS.blue)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.6)
+                        Text("kcal")
+                            .font(.custom(DSFontName.semibold, size: 16))
+                            .foregroundStyle(DS.textMuted)
+                    }
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("\(VNNumber.int(model.nutritionGoal.calories)) kcal mỗi ngày")
+                    .accessibilityAddTraits(.isStaticText)
+                    .accessibilityIdentifier("result.calories")
+
+                    Text(model.formulaLine)
+                        .font(.custom(DSFontName.regular, size: 12.5))
+                        .foregroundStyle(DS.textMuted)
+                        .accessibilityIdentifier("result.formula")
+
+                    HStack(spacing: DS.s2) {
+                        MacroChip(
+                            vi: "Đạm", grams: model.nutritionGoal.protein,
+                            background: DS.blue50, foreground: DS.blue700
+                        )
+                        MacroChip(
+                            vi: "Tinh bột", grams: model.nutritionGoal.carbohydrates,
+                            background: DS.orange100, foreground: DS.orange700
+                        )
+                        MacroChip(
+                            vi: "Chất béo", grams: model.nutritionGoal.fat,
+                            background: DS.green100, foreground: DS.green700
+                        )
+                    }
+                }
+            }
+
+            HFCard {
+                VStack(alignment: .leading, spacing: DS.s3) {
+                    HStack(spacing: DS.s2) {
+                        Text("BMI \(VNNumber.oneDecimal(model.bmi.value))")
+                            .hfStyle(HFType.rowLabel)
+                            .foregroundStyle(DS.textStrong)
+                        Text("\(model.bmi.category.vi) · \(model.bmi.category.en)")
+                            .hfStyle(HFType.subLabel)
+                            .foregroundStyle(DS.textSubtle)
+                        Spacer(minLength: DS.s2)
+                        Text(model.bmi.category.en)
+                            .hfStyle(HFType.subLabelSemibold)
+                            .foregroundStyle(DS.blue700)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(DS.blue50, in: Capsule())
+                    }
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(
+                        "BMI \(VNNumber.oneDecimal(model.bmi.value)), \(model.bmi.category.vi)"
+                    )
+
+                    BMIScaleBar(bmi: model.bmi.value)
+
+                    Text("BMI chỉ là bối cảnh sức khỏe — mục tiêu calo được tính từ tuổi, chiều cao, cân nặng, vận động và mục tiêu của bạn.")
+                        .hfStyle(HFType.subLabel)
+                        .foregroundStyle(DS.textMuted)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+
+            if let message = model.healthMessage {
+                DSFieldMessage(text: message, isError: true)
+            }
         }
     }
 }

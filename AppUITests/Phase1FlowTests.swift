@@ -1,15 +1,12 @@
 import XCTest
 
-/// Walks the Phase 1 flow the way a user would: onboarding produces a target,
+/// Walks the flow the way a user would: four onboarding steps produce a target,
 /// a logged meal moves the dashboard, and crossing a threshold surfaces the
 /// status note.
 ///
-/// The dashboard follows the design handoff (§6.4) and is Vietnamese-primary,
-/// so its assertions are Vietnamese. Onboarding has not been converted yet and
-/// is still English.
-///
+/// Both screens now follow the design handoff and are Vietnamese-primary.
 /// Numbers are built with a `vi_VN` formatter rather than hardcoded, because
-/// the app formats with that locale regardless of the device's.
+/// the app formats with that locale whatever the device is set to.
 final class Phase1FlowTests: XCTestCase {
     private var app: XCUIApplication!
 
@@ -20,40 +17,53 @@ final class Phase1FlowTests: XCTestCase {
         app.launch()
     }
 
-    func testOnboardingProducesTargetsAndReachesDashboard() {
-        XCTAssertTrue(app.navigationBars["Set up"].waitForExistence(timeout: 30))
+    func testOnboardingWalksFourStepsAndProducesTargets() {
+        XCTAssertTrue(app.staticTexts["onboarding.counter"].waitForExistence(timeout: 30))
+        XCTAssertEqual(app.staticTexts["onboarding.counter"].label, "1/4")
 
-        // Defaults are 170 cm, 70 kg, 30 y, unspecified sex, moderate, maintain
+        // Defaults: 170 cm, 70 kg, 30 y, unspecified sex, moderate, maintain
         // → BMR 1534.5 × 1.55 = 2378 kcal, protein 70 × 1.6 = 112 g.
-        XCTAssertTrue(app.staticTexts["Protein, 112 g"].exists)
+        app.buttons["onboarding.cta"].tap()
+        XCTAssertEqual(app.staticTexts["onboarding.counter"].label, "2/4")
 
-        app.buttons["Continue"].tap()
+        app.buttons["onboarding.cta"].tap()
+        XCTAssertEqual(app.staticTexts["onboarding.counter"].label, "3/4")
 
-        XCTAssertTrue(app.buttons["mealRow.breakfast"].waitForExistence(timeout: 30))
-        XCTAssertEqual(app.staticTexts["hero.remaining"].label, "\(vn(2378)) kcal còn lại")
+        app.buttons["onboarding.cta"].tap()
+        XCTAssertEqual(app.staticTexts["onboarding.counter"].label, "4/4")
+
+        XCTAssertEqual(
+            app.staticTexts["result.calories"].label,
+            "\(vn(2378)) kcal mỗi ngày"
+        )
+        XCTAssertTrue(app.staticTexts["Đạm, \(vn(112)) gam"].exists)
     }
 
-    func testOutOfRangeWeightExplainsWhyContinueIsDisabled() {
-        XCTAssertTrue(app.navigationBars["Set up"].waitForExistence(timeout: 30))
+    func testGoingBackReturnsToTheEarlierStep() {
+        XCTAssertTrue(app.buttons["onboarding.cta"].waitForExistence(timeout: 30))
+        app.buttons["onboarding.cta"].tap()
+        XCTAssertEqual(app.staticTexts["onboarding.counter"].label, "2/4")
+
+        app.buttons["onboarding.back"].tap()
+        XCTAssertEqual(app.staticTexts["onboarding.counter"].label, "1/4")
+    }
+
+    func testOutOfRangeWeightBlocksTheStepAndSaysWhy() {
+        XCTAssertTrue(app.textFields["field.weight"].waitForExistence(timeout: 30))
 
         let weight = app.textFields["field.weight"]
         weight.doubleTap()
         weight.typeText("500")
         // `TextField(value:format:)` commits on end-editing, so move focus off.
-        app.staticTexts["Height"].tap()
+        app.staticTexts["Tuổi, Age"].tap()
 
         // DSFieldMessage prefixes its accessibility label with "Error: " so
         // VoiceOver distinguishes an error from a hint.
         XCTAssertTrue(
-            app.staticTexts["Error: Enter a weight between 25 and 400 kg"]
+            app.staticTexts["Error: Nhập cân nặng từ 25 đến 400 kg"]
                 .waitForExistence(timeout: 10)
         )
-        XCTAssertFalse(app.buttons["Continue"].isEnabled)
-
-        // The targets are derived from weight, so they must not be shown at all
-        // rather than shown as confident nonsense.
-        XCTAssertTrue(app.staticTexts["Targets unavailable"].exists)
-        XCTAssertFalse(app.staticTexts["kcal per day"].exists)
+        XCTAssertFalse(app.buttons["onboarding.cta"].isEnabled)
     }
 
     func testLoggingAMealMovesTheDashboard() {
@@ -104,9 +114,15 @@ final class Phase1FlowTests: XCTestCase {
         return formatter.string(from: NSNumber(value: value)) ?? "\(value)"
     }
 
+    /// Walks all four steps with the defaults. The final step is left via
+    /// "Để sau" rather than the primary CTA — the CTA opens the system
+    /// HealthKit sheet, which cannot be driven reliably from a test.
     private func reachDashboard() {
-        XCTAssertTrue(app.buttons["Continue"].waitForExistence(timeout: 30))
-        app.buttons["Continue"].tap()
+        XCTAssertTrue(app.buttons["onboarding.cta"].waitForExistence(timeout: 30))
+        for _ in 0..<3 {
+            app.buttons["onboarding.cta"].tap()
+        }
+        app.buttons["onboarding.skipHealth"].tap()
         XCTAssertTrue(app.buttons["mealRow.breakfast"].waitForExistence(timeout: 30))
     }
 
