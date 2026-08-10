@@ -59,6 +59,42 @@ func makeFoodItem(
 /// A fixed instant so tests never depend on the wall clock.
 let referenceDate = Date(timeIntervalSince1970: 1_700_000_000)
 
+/// A calendar fixed to UTC so day boundaries do not move with the machine's
+/// time zone — `referenceDate` is an absolute instant, and `startOfDay` for it
+/// is a different day in Hanoi than in Los Angeles.
+let testCalendar: Calendar = {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(identifier: "UTC")!
+    return calendar
+}()
+
+/// `days` before `referenceDate`, at the same time of day.
+func daysBeforeReference(_ days: Int) -> Date {
+    referenceDate.addingTimeInterval(Double(-days) * 86_400)
+}
+
+actor InMemoryWeightRepository: WeightRepository {
+    private var stored: [WeightEntry]
+
+    init(stored: [WeightEntry] = []) {
+        self.stored = stored
+    }
+
+    func log(_ entry: WeightEntry) async throws {
+        stored.append(entry)
+    }
+
+    func entries(from start: Date, to end: Date) async throws -> [WeightEntry] {
+        stored.filter { $0.date >= start && $0.date < end }.sorted { $0.date < $1.date }
+    }
+
+    func latest() async throws -> WeightEntry? {
+        stored.max { $0.date < $1.date }
+    }
+
+    var count: Int { stored.count }
+}
+
 actor InMemoryMealRepository: MealRepository {
     private var stored: [Meal]
 

@@ -81,6 +81,9 @@ final class Phase1FlowTests: XCTestCase {
         app.buttons["tab.history"].tap()
         XCTAssertTrue(app.staticTexts["Bữa ăn đã ghi"].waitForExistence(timeout: 30))
 
+        app.buttons["tab.insights"].tap()
+        XCTAssertTrue(app.staticTexts["7 ngày qua"].waitForExistence(timeout: 30))
+
         app.buttons["tab.profile"].tap()
         XCTAssertTrue(app.buttons["profile.editBody"].waitForExistence(timeout: 30))
 
@@ -209,6 +212,31 @@ final class Phase1FlowTests: XCTestCase {
                 .waitForExistence(timeout: 30)
         )
         XCTAssertEqual(app.staticTexts["hero.remaining"].label, "\(vn(122)) kcal vượt mục tiêu")
+    }
+
+    func testInsightsReportTheWeekAndTheWeightRecordedAtOnboarding() {
+        reachDashboard()
+
+        logMeal(named: "breakfast", food: "Chao yen mach", calories: 500)
+        XCTAssertTrue(app.buttons["mealRow.breakfast"].waitForExistence(timeout: 30))
+
+        app.buttons["tab.insights"].tap()
+
+        // One logged day out of seven, averaged over that day alone rather than
+        // over seven — the other six have no data, which is not a zero.
+        let average = app.staticTexts["insights.average"]
+        XCTAssertTrue(average.waitForExistence(timeout: 30))
+        XCTAssertEqual(average.label, "Trung bình \(vn(500)) kcal mỗi ngày")
+        XCTAssertEqual(
+            app.staticTexts["insights.daysWithinGoal"].label,
+            "1/7 ngày trong mục tiêu"
+        )
+
+        // Onboarding's 70 kg default is written to the weight log on save, so
+        // the chart has a point without the user logging one by hand.
+        XCTAssertEqual(app.staticTexts["insights.currentWeight"].label, "Hiện tại 70,0 kg")
+        // A single weighing gives nothing to compare against.
+        XCTAssertEqual(app.staticTexts["insights.weightChange"].label, "— trong 6 tuần")
     }
 
     // MARK: Helpers

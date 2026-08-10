@@ -198,32 +198,55 @@ folder is actually named `design_handoff_healthclean/`.)
 Order of work is §13 of the handoff README: tokens + six shared views →
 Dashboard → Onboarding → Manual/Detail/History → HealthKit → Scan/Review →
 Insights/Profile → localization. Items 1–5 are done, plus Welcome (§6.1),
-Profile (§6.13) and the tab bar. What remains is camera/AI (§6.6–6.9),
-Insights (§6.12), and translating the catalog.
+Profile (§6.13), Insights (§6.12) and the tab bar. What remains is real camera
+capture and a real recognition provider (§6.6–6.9), and translating the catalog.
 
 Profile omits §6.13's five notification switches: there is no notification
 system, and a switch that schedules nothing is a broken control. Add them with
 UserNotifications, not before. It also shows a generic avatar rather than
 initials, because nothing in the app ever asks for a name.
 
-**Insights is blocked**: §6.12 wants a six-week weight series, but the Domain
-has no weight history — `UserProfile` holds one current value. Building it means
-adding a weight-log entity and repository first.
+### Weight history and Insights (§6.12)
+
+`UserProfile.weightKg` is the one value the calorie model reads; `WeightEntry` /
+`WeightRepository` are the history behind it. They are separate on purpose — the
+profile is current state, the log is a record.
+
+- Entries are written from **one place only**: `OnboardingModel.save()`, which
+  Profile's "Thông tin cơ thể & mục tiêu" also routes through. `RecordWeightUseCase`
+  skips a weight that has not moved, because the profile is re-saved whenever
+  *anything* on it is edited and recording unconditionally would stack duplicate
+  points for weighings that never happened.
+- A failed weight write does not fail the profile save, the way health reads do
+  not fail the dashboard. The profile was saved; the chart is secondary.
+- `GetWeightSeriesUseCase` reduces entries to one point per week, keeping the
+  most recent weighing in each. Weeks are 7-day blocks counted back from today,
+  **not** calendar weeks, so the last point is always the latest weighing rather
+  than a partial week. A week with no weighing produces **no point** — hence
+  `WeightPoint.weekIndex`, which is how the chart places what it has and leaves
+  gaps as gaps rather than carrying a stale value forward.
+
+Two of §6.12's four stat cells are deliberately absent:
+
+- "% bữa ăn được ghi" has no denominator — the app never learns how many meals
+  the user meant to eat, and any figure would be invented.
+- "% AI cần sửa khẩu phần" is not recorded. `FoodItem` keeps `aiConfidence`, so
+  the app knows which items came from a scan, but not whether the user corrected
+  the portion. Recording that means adding a field at the point of confirmation.
+
+The closing gray note of §6.12 is also absent; it needs an analysis of
+afternoon protein that nothing specifies.
 
 Hiding the navigation bar also hides the system back button, so any screen that
 draws its own header must supply `HFBackChip` — edge-swipe is not a visible
 affordance. This applies to pushed and sheet-presented screens; tab roots do not
 need one. Apple Health still uses it.
 
-The §5 tab bar exists over the three roots that have something to open — Hôm
-nay, Lịch sử, Tôi. Two things §5 specifies are absent: Welcome's "Tôi đã có tài
-khoản" link, because there is no account system to sign into and a link that
-cannot do what it says is worse than none; the "Thống kê" tab, which needs
-weight history the Domain does not hold; and the raised orange scan action,
-which needs the AI pipeline. A tab that opens nothing is worse than an absent
-one. Three of its four destinations
-(Camera, Insights, Profile) do not exist yet, so a tab bar now would ship three
-dead tabs. History is reached from the dashboard header instead.
+The §5 tab bar is complete: all four roots — Hôm nay, Lịch sử, Thống kê, Tôi —
+plus the raised orange scan action between History and Insights. One thing §5
+specifies is still absent: Welcome's "Tôi đã có tài khoản" link, because there is
+no account system to sign into and a link that cannot do what it says is worse
+than none. A tab that opens nothing is worse than an absent one.
 
 ### Camera / AI (§6.6–6.9)
 

@@ -11,13 +11,16 @@ final class DependencyContainer {
 
     private let userRepository: any UserRepository
     private let mealRepository: any MealRepository
+    private let weightRepository: any WeightRepository
     private let healthRepository: any HealthRepository
     private let recognitionRepository: any FoodRecognitionRepository
 
     /// `nonisolated` so it can be built in a stored-property initializer, and
     /// because nothing it touches is main-actor bound.
     nonisolated init(inMemory: Bool = false) {
-        let schema = Schema([UserProfileEntity.self, MealEntity.self, FoodItemEntity.self])
+        let schema = Schema([
+            UserProfileEntity.self, MealEntity.self, FoodItemEntity.self, WeightEntryEntity.self,
+        ])
         let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: inMemory)
 
         do {
@@ -29,6 +32,7 @@ final class DependencyContainer {
 
         userRepository = SwiftDataUserRepository(modelContainer: modelContainer)
         mealRepository = SwiftDataMealRepository(modelContainer: modelContainer)
+        weightRepository = SwiftDataWeightRepository(modelContainer: modelContainer)
         healthRepository = HealthKitHealthRepository()
 
         // No gateway is running by default, and no model is configured, so the
@@ -57,6 +61,14 @@ final class DependencyContainer {
         SaveMealUseCase(mealRepository: mealRepository)
     }
 
+    var getWeightSeries: GetWeightSeriesUseCase {
+        GetWeightSeriesUseCase(weightRepository: weightRepository)
+    }
+
+    var recordWeight: RecordWeightUseCase {
+        RecordWeightUseCase(weightRepository: weightRepository)
+    }
+
     var user: any UserRepository { userRepository }
 
     func makeOnboardingModel() -> OnboardingModel {
@@ -64,7 +76,8 @@ final class DependencyContainer {
             userRepository: userRepository,
             healthRepository: healthRepository,
             calculateBMI: calculateBMI,
-            calculateCalorieGoal: calculateCalorieGoal
+            calculateCalorieGoal: calculateCalorieGoal,
+            recordWeight: recordWeight
         )
     }
 
@@ -108,6 +121,14 @@ final class DependencyContainer {
             meals: meals,
             dailyGoalCalories: dailyGoalCalories,
             mealRepository: mealRepository
+        )
+    }
+
+    func makeInsightsModel() -> InsightsModel {
+        InsightsModel(
+            mealRepository: mealRepository,
+            userRepository: userRepository,
+            getWeightSeries: getWeightSeries
         )
     }
 

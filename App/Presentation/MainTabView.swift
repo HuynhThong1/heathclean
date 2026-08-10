@@ -1,11 +1,10 @@
 import Domain
 import SwiftUI
 
-/// The tab roots that exist. §5 also specifies "Thống kê" (Insights), omitted
-/// until it has something to open — it needs weight history the Domain does not
-/// hold. The raised scan action is present.
+/// §5's four tab roots, in its order, with the raised scan action between
+/// History and Insights.
 enum MainTab: String, CaseIterable, Identifiable {
-    case today, history, profile
+    case today, history, insights, profile
 
     var id: String { rawValue }
 
@@ -13,6 +12,7 @@ enum MainTab: String, CaseIterable, Identifiable {
         switch self {
         case .today: "Hôm nay"
         case .history: "Lịch sử"
+        case .insights: "Thống kê"
         case .profile: "Tôi"
         }
     }
@@ -21,6 +21,7 @@ enum MainTab: String, CaseIterable, Identifiable {
         switch self {
         case .today: "circle.dashed.inset.filled"
         case .history: "clock"
+        case .insights: "chart.bar"
         case .profile: "person"
         }
     }
@@ -41,6 +42,8 @@ struct MainTabView: View {
                     }
                 case .history:
                     NavigationStack { MealHistoryView() }
+                case .insights:
+                    NavigationStack { InsightsView() }
                 case .profile:
                     NavigationStack { ProfileView() }
                 }

@@ -19,17 +19,20 @@ final class OnboardingModel {
     private let healthRepository: any HealthRepository
     private let calculateBMI: CalculateBMIUseCase
     private let calculateCalorieGoal: CalculateCalorieGoalUseCase
+    private let recordWeight: RecordWeightUseCase
 
     init(
         userRepository: any UserRepository,
         healthRepository: any HealthRepository,
         calculateBMI: CalculateBMIUseCase,
-        calculateCalorieGoal: CalculateCalorieGoalUseCase
+        calculateCalorieGoal: CalculateCalorieGoalUseCase,
+        recordWeight: RecordWeightUseCase
     ) {
         self.userRepository = userRepository
         self.healthRepository = healthRepository
         self.calculateBMI = calculateBMI
         self.calculateCalorieGoal = calculateCalorieGoal
+        self.recordWeight = recordWeight
     }
 
     // MARK: Apple Health
@@ -193,6 +196,12 @@ final class OnboardingModel {
 
         do {
             try await userRepository.save(profile: profile, goal: nutritionGoal)
+
+            // History is for the chart; the profile is what the calorie model
+            // reads. A failure here must not report the profile as unsaved —
+            // it was saved — so the error is dropped, as health reads are.
+            try? await recordWeight.execute(kilograms: weightKg, on: Date())
+
             return true
         } catch {
             errorMessage = String(localized: "Không lưu được hồ sơ. Vui lòng thử lại.")
