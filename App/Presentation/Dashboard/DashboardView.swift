@@ -9,6 +9,8 @@ struct DashboardView: View {
     @Environment(DependencyContainer.self) private var container
     @State private var model: DashboardModel?
     @State private var entryType: MealType?
+    @State private var detailType: MealType?
+    @State private var toast: String?
 
     var body: some View {
         NavigationStack {
@@ -34,10 +36,12 @@ struct DashboardView: View {
             await model?.load()
         }
         .sheet(item: $entryType) { type in
-            MealEntryView(type: type) {
+            MealEntryView(type: type) { savedCalories in
+                toast = "Đã lưu bữa ăn · \(VNNumber.int(savedCalories)) kcal"
                 Task { await model?.load() }
             }
         }
+        .hfToast(message: $toast)
     }
 
     private func content(model: DashboardModel, summary: DailyNutritionSummary) -> some View {
@@ -63,6 +67,23 @@ struct DashboardView: View {
                 .padding(.top, DS.s1)
                 .padding(.bottom, DS.s3)
                 .background(DS.surfacePage)
+        }
+        .navigationDestination(item: $detailType) { type in
+            MealDetailView(
+                model: container.makeMealDetailModel(
+                    type: type,
+                    meals: summary.meals(of: type),
+                    dailyGoalCalories: summary.goal.calories
+                ),
+                onAddMore: {
+                    detailType = nil
+                    entryType = type
+                },
+                onDeleted: {
+                    toast = "Đã xoá bữa ăn"
+                    Task { await self.model?.load() }
+                }
+            )
         }
     }
 
@@ -224,7 +245,11 @@ struct DashboardView: View {
                     ForEach(Array(MealType.allCases.enumerated()), id: \.element) { index, type in
                         let meals = summary.meals(of: type)
                         Button {
-                            entryType = type
+                            if meals.flatMap(\.items).isEmpty {
+                                entryType = type
+                            } else {
+                                detailType = type
+                            }
                         } label: {
                             MealRow(
                                 type: type,

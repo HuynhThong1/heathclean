@@ -17,6 +17,17 @@ actor SwiftDataMealRepository: MealRepository {
         return try await meals(from: start, to: end)
     }
 
+    func delete(mealID: UUID) async throws {
+        let descriptor = FetchDescriptor<MealEntity>(
+            predicate: #Predicate { $0.id == mealID }
+        )
+        // The cascade rule on `items` removes the food rows with it.
+        for entity in try modelContext.fetch(descriptor) {
+            modelContext.delete(entity)
+        }
+        try modelContext.save()
+    }
+
     func meals(from start: Date, to end: Date) async throws -> [Meal] {
         let descriptor = FetchDescriptor<MealEntity>(
             predicate: #Predicate { $0.date >= start && $0.date < end },

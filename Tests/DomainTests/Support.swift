@@ -79,4 +79,8 @@ actor InMemoryMealRepository: MealRepository {
     func meals(from start: Date, to end: Date) async throws -> [Meal] {
         stored.filter { $0.date >= start && $0.date < end }
     }
+
+    func delete(mealID: UUID) async throws {
+        stored.removeAll { $0.id == mealID }
+    }
 }

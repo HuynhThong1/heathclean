@@ -68,7 +68,20 @@ final class DependencyContainer {
         MealEntryModel(type: type, date: date, saveMeal: saveMeal)
     }
 
+    func makeMealDetailModel(
+        type: MealType,
+        meals: [Meal],
+        dailyGoalCalories: Double
+    ) -> MealDetailModel {
+        MealDetailModel(
+            type: type,
+            meals: meals,
+            dailyGoalCalories: dailyGoalCalories,
+            mealRepository: mealRepository
+        )
+    }
+
     func makeMealHistoryModel() -> MealHistoryModel {
-        MealHistoryModel(mealRepository: mealRepository)
+        MealHistoryModel(mealRepository: mealRepository, userRepository: userRepository)
     }
 }

@@ -54,7 +54,25 @@ final class MealEntryModel {
     var totalFat: Double { drafts.reduce(0) { $0 + $1.fat } }
 
     var canSave: Bool {
-        !drafts.isEmpty && drafts.allSatisfy(\.isComplete) && !isSaving
+        !drafts.isEmpty && drafts.allSatisfy(\.isComplete) && hasCalories && !isSaving
+    }
+
+    /// §10: saving stays disabled until at least one item carries calories —
+    /// a meal of zero kcal is almost always an unfinished entry.
+    var hasCalories: Bool {
+        drafts.contains { $0.calories > 0 }
+    }
+
+    /// Explains a disabled Save rather than leaving it inert.
+    var blockedReason: String? {
+        guard !isSaving else { return nil }
+        if drafts.contains(where: { $0.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }) {
+            return "Nhập tên món trước khi lưu"
+        }
+        if !hasCalories {
+            return "Nhập calo trước khi lưu"
+        }
+        return nil
     }
 
     func addDraft() {

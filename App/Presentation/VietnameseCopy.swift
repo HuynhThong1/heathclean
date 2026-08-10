@@ -148,6 +148,15 @@ enum BudgetCopy {
 }
 
 enum VietnameseDate {
+    /// "Thứ Sáu 8/8" — weekday then day/month, used by history sections.
+    static func dayText(for date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "vi_VN")
+        formatter.setLocalizedDateFormatFromTemplate("EEEE d M")
+        let text = formatter.string(from: date).replacingOccurrences(of: ",", with: "")
+        return text.prefix(1).uppercased() + text.dropFirst()
+    }
+
     /// "Thứ Bảy, 9/8" — weekday then day/month, per §6.4.
     static func headerText(for date: Date) -> String {
         let formatter = DateFormatter()

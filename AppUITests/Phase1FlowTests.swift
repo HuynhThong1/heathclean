@@ -77,6 +77,38 @@ final class Phase1FlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["mealRow.breakfast"].label.contains("500"))
     }
 
+    func testSavingAMealConfirmsWithAToast() {
+        reachDashboard()
+
+        logMeal(named: "snack", food: "Sua chua", calories: 180)
+
+        XCTAssertTrue(
+            app.staticTexts["Đã lưu bữa ăn · \(vn(180)) kcal"].waitForExistence(timeout: 30)
+        )
+    }
+
+    func testALoggedMealOpensItsDetailAndCanBeDeleted() {
+        reachDashboard()
+
+        logMeal(named: "lunch", food: "Com trua", calories: 640)
+        XCTAssertTrue(app.buttons["mealRow.lunch"].waitForExistence(timeout: 30))
+
+        // A row with items routes to the detail screen; an empty one would open
+        // manual entry instead (§5).
+        app.buttons["mealRow.lunch"].tap()
+        XCTAssertTrue(app.staticTexts["mealDetail.total"].waitForExistence(timeout: 30))
+        XCTAssertEqual(
+            app.staticTexts["mealDetail.total"].label,
+            "Tổng bữa ăn \(vn(640)) kcal"
+        )
+
+        app.buttons["mealDetail.delete"].tap()
+        app.buttons["Xoá bữa ăn"].tap()
+
+        XCTAssertTrue(app.buttons["mealRow.lunch"].waitForExistence(timeout: 30))
+        XCTAssertEqual(app.staticTexts["hero.remaining"].label, "\(vn(2378)) kcal còn lại")
+    }
+
     func testCrossingSeventyPercentShowsTheInformMessage() {
         reachDashboard()
 
@@ -140,6 +172,6 @@ final class Phase1FlowTests: XCTestCase {
         caloriesField.doubleTap()
         caloriesField.typeText("\(calories)")
 
-        app.buttons["Save"].tap()
+        app.buttons["mealEntry.save"].tap()
     }
 }

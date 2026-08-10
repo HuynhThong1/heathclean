@@ -1,6 +1,8 @@
 import Domain
 import SwiftUI
 
+/// Manual entry. Reached from a dashboard meal row with no items yet, and from
+/// meal detail's "Thêm món".
 struct MealEntryView: View {
     @Environment(DependencyContainer.self) private var container
     @Environment(\.dismiss) private var dismiss
@@ -8,7 +10,7 @@ struct MealEntryView: View {
     @State private var model: MealEntryModel?
 
     let type: MealType
-    let onSaved: () -> Void
+    let onSaved: (Double) -> Void
 
     var body: some View {
         NavigationStack {
@@ -19,24 +21,28 @@ struct MealEntryView: View {
                     ProgressView()
                 }
             }
-            .navigationTitle(type.title)
-            .dsScreen()
+            .background(DS.surfacePage)
+            .navigationTitle(type.vi)
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                        .font(DSType.bodyMedium)
+                    Button("Huỷ") { dismiss() }
+                        .font(.custom(DSFontName.medium, size: 15))
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
+                    Button("Lưu") {
                         Task {
-                            if await model?.save() == true {
-                                onSaved()
+                            guard let model else { return }
+                            let total = model.totalCalories
+                            if await model.save() {
+                                onSaved(total)
                                 dismiss()
                             }
                         }
                     }
-                    .font(DSType.bodySemibold)
+                    .font(.custom(DSFontName.semibold, size: 15))
                     .disabled(model?.canSave != true)
+                    .accessibilityIdentifier("mealEntry.save")
                 }
             }
         }
@@ -50,46 +56,41 @@ struct MealEntryView: View {
     private func form(model: MealEntryModel) -> some View {
         @Bindable var model = model
 
-        return Form {
-            ForEach(Array($model.drafts.enumerated()), id: \.element.id) { index, $draft in
-                Section {
-                    TextField("Food", text: $draft.name)
-                        .font(DSType.bodyMedium)
-                        .foregroundStyle(DSColor.textStrong)
-                        .accessibilityIdentifier("field.food")
-                    NumberField(title: "Weight", unit: "g", value: $draft.weightGrams)
-                    NumberField(title: "Calories", unit: "kcal", value: $draft.calories)
-                    NumberField(title: "Protein", unit: "g", value: $draft.protein)
-                    NumberField(title: "Carbs", unit: "g", value: $draft.carbohydrates)
-                    NumberField(title: "Fat", unit: "g", value: $draft.fat)
-                } header: {
-                    DSSectionHeader(title: model.drafts.count > 1 ? "Food \(index + 1)" : "Food")
+        return ScrollView {
+            VStack(alignment: .leading, spacing: DS.s4) {
+                ForEach(Array($model.drafts.enumerated()), id: \.element.id) { index, $draft in
+                    draftCard(index: index, draft: $draft, model: model)
                 }
-                .dsRow()
-            }
-            .onDelete { model.removeDrafts(at: $0) }
 
-            Section {
                 Button {
                     model.addDraft()
                 } label: {
-                    Label("Add another food", systemImage: "plus")
-                        .font(DSType.bodyMedium)
-                        .foregroundStyle(DSColor.brandOnSurface)
+                    Label("Thêm món khác", systemImage: "plus")
+                        .font(.custom(DSFontName.semibold, size: 15))
+                        .foregroundStyle(DS.blue)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 52)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: DS.rControl, style: .continuous)
+                                .strokeBorder(DS.borderDefault, lineWidth: 1.5)
+                        }
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("mealEntry.addFood")
+
+                totalsCard(model: model)
+
+                if let reason = model.blockedReason {
+                    DSFieldMessage(text: reason, isError: true)
                 }
             }
-            .dsRow()
-
-            Section {
-                totalsCard(model: model)
-                    .listRowInsets(EdgeInsets(top: Space.s2, leading: Space.s4,
-                                              bottom: Space.s2, trailing: Space.s4))
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
-            }
+            .padding(.horizontal, 20)
+            .padding(.top, DS.s4)
+            .padding(.bottom, 34)
         }
+        .scrollIndicators(.hidden)
         .alert(
-            "Something went wrong",
+            "Có lỗi xảy ra",
             isPresented: Binding(
                 get: { model.errorMessage != nil },
                 set: { if !$0 { model.errorMessage = nil } }
@@ -101,54 +102,117 @@ struct MealEntryView: View {
         }
     }
 
-    private func totalsCard(model: MealEntryModel) -> some View {
-        DSCard(padding: .medium, accent: .green) {
-            VStack(alignment: .leading, spacing: Space.s3) {
-                DSStatBlock(
-                    value: Int(model.totalCalories.rounded()).formatted(),
-                    label: "kcal in this meal",
-                    tone: .green
+    private func draftCard(
+        index: Int,
+        draft: Binding<MealEntryModel.Draft>,
+        model: MealEntryModel
+    ) -> some View {
+        VStack(alignment: .leading, spacing: DS.s3) {
+            HStack {
+                HFSectionHeader(
+                    vi: model.drafts.count > 1 ? "Món \(index + 1)" : "Món ăn",
+                    en: "Food"
                 )
-                Divider().overlay(DSColor.borderSubtle)
-                TotalLine(name: "Protein", grams: model.totalProtein)
-                TotalLine(name: "Carbs", grams: model.totalCarbohydrates)
-                TotalLine(name: "Fat", grams: model.totalFat)
+                if model.drafts.count > 1 {
+                    Button {
+                        model.removeDrafts(at: IndexSet(integer: index))
+                    } label: {
+                        Image(systemName: "trash")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(DS.textSubtle)
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Xoá món \(index + 1)")
+                }
+            }
+
+            HFCard(padding: 0) {
+                VStack(spacing: 0) {
+                    HStack(spacing: DS.s3) {
+                        LabelPair(vi: "Tên món", en: "Name")
+                        Spacer(minLength: DS.s2)
+                        TextField("Ví dụ: Phở bò", text: draft.name)
+                            .multilineTextAlignment(.trailing)
+                            .font(.custom(DSFontName.medium, size: 15))
+                            .foregroundStyle(DS.textStrong)
+                            .accessibilityIdentifier("field.food")
+                    }
+                    .padding(.horizontal, DS.s4)
+                    .frame(minHeight: 58)
+
+                    separator
+                    numericRow("Khối lượng", "Weight", "g", draft.weightGrams, "field.weight")
+                    separator
+                    numericRow("Calo", "Calories", "kcal", draft.calories, "field.calories")
+                    separator
+                    numericRow("Đạm", "Protein", "g", draft.protein, "field.protein")
+                    separator
+                    numericRow("Tinh bột", "Carbs", "g", draft.carbohydrates, "field.carbs")
+                    separator
+                    numericRow("Chất béo", "Fat", "g", draft.fat, "field.fat")
+                }
             }
         }
     }
-}
 
-private struct TotalLine: View {
-    let name: String
-    let grams: Double
-
-    var body: some View {
-        DSValueRow(name: name, value: "\(Int(grams.rounded())) g")
+    private func numericRow(
+        _ vi: String,
+        _ en: String,
+        _ suffix: String,
+        _ value: Binding<Double>,
+        _ identifier: String
+    ) -> some View {
+        HStack(spacing: DS.s3) {
+            LabelPair(vi: vi, en: en)
+            Spacer(minLength: DS.s2)
+            HFNumericField(value: value, suffix: suffix, identifier: identifier)
+        }
+        .padding(.horizontal, DS.s4)
+        .frame(minHeight: 58)
     }
-}
 
-private struct NumberField: View {
-    let title: String
-    let unit: String
-    @Binding var value: Double
+    private var separator: some View {
+        Rectangle().fill(DS.borderSubtle).frame(height: 1).padding(.leading, DS.s4)
+    }
 
-    var body: some View {
-        LabeledContent {
-            HStack {
-                TextField(title, value: $value, format: .number)
-                    .keyboardType(.decimalPad)
-                    .multilineTextAlignment(.trailing)
-                    .font(DSType.bodyMedium)
-                    .foregroundStyle(DSColor.textStrong)
-                    .accessibilityIdentifier("field.\(title.lowercased())")
-                Text(unit)
-                    .font(DSType.bodySmall)
-                    .foregroundStyle(DSColor.textSubtle)
+    private func totalsCard(model: MealEntryModel) -> some View {
+        HFCard(padding: DS.s5, radius: DS.rHero, accent: DS.green) {
+            VStack(alignment: .leading, spacing: DS.s3) {
+                Text("TỔNG BỮA ĂN")
+                    .hfStyle(HFType.eyebrow)
+                    .foregroundStyle(DS.textSubtle)
+
+                HStack(alignment: .firstTextBaseline, spacing: DS.s2) {
+                    Text(VNNumber.int(model.totalCalories))
+                        .font(.custom(DSFontName.extrabold, size: 38))
+                        .tracking(-1.14)
+                        .foregroundStyle(DS.textStrong)
+                    Text("kcal")
+                        .font(.custom(DSFontName.semibold, size: 15))
+                        .foregroundStyle(DS.textMuted)
+                }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Tổng \(VNNumber.int(model.totalCalories)) kcal")
+                .accessibilityAddTraits(.isStaticText)
+                .accessibilityIdentifier("mealEntry.total")
+
+                HStack(spacing: DS.s2) {
+                    MacroChip(
+                        vi: "Đạm", grams: model.totalProtein,
+                        background: DS.blue50, foreground: DS.blue700
+                    )
+                    MacroChip(
+                        vi: "Tinh bột", grams: model.totalCarbohydrates,
+                        background: DS.orange100, foreground: DS.orange700
+                    )
+                    MacroChip(
+                        vi: "Chất béo", grams: model.totalFat,
+                        background: DS.green100, foreground: DS.green700
+                    )
+                }
             }
-        } label: {
-            Text(title)
-                .font(DSType.body)
-                .foregroundStyle(DSColor.textBody)
         }
     }
 }

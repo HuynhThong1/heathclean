@@ -197,7 +197,12 @@ folder is actually named `design_handoff_healthclean/`.)
 
 Order of work is §13 of the handoff README: tokens + six shared views →
 Dashboard → Onboarding → Manual/Detail/History → HealthKit → Scan/Review →
-Insights/Profile → localization.
+Insights/Profile → localization. Items 1–4 are done; the next unstarted item is
+the Apple Health permissions screen (§6.3), then camera/AI (§6.6–6.9).
+
+Not built, and deliberately so: the §5 tab bar. Three of its four destinations
+(Camera, Insights, Profile) do not exist yet, so a tab bar now would ship three
+dead tabs. History is reached from the dashboard header instead.
 
 ### Two token sets exist — know which you are in
 
@@ -205,11 +210,14 @@ Insights/Profile → localization.
 use. `DSPalette`/`DSColor`/`DSType` came from an earlier sync of the claude.ai
 Design project and carry **slightly different values** (`surfacePage` `#F8FAFC`
 vs `#F4F7FA`, `textBody` `#1F2E3D` vs `#2B3947`, `danger` `#D5342B` vs
-`#D64545`). Onboarding, meal entry and history still use the older set. Migrating
-them is outstanding work; until then, do not mix the two in one screen.
+`#D64545`). Do not mix the two in one screen.
 
 `DSColor` is also appearance-adaptive while `DS.*` is light-only, so a screen on
 `DS.*` will not respond to dark mode.
+
+Dashboard, onboarding, manual entry, meal detail and history are all on `DS.*`
+now. What still uses the older set is `DisplayNames.swift` and the `DS*`
+components under `DesignSystem/` that nothing on a handoff screen references.
 
 ## Scope
 
