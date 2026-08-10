@@ -227,8 +227,17 @@ dead tabs. History is reached from the dashboard header instead.
 
 ### Camera / AI (§6.6–6.9) — not started, and what blocks it
 
-Two decisions are open and were not made: whether the FastAPI gateway lives in
-this repo under `backend/` or in its own, and which model to verify against.
+Decided: the FastAPI gateway lives in **its own repository**, not here. And
+**no local model** — inference goes to a hosted provider, so the gateway needs an
+API key before anything on the AI path can be verified.
+
+Still open: which hosted provider (Gemini free tier per `plan.md` §31, or a
+hosted Qwen such as DashScope / OpenRouter), and the key itself.
+
+Sending meal photos to a hosted service is what `plan.md` §20 and §21 already
+describe — the image is analysed and deleted, never persisted server-side. The
+privacy line on Profile is about *health* data staying on device, which remains
+true either way.
 
 What was measured on this machine, so it need not be rediscovered:
 
@@ -245,12 +254,16 @@ So with the machine as it stands, only a mock provider can be verified end to
 end. The Qwen and Gemini paths can be written but not run. Plan the work that
 way, or install a model first.
 
-If a local model is wanted, prefer **ollama** over MLX: it is a standalone
-binary, so it sidesteps the Python 3.9.6 problem entirely. `brew` is present and
-ollama.com is reachable. MLX would mean installing a newer Python first.
+Local inference was ruled out, so the ollama/MLX comparison below is moot unless
+that changes.
 
 The contract to build against is §25 (`POST /v1/meals/analyze`) and the Domain
 seam is `FoodRecognitionRepository` from `plan.md` §9 — which does not exist yet.
+
+**The iOS half is not blocked.** With the seam plus a mock provider, the scan
+state machine and the review/portion-editor screens (§6.6–6.9) can be built and
+verified here without the gateway or a key. Only the real recognition path
+waits.
 
 ### Localization
 
