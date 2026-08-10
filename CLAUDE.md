@@ -225,14 +225,23 @@ one. Three of its four destinations
 (Camera, Insights, Profile) do not exist yet, so a tab bar now would ship three
 dead tabs. History is reached from the dashboard header instead.
 
-### Camera / AI (§6.6–6.9) — not started, and what blocks it
+### Camera / AI (§6.6–6.9)
 
-Decided: the FastAPI gateway lives in **its own repository**, not here. And
-**no local model** — inference goes to a hosted provider, so the gateway needs an
-API key before anything on the AI path can be verified.
+The gateway lives in its own repo at `~/Projects/healthclean-gateway`
+(FastAPI). The iOS side talks to it through `FoodRecognitionRepository`.
 
-Still open: which hosted provider (Gemini free tier per `plan.md` §31, or a
-hosted Qwen such as DashScope / OpenRouter), and the key itself.
+**Which repository runs is chosen by environment**, not code:
+`GATEWAY_URL` points at a running gateway, `MODEL_PROVIDER` overrides which
+model it uses. With neither set the app uses `MockFoodRecognitionRepository`,
+which is the honest default — a scan that always failed would teach nothing.
+
+Still open: which hosted provider to use (Gemini free tier per `plan.md` §31,
+or a hosted Qwen such as DashScope / OpenRouter), and the key.
+
+**What is unverified:** every real provider. The mock path is exercised end to
+end on both sides; Gemini and Qwen have never been run. Camera capture is also
+unbuilt — AVFoundation has no camera in the simulator, so the flow uses
+`PhotosPicker`, which is the part that can actually be tested here.
 
 Sending meal photos to a hosted service is what `plan.md` §20 and §21 already
 describe — the image is analysed and deleted, never persisted server-side. The

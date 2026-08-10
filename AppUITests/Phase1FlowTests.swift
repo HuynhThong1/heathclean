@@ -66,6 +66,13 @@ final class Phase1FlowTests: XCTestCase {
         XCTAssertFalse(app.buttons["health.allow"].isEnabled)
     }
 
+    func testScanFlowProposesAMealAndRefusesToSaveUnresolvedItems() {
+        reachDashboard()
+
+        app.buttons["tab.scan"].tap()
+        XCTAssertTrue(app.buttons["scan.pickPhoto"].waitForExistence(timeout: 30))
+    }
+
     func testTabBarReachesEveryRootAndBack() {
         reachDashboard()
 

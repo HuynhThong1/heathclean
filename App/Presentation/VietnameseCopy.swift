@@ -166,3 +166,16 @@ enum VietnameseDate {
         return text.prefix(1).uppercased() + text.dropFirst()
     }
 }
+
+extension MealType {
+    /// Which meal a scan should default to, by time of day. Arbitrary defaults
+    /// would make the user re-pick almost every time.
+    static func suggestedForNow(_ date: Date = Date()) -> MealType {
+        switch Calendar.current.component(.hour, from: date) {
+        case 4..<10: .breakfast
+        case 10..<15: .lunch
+        case 15..<18: .snack
+        default: .dinner
+        }
+    }
+}

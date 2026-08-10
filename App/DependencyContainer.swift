@@ -12,6 +12,7 @@ final class DependencyContainer {
     private let userRepository: any UserRepository
     private let mealRepository: any MealRepository
     private let healthRepository: any HealthRepository
+    private let recognitionRepository: any FoodRecognitionRepository
 
     /// `nonisolated` so it can be built in a stored-property initializer, and
     /// because nothing it touches is main-actor bound.
@@ -29,6 +30,19 @@ final class DependencyContainer {
         userRepository = SwiftDataUserRepository(modelContainer: modelContainer)
         mealRepository = SwiftDataMealRepository(modelContainer: modelContainer)
         healthRepository = HealthKitHealthRepository()
+
+        // No gateway is running by default, and no model is configured, so the
+        // mock is the honest default — a scan that always fails would teach
+        // nothing. Point GATEWAY_URL at a running gateway to use the real one.
+        if let raw = ProcessInfo.processInfo.environment["GATEWAY_URL"],
+           let url = URL(string: raw) {
+            recognitionRepository = GatewayFoodRecognitionRepository(
+                baseURL: url,
+                providerOverride: ProcessInfo.processInfo.environment["MODEL_PROVIDER"]
+            )
+        } else {
+            recognitionRepository = MockFoodRecognitionRepository()
+        }
     }
 
     var calculateBMI: CalculateBMIUseCase { CalculateBMIUseCase() }
@@ -66,6 +80,14 @@ final class DependencyContainer {
 
     func makeMealEntryModel(type: MealType, date: Date) -> MealEntryModel {
         MealEntryModel(type: type, date: date, saveMeal: saveMeal)
+    }
+
+    func makeScanModel(type: MealType) -> ScanModel {
+        ScanModel(
+            type: type,
+            recognitionRepository: recognitionRepository,
+            saveMeal: saveMeal
+        )
     }
 
     func makeProfileModel() -> ProfileModel {
