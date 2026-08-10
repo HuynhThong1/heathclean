@@ -132,9 +132,10 @@
 				};
 			};
 			buildConfigurationList = AA00000000000000000000B0 /* Build configuration list for PBXProject "HeathFirst" */;
-			developmentRegion = en;
+			developmentRegion = vi;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				vi,
 				en,
 				Base,
 			);

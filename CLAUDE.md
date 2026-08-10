@@ -199,7 +199,7 @@ Order of work is §13 of the handoff README: tokens + six shared views →
 Dashboard → Onboarding → Manual/Detail/History → HealthKit → Scan/Review →
 Insights/Profile → localization. Items 1–5 are done, plus Welcome (§6.1),
 Profile (§6.13) and the tab bar. What remains is camera/AI (§6.6–6.9),
-Insights (§6.12) and the localization pass.
+Insights (§6.12), and translating the catalog.
 
 Profile omits §6.13's five notification switches: there is no notification
 system, and a switch that schedules nothing is a broken control. Add them with
@@ -224,6 +224,35 @@ which needs the AI pipeline. A tab that opens nothing is worse than an absent
 one. Three of its four destinations
 (Camera, Insights, Profile) do not exist yet, so a tab bar now would ship three
 dead tabs. History is reached from the dashboard header instead.
+
+### Localization
+
+`App/Resources/Localizable.xcstrings` holds every user-facing string; the
+project's development language is `vi`, so Vietnamese *is* the source language
+and there is no separate base file.
+
+`xcodebuild` extracts strings into `.stringsdata` but does not write back to the
+catalog — only the Xcode IDE does. To refresh it from the command line:
+
+```bash
+find ~/Library/Developer/Xcode/DerivedData/HeathFirst-*/Build/Intermediates.noindex/HeathFirst.build \
+  -name '*.stringsdata' > /tmp/sd.txt
+/Applications/Xcode.app/Contents/Developer/usr/bin/xcstringstool sync \
+  App/Resources/Localizable.xcstrings --stringsdata $(tr '\n' ' ' < /tmp/sd.txt)
+```
+
+Only `Text("…")` and other `LocalizedStringKey` positions are extracted
+automatically. A string built as a plain `String` — an error message, a status
+line — must be wrapped in `String(localized:)` or it silently stays out of the
+catalog.
+
+**No translations have been added, deliberately.** §4 makes the UI *bilingual*:
+`LabelPair` shows Vietnamese and English at once, by design. That is not the
+same as switching language, and nothing in the handoff asks for a language
+switch — adding an `en` locale would turn "Bước chân / Step count" into
+"Step count / Step count" on an English device. The catalog exists so copy can
+be edited without touching Swift, and so translation is possible when someone
+decides what it should mean.
 
 ### Two token sets exist — know which you are in
 

@@ -136,13 +136,13 @@ enum BudgetCopy {
         case .normal:
             return nil
         case .informUser:
-            return "Bạn còn \(magnitude) kcal cho hôm nay."
+            return String(localized: "Bạn còn \(magnitude) kcal cho hôm nay.")
         case .nearTarget:
-            return "Bạn đang gần mục tiêu calo hôm nay."
+            return String(localized: "Bạn đang gần mục tiêu calo hôm nay.")
         case .reached:
-            return "Bạn đã đạt mục tiêu calo hôm nay."
+            return String(localized: "Bạn đã đạt mục tiêu calo hôm nay.")
         case .exceeded:
-            return "Bạn đã vượt mục tiêu hôm nay \(magnitude) kcal."
+            return String(localized: "Bạn đã vượt mục tiêu hôm nay \(magnitude) kcal.")
         }
     }
 }

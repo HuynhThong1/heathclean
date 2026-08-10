@@ -1,0 +1,381 @@
+{
+  "sourceLanguage" : "vi",
+  "strings" : {
+    "" : {
+
+    },
+    " / %@ g" : {
+
+    },
+    "%@ %@" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ / %@" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ / %2$@"
+          }
+        }
+      }
+    },
+    "%@ g" : {
+
+    },
+    "%@ kcal" : {
+
+    },
+    "%@ kcal còn lại" : {
+
+    },
+    "%@ kcal mỗi ngày" : {
+
+    },
+    "%@ kcal vượt mục tiêu" : {
+
+    },
+    "%@ · %@" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "%@, %@" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@"
+          }
+        }
+      }
+    },
+    "%@, %@ %@" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@ %3$@"
+          }
+        }
+      }
+    },
+    "%@, %@ gam" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@ gam"
+          }
+        }
+      }
+    },
+    "%@, %@ kcal" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@ kcal"
+          }
+        }
+      }
+    },
+    "%@, %@ kcal, %@ gam" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@ kcal, %3$@ gam"
+          }
+        }
+      }
+    },
+    "%@, %@, %@ trên %@ gam" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@, %3$@ trên %4$@ gam"
+          }
+        }
+      }
+    },
+    "%lld" : {
+
+    },
+    "%lld%%" : {
+
+    },
+    "AI" : {
+
+    },
+    "AI nhận diện món ăn, cơ sở dữ liệu dinh dưỡng tính calo, và bạn là người xác nhận cuối cùng." : {
+
+    },
+    "Apple Health hiện không khả dụng. Bạn có thể kết nối sau." : {
+
+    },
+    "BMI" : {
+
+    },
+    "BMI %@" : {
+
+    },
+    "BMI %@ · %@" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "BMI %1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "BMI %@, %@" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "BMI %1$@, %2$@"
+          }
+        }
+      }
+    },
+    "BMI %@, %@, %@" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "BMI %1$@, %2$@, %3$@"
+          }
+        }
+      }
+    },
+    "BMI chỉ là bối cảnh sức khỏe — mục tiêu calo được tính từ tuổi, chiều cao, cân nặng, vận động và mục tiêu của bạn." : {
+
+    },
+    "BMI, %@, %@" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "BMI, %1$@, %2$@"
+          }
+        }
+      }
+    },
+    "Bạn còn %@ kcal cho hôm nay." : {
+
+    },
+    "Bạn đang gần mục tiêu calo hôm nay." : {
+
+    },
+    "Bạn đã vượt mục tiêu hôm nay %@ kcal." : {
+
+    },
+    "Bạn đã đạt mục tiêu calo hôm nay." : {
+
+    },
+    "Bắt đầu" : {
+
+    },
+    "Bối cảnh sức khỏe, không dùng để tính calo" : {
+
+    },
+    "Bữa ăn đã ghi" : {
+
+    },
+    "CALO MỖI NGÀY" : {
+
+    },
+    "Cho phép truy cập" : {
+
+    },
+    "Chưa kết nối" : {
+
+    },
+    "Chụp bữa ăn.\nBiết ngay calo." : {
+
+    },
+    "Có lỗi xảy ra" : {
+
+    },
+    "DINH DƯỠNG HẰNG NGÀY" : {
+
+    },
+    "HealthClean" : {
+
+    },
+    "HealthClean chỉ đọc những gì bạn cho phép. Ứng dụng vẫn hoạt động đầy đủ nếu bạn từ chối." : {
+
+    },
+    "Huỷ" : {
+
+    },
+    "HÔM NAY · TODAY" : {
+
+    },
+    "Hồ sơ của bạn" : {
+
+    },
+    "Hồ sơ của bạn, %@" : {
+
+    },
+    "Hồ sơ, Profile" : {
+
+    },
+    "Không khả dụng trên thiết bị này" : {
+
+    },
+    "Không lưu được bữa ăn. Vui lòng thử lại." : {
+
+    },
+    "Không lưu được hồ sơ. Vui lòng thử lại." : {
+
+    },
+    "Không tải được bữa ăn hôm nay." : {
+
+    },
+    "Không tải được hôm nay" : {
+
+    },
+    "Không tải được lịch sử bữa ăn." : {
+
+    },
+    "Không xoá được bữa ăn. Vui lòng thử lại." : {
+
+    },
+    "Kết nối Apple Health" : {
+
+    },
+    "Kết nối Apple Health để thấy bước chân, năng lượng và giấc ngủ." : {
+
+    },
+    "Lưu" : {
+
+    },
+    "LỊCH SỬ · HISTORY" : {
+
+    },
+    "Mục tiêu giảm cân thường thấp hơn cân nặng hiện tại." : {
+
+    },
+    "Mục tiêu tăng cân thường cao hơn cân nặng hiện tại." : {
+
+    },
+    "Nhập calo trước khi lưu" : {
+
+    },
+    "Nhập chiều cao từ %lld đến %lld cm" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Nhập chiều cao từ %1$lld đến %2$lld cm"
+          }
+        }
+      }
+    },
+    "Nhập cân nặng từ %lld đến %lld kg" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Nhập cân nặng từ %1$lld đến %2$lld kg"
+          }
+        }
+      }
+    },
+    "Nhập tay" : {
+
+    },
+    "Nhập tên món trước khi lưu" : {
+
+    },
+    "OK" : {
+
+    },
+    "QUYỀN RIÊNG TƯ" : {
+
+    },
+    "Quay lại" : {
+
+    },
+    "THIẾT LẬP" : {
+
+    },
+    "Thao tác này không thể hoàn tác." : {
+
+    },
+    "Thêm món" : {
+
+    },
+    "Thêm món khác" : {
+
+    },
+    "TÔI · PROFILE" : {
+
+    },
+    "TỔNG BỮA ĂN" : {
+
+    },
+    "Tổng %@ kcal" : {
+
+    },
+    "Tổng bữa ăn %@ kcal" : {
+
+    },
+    "Ví dụ: Phở bò" : {
+
+    },
+    "Xoá bữa ăn" : {
+
+    },
+    "Xoá bữa ăn này" : {
+
+    },
+    "Xoá bữa ăn này?" : {
+
+    },
+    "Xoá món %lld" : {
+
+    },
+    "kcal" : {
+
+    },
+    "kcal còn lại" : {
+
+    },
+    "ngân sách ngày" : {
+
+    },
+    "over target" : {
+
+    },
+    "remaining" : {
+
+    },
+    "vượt mục tiêu" : {
+
+    },
+    "Đã kết nối · bước chân, năng lượng, giấc ngủ" : {
+
+    },
+    "Để sau" : {
+
+    }
+  },
+  "version" : "1.0"
+}

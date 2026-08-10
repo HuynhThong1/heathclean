@@ -51,7 +51,7 @@ final class DashboardModel {
             summary = try await getDailySummary.execute(date: Date(), goal: stored.goal)
             errorMessage = nil
         } catch {
-            errorMessage = "Could not load today's meals."
+            errorMessage = String(localized: "Không tải được bữa ăn hôm nay.")
         }
 
         await loadHealth()

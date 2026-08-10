@@ -38,7 +38,7 @@ final class MealHistoryModel {
                 .sorted { $0.date > $1.date }
             errorMessage = nil
         } catch {
-            errorMessage = "Không tải được lịch sử bữa ăn."
+            errorMessage = String(localized: "Không tải được lịch sử bữa ăn.")
         }
     }
 }

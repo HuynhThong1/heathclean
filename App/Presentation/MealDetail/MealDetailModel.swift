@@ -70,7 +70,7 @@ final class MealDetailModel {
             meals = []
             return true
         } catch {
-            errorMessage = "Không xoá được bữa ăn. Vui lòng thử lại."
+            errorMessage = String(localized: "Không xoá được bữa ăn. Vui lòng thử lại.")
             return false
         }
     }

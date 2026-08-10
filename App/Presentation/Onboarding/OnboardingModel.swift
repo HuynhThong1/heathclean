@@ -68,7 +68,7 @@ final class OnboardingModel {
             // the request itself failed, and claiming "connected" would be a lie.
             hasRequestedHealth = true
         } catch {
-            healthMessage = "Apple Health isn't available right now. You can connect it later."
+            healthMessage = String(localized: "Apple Health hiện không khả dụng. Bạn có thể kết nối sau.")
         }
     }
 
@@ -110,13 +110,13 @@ final class OnboardingModel {
     var heightError: String? {
         Self.heightRange.contains(heightCm)
             ? nil
-            : "Nhập chiều cao từ \(Int(Self.heightRange.lowerBound)) đến \(Int(Self.heightRange.upperBound)) cm"
+            : String(localized: "Nhập chiều cao từ \(Int(Self.heightRange.lowerBound)) đến \(Int(Self.heightRange.upperBound)) cm")
     }
 
     var weightError: String? {
         Self.weightRange.contains(weightKg)
             ? nil
-            : "Nhập cân nặng từ \(Int(Self.weightRange.lowerBound)) đến \(Int(Self.weightRange.upperBound)) kg"
+            : String(localized: "Nhập cân nặng từ \(Int(Self.weightRange.lowerBound)) đến \(Int(Self.weightRange.upperBound)) kg")
     }
 
     /// Target weight is optional, but a value pointing the wrong way is worth
@@ -125,9 +125,9 @@ final class OnboardingModel {
         guard let target = targetWeightKg else { return nil }
         switch goal {
         case .lose where target >= weightKg:
-            return "Mục tiêu giảm cân thường thấp hơn cân nặng hiện tại."
+            return String(localized: "Mục tiêu giảm cân thường thấp hơn cân nặng hiện tại.")
         case .gain where target <= weightKg:
-            return "Mục tiêu tăng cân thường cao hơn cân nặng hiện tại."
+            return String(localized: "Mục tiêu tăng cân thường cao hơn cân nặng hiện tại.")
         default:
             return nil
         }
@@ -195,7 +195,7 @@ final class OnboardingModel {
             try await userRepository.save(profile: profile, goal: nutritionGoal)
             return true
         } catch {
-            errorMessage = "Could not save your profile. Please try again."
+            errorMessage = String(localized: "Không lưu được hồ sơ. Vui lòng thử lại.")
             return false
         }
     }

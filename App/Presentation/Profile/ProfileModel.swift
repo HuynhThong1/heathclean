@@ -47,10 +47,10 @@ final class ProfileModel {
     /// whether a *read* was granted, so the only honest signal is whether any
     /// data actually came back.
     var healthStatusText: String {
-        guard healthRepository.isAvailable else { return "Không khả dụng trên thiết bị này" }
+        guard healthRepository.isAvailable else { return String(localized: "Không khả dụng trên thiết bị này") }
         return hasHealthData
-            ? "Đã kết nối · bước chân, năng lượng, giấc ngủ"
-            : "Chưa kết nối"
+            ? String(localized: "Đã kết nối · bước chân, năng lượng, giấc ngủ")
+            : String(localized: "Chưa kết nối")
     }
 
     func load() async {
