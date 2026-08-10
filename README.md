@@ -1,4 +1,4 @@
-# HeathFirst
+    # HeathFirst
 
 Phase 1 of the calorie tracker described in [`plan.md`](plan.md): profile, BMI,
 personalized calorie and macro targets, manual meal entry, meal history, daily

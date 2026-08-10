@@ -166,6 +166,51 @@ A `Button` with `.buttonStyle(.plain)` wrapping a `LabeledContent` only hit-test
 where text is drawn — the gap between label and value is dead space. Add
 `.contentShape(Rectangle())` to the label. The dashboard meal rows do this.
 
+## Design source of truth
+
+UI follows `design_handoff_healthclean/README.md` — the full spec: screens,
+colours, type, spacing, Vietnamese copy. Interactive prototype:
+`design_handoff_healthclean/design/HealthClean Screens.dc.html` in a browser.
+The `.dc.html` files are **design references, not code to port** — recreate them
+in SwiftUI.
+
+(The handoff's own `CLAUDE.md` writes these paths as `DesignHandoff/…`; the
+folder is actually named `design_handoff_healthclean/`.)
+
+### Rules
+
+- Use `DesignTokens.swift` (`DS.*`) for every colour / radius / spacing /
+  motion. Never hardcode a hex in a View.
+- Do not change the Domain layer to fit the UI. The UI reads
+  `CalculateCalorieGoalUseCase` and `EvaluateCalorieBudgetUseCase`.
+- Blue `#0062B0` leads. Orange `#F37021` is reserved for the scan action alone.
+  Green `#12B24C` is growth/success only.
+- Over-budget state is **neutral grey, never red, never a command.** This is a
+  health app for casual users, not a scold.
+- Every label is bilingual: Vietnamese primary (14.5px/650) with English beneath
+  (11.5px, `textSubtle`). Use `LabelPair`.
+- AI results always show confidence and are always correctable. Nothing is saved
+  before the user confirms.
+- Hit targets ≥ 44pt. Font: Be Vietnam Pro (or the official FPT face) — never
+  fall back to SF for headlines, the tracking assumes the geometric face.
+- Numbers via a `vi_VN` `NumberFormatter` ("1.886"). Never concatenate strings.
+
+Order of work is §13 of the handoff README: tokens + six shared views →
+Dashboard → Onboarding → Manual/Detail/History → HealthKit → Scan/Review →
+Insights/Profile → localization.
+
+### Two token sets exist — know which you are in
+
+`DesignTokens.swift` (`DS.*`) is the handoff's palette and the one new work must
+use. `DSPalette`/`DSColor`/`DSType` came from an earlier sync of the claude.ai
+Design project and carry **slightly different values** (`surfacePage` `#F8FAFC`
+vs `#F4F7FA`, `textBody` `#1F2E3D` vs `#2B3947`, `danger` `#D5342B` vs
+`#D64545`). Onboarding, meal entry and history still use the older set. Migrating
+them is outstanding work; until then, do not mix the two in one screen.
+
+`DSColor` is also appearance-adaptive while `DS.*` is light-only, so a screen on
+`DS.*` will not respond to dark mode.
+
 ## Scope
 
 `plan.md` is the product spec — 31 sections, 8 phases. It is the source of truth and

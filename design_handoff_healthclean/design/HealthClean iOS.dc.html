@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/fpt-is-design-system-77c3dd08-7139-46b4-9df4-1a11e3ad2130/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/fpt-is-design-system-77c3dd08-7139-46b4-9df4-1a11e3ad2130/tokens/colors.css">
+<link rel="stylesheet" href="_ds/fpt-is-design-system-77c3dd08-7139-46b4-9df4-1a11e3ad2130/tokens/semantic.css">
+<link rel="stylesheet" href="_ds/fpt-is-design-system-77c3dd08-7139-46b4-9df4-1a11e3ad2130/tokens/typography.css">
+<link rel="stylesheet" href="_ds/fpt-is-design-system-77c3dd08-7139-46b4-9df4-1a11e3ad2130/tokens/layout.css">
+<link rel="stylesheet" href="_ds/fpt-is-design-system-77c3dd08-7139-46b4-9df4-1a11e3ad2130/tokens/base.css">
+<link rel="stylesheet" href="_ds/fpt-is-design-system-77c3dd08-7139-46b4-9df4-1a11e3ad2130/tokens/components.css">
+<link rel="stylesheet" href="_ds/fpt-is-design-system-77c3dd08-7139-46b4-9df4-1a11e3ad2130/styles.css">
+<script src="_ds/fpt-is-design-system-77c3dd08-7139-46b4-9df4-1a11e3ad2130/_ds_bundle.js"></script>
+<style>
+body { margin: 0; background: #EDF1F5; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+a { color: var(--fpt-blue); text-decoration: none; }
+a:hover { color: var(--blue-700); }
+* { -webkit-font-smoothing: antialiased; }
+.hcs::-webkit-scrollbar, [data-om-starter="ios-frame"] div::-webkit-scrollbar { width: 0; height: 0; }
+@keyframes hc-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes hc-sheet { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes hc-pulse { 0%,100% { opacity: .35; } 50% { opacity: 1; } }
+</style>
+</helmet>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="{{ 402 }}" height="{{ 874 }}" hint-size="402px,874px">
+<div style="height:100%;display:flex;flex-direction:column;background:var(--surface-page);font-family:var(--font-sans);color:var(--text-body);position:relative;overflow:hidden">
+
+<div style="height:54px;flex:none"></div>
+
+<!-- ══════════ WELCOME ══════════ -->
+<sc-if value="{{ isWelcome }}">
+<div class="hcs" style="flex:1;overflow:auto;display:flex;flex-direction:column;justify-content:space-between;padding:0 24px 28px;background:linear-gradient(160deg,var(--blue-700) 0%,var(--fpt-blue) 55%,var(--green-600) 140%)">
+  <div style="padding-top:44px;display:flex;flex-direction:column;gap:0">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7-4.4-7-9.6A4.4 4.4 0 0 1 12 8a4.4 4.4 0 0 1 7 3.4C19 16.6 12 21 12 21z"></path><path d="M12 8V3"></path></svg>
+      </div>
+      <span style="color:#fff;font-size:17px;font-weight:700;letter-spacing:-.01em">HealthClean</span>
+    </div>
+    <div style="height:52px"></div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:.16em;color:rgba(255,255,255,.7)">DINH DƯỠNG HẰNG NGÀY</div>
+    <div style="height:12px"></div>
+    <div style="font-size:38px;line-height:1.1;font-weight:800;letter-spacing:-.025em;color:#fff;text-wrap:pretty">Chụp bữa ăn.<br>Biết ngay calo.</div>
+    <div style="height:14px"></div>
+    <div style="font-size:15px;line-height:1.55;color:rgba(255,255,255,.82);max-width:300px;text-wrap:pretty">AI nhận diện món ăn, cơ sở dữ liệu dinh dưỡng tính calo, và bạn là người xác nhận cuối cùng.</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.9);font-size:14px">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+        Dữ liệu sức khỏe lưu trên thiết bị
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.9);font-size:14px">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+        Món Việt: cơm tấm, phở, bánh mì…
+      </div>
+    </div>
+    <div onClick="{{ goOnboarding }}" style="cursor:pointer">
+      <x-import component-from-global-scope="FPTISDesignSystem_77c3dd.Button" variant="accent" size="lg" fullWidth="{{ true }}" hint-size="100%,52px">Bắt đầu</x-import>
+    </div>
+    <div onClick="{{ goDashboard }}" style="text-align:center;color:rgba(255,255,255,.75);font-size:14px;font-weight:600;cursor:pointer;padding:6px">Tôi đã có tài khoản</div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════ ONBOARDING ══════════ -->
+<sc-if value="{{ isOnb }}">
+<div style="flex:none;padding:4px 20px 10px;display:flex;align-items:center;gap:12px">
+  <div onClick="{{ onbBack }}" style="width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--surface-sunken)">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--neutral-700)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+  </div>
+  <div style="flex:1;display:flex;gap:5px">
+    <div style="flex:1;height:4px;border-radius:2px;background:{{ dot0 }}"></div>
+    <div style="flex:1;height:4px;border-radius:2px;background:{{ dot1 }}"></div>
+    <div style="flex:1;height:4px;border-radius:2px;background:{{ dot2 }}"></div>
+    <div style="flex:1;height:4px;border-radius:2px;background:{{ dot3 }}"></div>
+  </div>
+  <div style="font-size:12.5px;font-weight:600;color:var(--text-subtle);min-width:26px;text-align:right">{{ stepLabel }}</div>
+</div>
+<div class="hcs" style="flex:1;overflow:auto;padding:6px 20px 24px">
+  <div style="font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--fpt-blue)">{{ onbEyebrow }}</div>
+  <div style="height:6px"></div>
+  <div style="font-size:27px;font-weight:800;letter-spacing:-.02em;color:var(--text-strong);line-height:1.2;text-wrap:pretty">{{ onbTitle }}</div>
+  <div style="height:6px"></div>
+  <div style="font-size:14px;line-height:1.5;color:var(--text-muted);text-wrap:pretty">{{ onbSub }}</div>
+  <div style="height:22px"></div>
+
+  <sc-if value="{{ isStep0 }}">
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:16px;padding:6px 16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border-subtle)">
+        <div><div style="font-size:15px;font-weight:600;color:var(--text-strong)">Tuổi</div><div style="font-size:11.5px;color:var(--text-subtle)">Age</div></div>
+        <div style="display:flex;align-items:center;gap:14px">
+          <div onClick="{{ ageDown }}" style="width:32px;height:32px;border-radius:8px;background:var(--blue-50);color:var(--fpt-blue);display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:600;cursor:pointer;user-select:none">−</div>
+          <div style="font-size:19px;font-weight:700;color:var(--text-strong);min-width:30px;text-align:center">{{ pAge }}</div>
+          <div onClick="{{ ageUp }}" style="width:32px;height:32px;border-radius:8px;background:var(--blue-50);color:var(--fpt-blue);display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:600;cursor:pointer;user-select:none">+</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border-subtle)">
+        <div><div style="font-size:15px;font-weight:600;color:var(--text-strong)">Chiều cao</div><div style="font-size:11.5px;color:var(--text-subtle)">Height</div></div>
+        <div style="display:flex;align-items:baseline;gap:5px">
+          <input type="number" value="{{ pHeight }}" onChange="{{ setHeight }}" style="width:66px;border:1.5px solid var(--border-default);border-radius:10px;padding:7px 9px;font-family:var(--font-sans);font-size:16px;font-weight:700;text-align:right;color:var(--text-strong);background:var(--white)">
+          <span style="font-size:13px;color:var(--text-subtle);width:20px">cm</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border-subtle)">
+        <div><div style="font-size:15px;font-weight:600;color:var(--text-strong)">Cân nặng</div><div style="font-size:11.5px;color:var(--text-subtle)">Weight</div></div>
+        <div style="display:flex;align-items:baseline;gap:5px">
+          <input type="number" value="{{ pWeight }}" onChange="{{ setWeight }}" style="width:66px;border:1.5px solid var(--border-default);border-radius:10px;padding:7px 9px;font-family:var(--font-sans);font-size:16px;font-weight:700;text-align:right;color:var(--text-strong);background:var(--white)">
+          <span style="font-size:13px;color:var(--text-subtle);width:20px">kg</span>
+        </div>
+      </div>
+      <div style="padding:14px 0 16px">
+        <div style="font-size:15px;font-weight:600;color:var(--text-strong)">Giới tính sinh học</div>
+        <div style="font-size:11.5px;color:var(--text-subtle);margin-bottom:10px">Dùng cho công thức Mifflin-St Jeor</div>
+        <div style="display:flex;gap:8px">
+          <div onClick="{{ sexMale }}" style="flex:1;text-align:center;padding:10px 4px;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;background:{{ sexMaleBg }};color:{{ sexMaleFg }};border:1.5px solid {{ sexMaleBd }}">Nam</div>
+          <div onClick="{{ sexFemale }}" style="flex:1;text-align:center;padding:10px 4px;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;background:{{ sexFemaleBg }};color:{{ sexFemaleFg }};border:1.5px solid {{ sexFemaleBd }}">Nữ</div>
+          <div onClick="{{ sexNone }}" style="flex:1;text-align:center;padding:10px 4px;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;background:{{ sexNoneBg }};color:{{ sexNoneFg }};border:1.5px solid {{ sexNoneBd }}">Không nói</div>
+        </div>
+      </div>
+    </div>
+    <sc-if value="{{ sexUnknown }}">
+      <div style="display:flex;gap:9px;background:var(--surface-sunken);border-radius:12px;padding:12px 14px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-5M12 8h.01"></path></svg>
+        <div style="font-size:12.5px;line-height:1.5;color:var(--text-muted)">Không có giới tính sinh học, mục tiêu sẽ dùng giá trị trung bình nên kém chính xác hơn.</div>
+      </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isStep1 }}">
+  <div style="display:flex;flex-direction:column;gap:9px">
+    <sc-for list="{{ activityOptions }}" as="opt" hint-placeholder-count="5">
+      <div onClick="{{ opt.pick }}" style="display:flex;align-items:center;gap:13px;background:var(--surface-card);border:1.5px solid {{ opt.border }};border-radius:14px;padding:14px 15px;cursor:pointer">
+        <div style="width:20px;height:20px;border-radius:50%;border:2px solid {{ opt.ring }};display:flex;align-items:center;justify-content:center;flex:none">
+          <div style="width:10px;height:10px;border-radius:50%;background:{{ opt.dot }}"></div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:14.5px;font-weight:650;color:var(--text-strong)">{{ opt.vi }}</div>
+          <div style="font-size:11.5px;color:var(--text-subtle)">{{ opt.en }}</div>
+        </div>
+        <div style="font-size:12px;font-weight:600;color:var(--text-subtle)">×{{ opt.mult }}</div>
+      </div>
+    </sc-for>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isStep2 }}">
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;gap:8px">
+      <div onClick="{{ goalLose }}" style="flex:1;padding:16px 6px;border-radius:14px;text-align:center;cursor:pointer;background:{{ goalLoseBg }};border:1.5px solid {{ goalLoseBd }}">
+        <div style="font-size:15px;font-weight:700;color:{{ goalLoseFg }}">Giảm</div>
+        <div style="font-size:11px;color:var(--text-subtle);margin-top:2px">−500 kcal</div>
+      </div>
+      <div onClick="{{ goalKeep }}" style="flex:1;padding:16px 6px;border-radius:14px;text-align:center;cursor:pointer;background:{{ goalKeepBg }};border:1.5px solid {{ goalKeepBd }}">
+        <div style="font-size:15px;font-weight:700;color:{{ goalKeepFg }}">Duy trì</div>
+        <div style="font-size:11px;color:var(--text-subtle);margin-top:2px">±0 kcal</div>
+      </div>
+      <div onClick="{{ goalGain }}" style="flex:1;padding:16px 6px;border-radius:14px;text-align:center;cursor:pointer;background:{{ goalGainBg }};border:1.5px solid {{ goalGainBd }}">
+        <div style="font-size:15px;font-weight:700;color:{{ goalGainFg }}">Tăng</div>
+        <div style="font-size:11px;color:var(--text-subtle);margin-top:2px">+350 kcal</div>
+      </div>
+    </div>
+    <sc-if value="{{ needsTarget }}">
+      <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between">
+        <div><div style="font-size:15px;font-weight:600;color:var(--text-strong)">Cân nặng mong muốn</div><div style="font-size:11.5px;color:var(--text-subtle)">Target weight</div></div>
+        <div style="display:flex;align-items:baseline;gap:5px">
+          <input type="number" value="{{ pTarget }}" onChange="{{ setTarget }}" style="width:66px;border:1.5px solid var(--border-default);border-radius:10px;padding:7px 9px;font-family:var(--font-sans);font-size:16px;font-weight:700;text-align:right;color:var(--text-strong);background:var(--white)">
+          <span style="font-size:13px;color:var(--text-subtle);width:20px">kg</span>
+        </div>
+      </div>
+    </sc-if>
+    <div style="display:flex;gap:9px;background:var(--surface-sunken);border-radius:12px;padding:12px 14px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-5M12 8h.01"></path></svg>
+      <div style="font-size:12.5px;line-height:1.5;color:var(--text-muted)">Mức thiếu hụt không bao giờ đưa bạn xuống dưới chuyển hóa cơ bản của chính bạn.</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isStep3 }}">
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div style="position:relative;background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:18px;padding:22px 20px;overflow:hidden;box-shadow:var(--shadow-sm)">
+      <span style="position:absolute;top:0;left:0;right:0;height:4px;background:var(--fpt-blue)"></span>
+      <div style="font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--text-subtle)">CALO MỖI NGÀY</div>
+      <div style="display:flex;align-items:baseline;gap:7px;margin-top:6px">
+        <div style="font-size:46px;font-weight:800;letter-spacing:-.03em;color:var(--fpt-blue);line-height:1">{{ goalKcal }}</div>
+        <div style="font-size:16px;font-weight:600;color:var(--text-muted)">kcal</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--text-muted);margin-top:8px">BMR {{ bmrTxt }} × vận động {{ multTxt }} {{ deltaTxt }}</div>
+      <div style="height:18px"></div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1;background:var(--blue-50);border-radius:12px;padding:12px 10px">
+          <div style="font-size:20px;font-weight:800;color:var(--fpt-blue);letter-spacing:-.02em">{{ goalP }}g</div>
+          <div style="font-size:11.5px;color:var(--text-muted);font-weight:600">Đạm</div>
+        </div>
+        <div style="flex:1;background:var(--orange-100);border-radius:12px;padding:12px 10px">
+          <div style="font-size:20px;font-weight:800;color:var(--orange-700);letter-spacing:-.02em">{{ goalC }}g</div>
+          <div style="font-size:11.5px;color:var(--text-muted);font-weight:600">Tinh bột</div>
+        </div>
+        <div style="flex:1;background:var(--green-100);border-radius:12px;padding:12px 10px">
+          <div style="font-size:20px;font-weight:800;color:var(--green-700);letter-spacing:-.02em">{{ goalF }}g</div>
+          <div style="font-size:11.5px;color:var(--text-muted);font-weight:600">Chất béo</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:16px;padding:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div><div style="font-size:15px;font-weight:650;color:var(--text-strong)">BMI {{ bmiTxt }}</div><div style="font-size:12px;color:var(--text-subtle)">{{ bmiCatVi }} · {{ bmiCatEn }}</div></div>
+        <x-import component-from-global-scope="FPTISDesignSystem_77c3dd.Badge" tone="{{ bmiTone }}" hint-size="72px,22px">Bối cảnh</x-import>
+      </div>
+      <div style="height:12px"></div>
+      <div style="position:relative;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--blue-300) 0% 18%,var(--green-400) 18% 42%,var(--orange-300) 42% 66%,#E2A5A0 66% 100%)">
+        <div style="position:absolute;top:-4px;left:{{ bmiPos }};width:4px;height:16px;border-radius:2px;background:var(--text-strong);box-shadow:0 0 0 2px #fff"></div>
+      </div>
+      <div style="height:10px"></div>
+      <div style="font-size:12px;line-height:1.5;color:var(--text-muted)">BMI chỉ là bối cảnh sức khỏe — mục tiêu calo được tính từ tuổi, chiều cao, cân nặng, vận động và mục tiêu của bạn.</div>
+    </div>
+  </div>
+  </sc-if>
+</div>
+<div style="flex:none;padding:12px 20px 34px;background:var(--surface-card);border-top:1px solid var(--border-subtle)">
+  <div onClick="{{ onbNext }}" style="cursor:pointer">
+    <x-import component-from-global-scope="FPTISDesignSystem_77c3dd.Button" size="lg" fullWidth="{{ true }}" hint-size="100%,52px">{{ onbCta }}</x-import>
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════ APPLE HEALTH ══════════ -->
+<sc-if value="{{ isHealth }}">
+<div class="hcs" style="flex:1;overflow:auto;padding:20px 20px 24px">
+  <div style="width:56px;height:56px;border-radius:16px;background:var(--surface-card);border:1px solid var(--border-subtle);box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20.5S4 15.6 4 10.2A4.6 4.6 0 0 1 12 7a4.6 4.6 0 0 1 8 3.2c0 5.4-8 10.3-8 10.3z"></path></svg>
+  </div>
+  <div style="height:16px"></div>
+  <div style="font-size:27px;font-weight:800;letter-spacing:-.02em;color:var(--text-strong);line-height:1.2">Kết nối Apple Health</div>
+  <div style="height:6px"></div>
+  <div style="font-size:14px;line-height:1.55;color:var(--text-muted);text-wrap:pretty">HealthClean chỉ đọc những gì bạn cho phép. Ứng dụng vẫn hoạt động đầy đủ nếu bạn từ chối.</div>
+  <div style="height:20px"></div>
+  <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:16px;padding:4px 16px">
+    <sc-for list="{{ permRows }}" as="row" hint-placeholder-count="4">
+      <div style="display:flex;align-items:center;gap:13px;padding:15px 0;border-bottom:1px solid {{ row.sep }}">
+        <div style="width:32px;height:32px;border-radius:9px;background:var(--blue-50);display:flex;align-items:center;justify-content:center;flex:none">{{ row.icon }}</div>
+        <div style="flex:1">
+          <div style="font-size:14.5px;font-weight:650;color:var(--text-strong)">{{ row.vi }}</div>
+          <div style="font-size:11.5px;color:var(--text-subtle)">{{ row.en }}</div>
+        </div>
+        <div onClick="{{ row.toggle }}" style="cursor:pointer">
+          <x-import component-from-global-scope="FPTISDesignSystem_77c3dd.Switch" checked="{{ row.on }}" hint-size="44px,24px"></x-import>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="height:14px"></div>
+  <div style="display:flex;gap:9px;background:var(--surface-sunken);border-radius:12px;padding:13px 14px">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style="flex:none;margin-top:1px"><path d="M12 3l7 3v6c0 4.4-3 8-7 9-4-1-7-4.6-7-9V6l7-3z"></path></svg>
+    <div style="font-size:12.5px;line-height:1.5;color:var(--text-muted)">Dữ liệu Apple Health không rời khỏi thiết bị và không dùng cho quảng cáo.</div>
+  </div>
+</div>
+<div style="flex:none;padding:12px 20px 34px;background:var(--surface-card);border-top:1px solid var(--border-subtle);display:flex;flex-direction:column;gap:4px">
+  <div onClick="{{ connectHealth }}" style="cursor:pointer">
+    <x-import component-from-global-scope="FPTISDesignSystem_77c3dd.Button" size="lg" fullWidth="{{ true }}" hint-size="100%,52px">Cho phép truy cập</x-import>
+  </div>
+  <div onClick="{{ goDashboard }}" style="text-align:center;padding:12px;font-size:14.5px;font-weight:600;color:var(--text-muted);cursor:pointer">Để sau</div>
+</div>
+</sc-if>
+
+<!-- ══════════ DASHBOARD ══════════ -->
+<sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
+<div class="hcs" style="flex:1;overflow:auto;padding:2px 20px 108px">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between">
+    <div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--text-subtle)">HÔM NAY · TODAY</div>
+      <div style="font-size:29px;font-weight:800;letter-spacing:-.025em;color:var(--text-strong);line-height:1.15">Thứ Bảy, 9/8</div>
+    </div>
+    <div onClick="{{ goProfile }}" style="width:38px;height:38px;border-radius:50%;background:var(--blue-100);color:var(--blue-700);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;cursor:pointer">TN</div>
+  </div>
+
+  <div style="height:14px"></div>
+
+  <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:20px;box-shadow:var(--shadow-sm);padding:20px 18px 18px;display:flex;flex-direction:column;align-items:center">
+    <sc-if value="{{ isRing }}" hint-placeholder-val="{{ true }}">
+    <div style="position:relative;width:214px;height:214px">
+      <svg width="214" height="214" viewBox="0 0 220 220">
+        <circle cx="110" cy="110" r="95" fill="none" stroke="var(--neutral-150)" strokeWidth="17"></circle>
+        <circle cx="110" cy="110" r="95" fill="none" stroke="var(--fpt-blue)" strokeWidth="17" strokeLinecap="round" strokeDasharray="{{ ringDash }}" transform="rotate(-90 110 110)"></circle>
+        <circle cx="110" cy="110" r="95" fill="none" stroke="var(--neutral-400)" strokeWidth="17" strokeLinecap="{{ overCap }}" strokeDasharray="{{ overDash }}" transform="rotate(-90 110 110)"></circle>
+      </svg>
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <div style="font-size:52px;font-weight:800;letter-spacing:-.04em;color:var(--text-strong);line-height:1">{{ remainAbs }}</div>
+        <div style="font-size:13px;font-weight:650;color:var(--text-muted);margin-top:2px">kcal {{ remainWord }}</div>
+        <div style="font-size:11.5px;color:var(--text-subtle);margin-top:1px">{{ remainWordEn }}</div>
+      </div>
+    </div>
+    </sc-if>
+    <sc-if value="{{ isBar }}">
+    <div style="width:100%">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:7px">
+            <span style="font-size:44px;font-weight:800;letter-spacing:-.035em;color:var(--text-strong);line-height:1">{{ remainAbs }}</span>
+            <span style="font-size:15px;font-weight:650;color:var(--text-muted)">kcal</span>
+          </div>
+          <div style="font-size:13px;font-weight:650;color:var(--text-muted);margin-top:2px">{{ remainWord }} · <span style="color:var(--text-subtle);font-weight:500">{{ remainWordEn }}</span></div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:15px;font-weight:750;color:var(--text-strong)">{{ eatenTxt }} / {{ targetTxt }}</div>
+          <div style="font-size:11.5px;color:var(--text-subtle);font-weight:600">{{ fracTxt }} mục tiêu</div>
+        </div>
+      </div>
+      <div style="height:16px"></div>
+      <div style="position:relative;height:16px;border-radius:8px;background:var(--neutral-150);overflow:hidden;display:flex;gap:2px">
+        <sc-for list="{{ barSegs }}" as="s" hint-placeholder-count="3">
+          <div style="height:16px;background:{{ s.color }};width:{{ s.pct }}"></div>
+        </sc-for>
+      </div>
+      <div style="height:12px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 14px">
+        <sc-for list="{{ barLegend }}" as="l" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:9px;height:9px;border-radius:3px;background:{{ l.color }};flex:none"></div>
+            <div style="flex:1;font-size:12.5px;font-weight:600;color:var(--text-body)">{{ l.vi }}</div>
+            <div style="font-size:12.5px;font-weight:700;color:{{ l.kcalColor }}">{{ l.kcal }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+    <div style="height:14px"></div>
+    <div style="display:flex;width:100%;align-items:stretch">
+      <div style="flex:1;text-align:center">
+        <div style="font-size:17px;font-weight:750;color:var(--text-strong)">{{ targetTxt }}</div>
+        <div style="font-size:11.5px;color:var(--text-subtle);font-weight:600">Mục tiêu</div>
+      </div>
+      <div style="width:1px;background:var(--border-subtle)"></div>
+      <div style="flex:1;text-align:center">
+        <div style="font-size:17px;font-weight:750;color:var(--text-strong)">{{ eatenTxt }}</div>
+        <div style="font-size:11.5px;color:var(--text-subtle);font-weight:600">Đã ăn</div>
+      </div>
+      <div style="width:1px;background:var(--border-subtle)"></div>
+      <div style="flex:1;text-align:center">
+        <div style="font-size:17px;font-weight:750;color:var(--text-strong)">{{ burnedTxt }}</div>
+        <div style="font-size:11.5px;color:var(--text-subtle);font-weight:600">Vận động</div>
+      </div>
+    </div>
+    <sc-if value="{{ hasStatusMsg }}">
+      <div style="width:100%;margin-top:14px;display:flex;gap:9px;align-items:flex-start;background:var(--surface-sunken);border-radius:12px;padding:11px 13px">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 16v-5M12 8h.01"></path></svg>
+        <div style="font-size:12.5px;line-height:1.45;color:var(--text-muted);font-weight:500">{{ statusMsg }}</div>
+      </div>
+    </sc-if>
+  </div>
+
+  <div style="height:16px"></div>
+  <div style="display:flex;align-items:baseline;gap:8px;padding:0 2px 10px">
+    <div style="font-size:15px;font-weight:750;color:var(--text-strong)">Dinh dưỡng</div>
+    <div style="font-size:11.5px;color:var(--text-subtle)">MACROS</div>
+  </div>
+  <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:16px;padding:16px">
+    <sc-for list="{{ macroRows }}" as="m" hint-placeholder-count="3">
+      <div style="padding:{{ m.pad }}">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:7px">
+          <div style="display:flex;align-items:baseline;gap:7px">
+            <div style="font-size:14px;font-weight:650;color:var(--text-strong)">{{ m.vi }}</div>
+            <div style="font-size:11px;color:var(--text-subtle)">{{ m.en }}</div>
+          </div>
+          <div style="font-size:13px;font-weight:650;color:var(--text-muted)"><span style="color:var(--text-strong)">{{ m.now }}</span> / {{ m.goal }} g</div>
+        </div>
+        <div style="height:7px;border-radius:4px;background:var(--neutral-150);overflow:hidden">
+          <div style="height:7px;border-radius:4px;background:{{ m.color }};width:{{ m.pct }}"></div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="height:16px"></div>
+  <div style="display:flex;align-items:baseline;gap:8px;padding:0 2px 10px">
+    <div style="font-size:15px;font-weight:750;color:var(--text-strong)">Bữa ăn</div>
+    <div style="font-size:11.5px;color:var(--text-subtle)">MEALS</div>
+  </div>
+  <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:16px;padding:4px 16px">
+    <sc-for list="{{ mealRows }}" as="r" hint-placeholder-count="4">
+      <div onClick="{{ r.open }}" style="display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid {{ r.sep }};cursor:pointer">
+        <div style="width:34px;height:34px;border-radius:10px;background:{{ r.chipBg }};display:flex;align-items:center;justify-content:center;flex:none">{{ r.icon }}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14.5px;font-weight:650;color:var(--text-strong)">{{ r.vi }}</div>
+          <div style="font-size:11.5px;color:var(--text-subtle);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.detail }}</div>
+        </div>
+        <div style="font-size:14px;font-weight:700;color:{{ r.kcalColor }}">{{ r.kcalTxt }}</div>
+        <svg width="7" height="12" viewBox="0 0 8 14" style="flex:none"><path d="M1 1l6 6-6 6" stroke="var(--neutral-400)" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="height:16px"></div>
+  <div style="display:flex;align-items:baseline;gap:8px;padding:0 2px 10px">
+    <div style="font-size:15px;font-weight:750;color:var(--text-strong)">Apple Health</div>
+    <div style="font-size:11.5px;color:var(--text-subtle)">HÔM NAY</div>
+  </div>
+  <sc-if value="{{ connected }}">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <sc-for list="{{ healthTiles }}" as="t" hint-placeholder-count="4">
+      <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:14px;padding:13px 14px">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px">{{ t.icon }}<span style="font-size:11.5px;font-weight:650;color:var(--text-muted)">{{ t.vi }}</span></div>
+        <div style="font-size:21px;font-weight:800;letter-spacing:-.02em;color:var(--text-strong)">{{ t.value }}</div>
+      </div>
+    </sc-for>
+  </div>
+  </sc-if>
+  <sc-if value="{{ notConnected }}">
+    <div onClick="{{ goHealth }}" style="background:var(--surface-card);border:1px dashed var(--border-default);border-radius:14px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer">
+      <div style="flex:1;font-size:13.5px;color:var(--text-muted)">Kết nối Apple Health để thấy bước chân, năng lượng và giấc ngủ.</div>
+      <svg width="8" height="14" viewBox="0 0 8 14"><path d="M1 1l6 6-6 6" stroke="var(--fpt-blue)" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+    </div>
+  </sc-if>
+
+  <div style="height:16px"></div>
+  <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:16px;padding:15px 16px;display:flex;align-items:center;gap:12px">
+    <div style="flex:1">
+      <div style="font-size:14px;font-weight:650;color:var(--text-strong)">BMI {{ bmiTxt }} · {{ bmiCatVi }}</div>
+      <div style="font-size:11.5px;color:var(--text-subtle);margin-top:1px">Bối cảnh sức khỏe, không dùng để tính calo</div>
+    </div>
+    <x-import component-from-global-scope="FPTISDesignSystem_77c3dd.Badge" tone="{{ bmiTone }}" hint-size="80px,22px">{{ bmiCatEn }}</x-import>
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════ MEAL DETAIL ══════════ -->
+<sc-if value="{{ isDetail }}">
+<div style="flex:none;padding:2px 20px 12px;display:flex;align-items:center;gap:12px">
+  <div onClick="{{ detailBack }}" style="width:32px;height:32px;border-radius:8px;background:var(--surface-sunken);display:flex;align-items:center;justify-content:center;cursor:pointer">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--neutral-700)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+  </div>
+  <div style="flex:1">
+    <div style="font-size:18px;font-weight:750;letter-spacing:-.015em;color:var(--text-strong)">{{ detailVi }}</div>
+    <div style="font-size:11.5px;color:var(--text-subtle)">{{ detailEn }} · {{ detailTime }}</div>
+  </div>
+  <div onClick="{{ detailAdd }}" style="font-size:13px;font-weight:650;color:var(--fpt-blue);cursor:pointer">Thêm món</div>
+</div>
+<div class="hcs" style="flex:1;overflow:auto;padding:0 20px 24px">
+  <sc-if value="{{ mealPhotos }}">
+    <div style="height:150px;border-radius:16px;background:var(--neutral-150);border:1px solid var(--border-subtle);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;margin-bottom:14px">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--neutral-400)" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"></rect><circle cx="8.5" cy="9.5" r="1.6"></circle><path d="M21 16l-5-5-8 8"></path></svg>
+      <div style="font-size:11.5px;color:var(--text-subtle);font-weight:600">Ảnh bữa ăn · placeholder</div>
+    </div>
+  </sc-if>
+  <div style="position:relative;background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:18px;box-shadow:var(--shadow-sm);padding:20px 18px;overflow:hidden">
+    <span style="position:absolute;top:0;left:0;right:0;height:4px;background:{{ detailAccent }}"></span>
+    <div style="display:flex;align-items:baseline;justify-content:space-between">
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--text-subtle)">TỔNG BỮA ĂN</div>
+        <div style="display:flex;align-items:baseline;gap:6px;margin-top:5px">
+          <span style="font-size:38px;font-weight:800;letter-spacing:-.035em;color:var(--text-strong);line-height:1">{{ detailKcal }}</span>
+          <span style="font-size:14px;font-weight:600;color:var(--text-muted)">kcal</span>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:15px;font-weight:750;color:var(--fpt-blue)">{{ detailShare }}</div>
+        <div style="font-size:11px;color:var(--text-subtle);font-weight:600">ngân sách ngày</div>
+      </div>
+    </div>
+    <div style="height:16px"></div>
+    <div style="display:flex;height:10px;border-radius:5px;overflow:hidden;gap:2px">
+      <div style="height:10px;background:var(--fpt-blue);width:{{ detailPShare }}"></div>
+      <div style="height:10px;background:var(--fpt-orange);width:{{ detailCShare }}"></div>
+      <div style="height:10px;background:var(--fpt-green);width:{{ detailFShare }}"></div>
+    </div>
+    <div style="height:12px"></div>
+    <div style="display:flex;gap:8px">
+      <div style="flex:1;background:var(--blue-50);border-radius:10px;padding:10px"><div style="font-size:16px;font-weight:750;color:var(--blue-700)">{{ detailP }}g</div><div style="font-size:11px;color:var(--text-muted);font-weight:600">Đạm</div></div>
+      <div style="flex:1;background:var(--orange-100);border-radius:10px;padding:10px"><div style="font-size:16px;font-weight:750;color:var(--orange-700)">{{ detailC }}g</div><div style="font-size:11px;color:var(--text-muted);font-weight:600">Tinh bột</div></div>
+      <div style="flex:1;background:var(--green-100);border-radius:10px;padding:10px"><div style="font-size:16px;font-weight:750;color:var(--green-700)">{{ detailF }}g</div><div style="font-size:11px;color:var(--text-muted);font-weight:600">Chất béo</div></div>
+    </div>
+  </div>
+  <div style="height:16px"></div>
+  <div style="display:flex;align-items:baseline;gap:8px;padding:0 2px 10px">
+    <div style="font-size:15px;font-weight:750;color:var(--text-strong)">Các món</div>
+    <div style="font-size:11.5px;color:var(--text-subtle)">{{ detailCount }} món</div>
+  </div>
+  <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:16px;padding:2px 16px">
+    <sc-for list="{{ detailItems }}" as="it" hint-placeholder-count="4">
+      <div style="display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid {{ it.sep }}">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14.5px;font-weight:650;color:var(--text-strong)">{{ it.name }}</div>
+          <div style="font-size:11.5px;color:var(--text-subtle)">{{ it.sub }}</div>
+        </div>
+        <div style="text-align:right;flex:none">
+          <div style="font-size:14.5px;font-weight:700;color:var(--text-strong)">{{ it.kcal }}</div>
+          <div style="font-size:11px;color:var(--text-subtle)">{{ it.grams }} g</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="height:16px"></div>
+  <div style="background:var(--surface-sunken);border-radius:14px;padding:13px 15px;font-size:12.5px;line-height:1.55;color:var(--text-muted)">{{ detailNote }}</div>
+  <div style="height:16px"></div>
+  <div onClick="{{ detailDelete }}" style="text-align:center;padding:13px;border:1.5px solid var(--border-default);border-radius:12px;font-size:14px;font-weight:650;color:var(--text-muted);cursor:pointer">Xoá bữa ăn này</div>
+</div>
+</sc-if>
+
+<!-- ══════════ CAMERA ══════════ -->
+<sc-if value="{{ isCamera }}">
+<div style="position:absolute;inset:0;background:#0B1116;display:flex;flex-direction:column;z-index:40">
+  <div style="height:54px;flex:none"></div>
+  <div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:4px 18px 10px">
+    <div onClick="{{ goDashboard }}" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;cursor:pointer">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+    </div>
+    <div style="color:#fff;font-size:15px;font-weight:650">Quét bữa ăn</div>
+    <div style="width:34px"></div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 24px">
+    <div style="position:relative;width:100%;aspect-ratio:1;border-radius:22px;background:#151E26;display:flex;align-items:center;justify-content:center;overflow:hidden">
+      <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0 12px,transparent 12px 24px)"></div>
+      <div style="position:absolute;top:14px;left:14px;width:34px;height:34px;border-top:3px solid rgba(255,255,255,.85);border-left:3px solid rgba(255,255,255,.85);border-radius:10px 0 0 0"></div>
+      <div style="position:absolute;top:14px;right:14px;width:34px;height:34px;border-top:3px solid rgba(255,255,255,.85);border-right:3px solid rgba(255,255,255,.85);border-radius:0 10px 0 0"></div>
+      <div style="position:absolute;bottom:14px;left:14px;width:34px;height:34px;border-bottom:3px solid rgba(255,255,255,.85);border-left:3px solid rgba(255,255,255,.85);border-radius:0 0 0 10px"></div>
+      <div style="position:absolute;bottom:14px;right:14px;width:34px;height:34px;border-bottom:3px solid rgba(255,255,255,.85);border-right:3px solid rgba(255,255,255,.85);border-radius:0 0 10px 0"></div>
+      <div style="text-align:center;color:rgba(255,255,255,.45);display:flex;flex-direction:column;align-items:center;gap:10px">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z"></path><circle cx="12" cy="12.5" r="3.6"></circle></svg>
+        <div style="font-size:12.5px;letter-spacing:.02em">Vùng xem trước camera</div>
+      </div>
+    </div>
+    <div style="height:18px"></div>
+    <div style="color:rgba(255,255,255,.72);font-size:13.5px;text-align:center;line-height:1.5">Đặt cả đĩa ăn vào khung.<br><span style="color:rgba(255,255,255,.45);font-size:12px">Chụp từ trên xuống giúp ước lượng khẩu phần chính xác hơn.</span></div>
+  </div>
+  <div style="flex:none;padding:16px 24px 40px;display:flex;align-items:center;justify-content:space-between">
+    <div onClick="{{ startScan }}" style="width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;cursor:pointer">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"></rect><circle cx="8.5" cy="8.5" r="1.6"></circle><path d="M21 15l-5-5-8 8"></path></svg>
+    </div>
+    <div onClick="{{ startScan }}" style="width:76px;height:76px;border-radius:50%;background:var(--fpt-orange);border:5px solid rgba(255,255,255,.9);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(243,112,33,.45)">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z"></path><circle cx="12" cy="12.5" r="3.6"></circle></svg>
+    </div>
+    <div onClick="{{ goManual }}" style="width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;cursor:pointer">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M4 7h16M4 12h16M4 17h10"></path></svg>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════ ANALYZING ══════════ -->
+<sc-if value="{{ isAnalyzing }}">
+<div style="position:absolute;inset:0;background:#0B1116;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 32px;z-index:40">
+  <div style="width:110px;height:110px;border-radius:28px;background:#151E26;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
+    <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.04) 0 10px,transparent 10px 20px)"></div>
+    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.6)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z"></path><circle cx="12" cy="12.5" r="3.6"></circle></svg>
+  </div>
+  <div style="height:26px"></div>
+  <div style="color:#fff;font-size:19px;font-weight:700;letter-spacing:-.01em">Đang phân tích ảnh…</div>
+  <div style="height:6px"></div>
+  <div style="color:rgba(255,255,255,.5);font-size:12.5px">Analyzing your meal</div>
+  <div style="height:24px"></div>
+  <div style="width:100%;max-width:260px;height:5px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden">
+    <div style="height:5px;border-radius:3px;background:var(--fpt-orange);width:{{ progressPct }};transition:width .25s linear"></div>
+  </div>
+  <div style="height:24px"></div>
+  <div style="display:flex;flex-direction:column;gap:12px;width:100%;max-width:260px">
+    <sc-for list="{{ scanSteps }}" as="s" hint-placeholder-count="3">
+      <div style="display:flex;align-items:center;gap:10px;color:{{ s.color }};font-size:13.5px;font-weight:600">
+        <div style="width:18px;height:18px;flex:none">{{ s.mark }}</div>{{ s.label }}
+      </div>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════ AI REVIEW ══════════ -->
+<sc-if value="{{ isReview }}">
+<div style="flex:none;padding:2px 20px 12px;display:flex;align-items:center;gap:12px">
+  <div onClick="{{ backToCamera }}" style="width:32px;height:32px;border-radius:8px;background:var(--surface-sunken);display:flex;align-items:center;justify-content:center;cursor:pointer">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--neutral-700)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+  </div>
+  <div style="flex:1">
+    <div style="font-size:18px;font-weight:750;letter-spacing:-.015em;color:var(--text-strong)">{{ rvTitle }}</div>
+    <div style="font-size:11.5px;color:var(--text-subtle)">{{ rvSub }}</div>
+  </div>
+  <div onClick="{{ startScan }}" style="font-size:13px;font-weight:650;color:var(--fpt-blue);cursor:pointer">{{ rvRescan }}</div>
+</div>
+<div class="hcs" style="flex:1;overflow:auto;padding:0 20px 20px">
+  <div style="display:flex;gap:9px;background:var(--blue-50);border-radius:12px;padding:11px 13px;align-items:flex-start">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--fpt-blue)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style="flex:none;margin-top:1px"><path d="M12 3l1.9 4.6L18.5 9l-4.6 1.4L12 15l-1.9-4.6L5.5 9l4.6-1.4L12 3z"></path></svg>
+    <div style="font-size:12.5px;line-height:1.5;color:var(--blue-700)">{{ rvNote }}</div>
+  </div>
+  <div style="height:14px"></div>
+  <sc-if value="{{ mealPhotos }}">
+    <div style="height:120px;border-radius:14px;background:var(--neutral-150);border:1px solid var(--border-subtle);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;margin-bottom:14px">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--neutral-400)" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"></rect><circle cx="8.5" cy="9.5" r="1.6"></circle><path d="M21 16l-5-5-8 8"></path></svg>
+      <div style="font-size:11.5px;color:var(--text-subtle);font-weight:600">Ảnh bữa ăn · placeholder</div>
+    </div>
+  </sc-if>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <sc-for list="{{ aiRows }}" as="it" hint-placeholder-count="4">
+      <div onClick="{{ it.edit }}" style="background:var(--surface-card);border:1px solid {{ it.border }};border-radius:14px;padding:14px 15px;cursor:pointer">
+        <div style="display:flex;align-items:flex-start;gap:12px">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:15px;font-weight:700;color:var(--text-strong);letter-spacing:-.01em">{{ it.name }}</div>
+            <div style="font-size:11.5px;color:var(--text-subtle);margin-top:1px">{{ it.en }}</div>
+          </div>
+          <div style="text-align:right;flex:none">
+            <div style="font-size:16px;font-weight:750;color:var(--text-strong)">{{ it.kcal }}</div>
+            <div style="font-size:11px;color:var(--text-subtle)">kcal</div>
+          </div>
+        </div>
+        <div style="height:11px"></div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-size:12.5px;font-weight:650;color:var(--text-body);background:var(--surface-sunken);border-radius:999px;padding:4px 10px">{{ it.grams }} g</span>
+          <sc-if value="{{ showConfidence }}">
+            <x-import component-from-global-scope="FPTISDesignSystem_77c3dd.Badge" tone="{{ it.tone }}" hint-size="96px,22px">{{ it.confLabel }}</x-import>
+          </sc-if>
+          <div style="flex:1"></div>
+          <span style="font-size:11.5px;color:var(--text-subtle)">{{ it.macroTxt }}</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--fpt-blue)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 20h4l10-10-4-4L4 16v4z"></path></svg>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="height:10px"></div>
+  <div onClick="{{ addAiItem }}" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border:1.5px dashed var(--border-default);border-radius:14px;color:var(--fpt-blue);font-size:14px;font-weight:650;cursor:pointer">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--fpt-blue)" strokeWidth="2.2" strokeLinecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+    {{ rvAdd }}
+  </div>
+  <div style="height:14px"></div>
+  <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:16px;padding:16px;box-shadow:var(--shadow-sm)">
+    <div style="display:flex;align-items:baseline;justify-content:space-between">
+      <div><div style="font-size:14px;font-weight:700;color:var(--text-strong)">{{ rvTotal }}</div><div style="font-size:11px;color:var(--text-subtle)">{{ rvTotalSub }}</div></div>
+      <div style="display:flex;align-items:baseline;gap:5px"><span style="font-size:30px;font-weight:800;letter-spacing:-.03em;color:var(--fpt-blue)">{{ aiTotalKcal }}</span><span style="font-size:13px;font-weight:600;color:var(--text-muted)">kcal</span></div>
+    </div>
+    <div style="height:14px"></div>
+    <div style="display:flex;gap:8px">
+      <div style="flex:1;background:var(--blue-50);border-radius:10px;padding:9px 10px"><div style="font-size:15px;font-weight:750;color:var(--blue-700)">{{ aiP }}g</div><div style="font-size:11px;color:var(--text-muted)">{{ rvP }}</div></div>
+      <div style="flex:1;background:var(--orange-100);border-radius:10px;padding:9px 10px"><div style="font-size:15px;font-weight:750;color:var(--orange-700)">{{ aiC }}g</div><div style="font-size:11px;color:var(--text-muted)">{{ rvC }}</div></div>
+      <div style="flex:1;background:var(--green-100);border-radius:10px;padding:9px 10px"><div style="font-size:15px;font-weight:750;color:var(--green-700)">{{ aiF }}g</div><div style="font-size:11px;color:var(--text-muted)">{{ rvF }}</div></div>
+    </div>
+    <div style="height:12px"></div>
+    <div style="font-size:11.5px;line-height:1.5;color:var(--text-subtle)">{{ rvSource }}</div>
+  </div>
+</div>
+<div style="flex:none;padding:12px 20px 34px;background:var(--surface-card);border-top:1px solid var(--border-subtle);display:flex;gap:10px;align-items:center">
+  <div style="min-width:104px">
+    <div onClick="{{ cycleMealType }}" style="cursor:pointer;border:1.5px solid var(--border-default);border-radius:10px;padding:8px 10px;text-align:center">
+      <div style="font-size:13.5px;font-weight:650;color:var(--text-strong)">{{ pendingTypeVi }}</div>
+      <div style="font-size:10.5px;color:var(--text-subtle)">{{ rvSwitch }}</div>
+    </div>
+  </div>
+  <div onClick="{{ confirmMeal }}" style="flex:1;cursor:pointer">
+    <x-import component-from-global-scope="FPTISDesignSystem_77c3dd.Button" size="lg" fullWidth="{{ true }}" hint-size="100%,52px">{{ rvConfirm }}</x-import>
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════ MANUAL ENTRY ══════════ -->
+<sc-if value="{{ isManual }}">
+<div style="flex:none;padding:2px 20px 12px;display:flex;align-items:center;gap:12px">
+  <div onClick="{{ goDashboard }}" style="width:32px;height:32px;border-radius:8px;background:var(--surface-sunken);display:flex;align-items:center;justify-content:center;cursor:pointer">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--neutral-700)" strokeWidth="2.3" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+  </div>
+  <div style="flex:1">
+    <div style="font-size:18px;font-weight:750;letter-spacing:-.015em;color:var(--text-strong)">Nhập tay</div>
+    <div style="font-size:11.5px;color:var(--text-subtle)">MANUAL ENTRY · {{ pendingTypeVi }}</div>
+  </div>
+</div>
+<div class="hcs" style="flex:1;overflow:auto;padding:0 20px 20px">
+  <div style="display:flex;gap:7px;margin-bottom:14px">
+    <sc-for list="{{ typeChips }}" as="t" hint-placeholder-count="4">
+      <div onClick="{{ t.pick }}" style="flex:1;text-align:center;padding:9px 2px;border-radius:10px;font-size:12.5px;font-weight:650;cursor:pointer;background:{{ t.bg }};color:{{ t.fg }};border:1.5px solid {{ t.bd }}">{{ t.vi }}</div>
+    </sc-for>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <sc-for list="{{ draftRows }}" as="d" hint-placeholder-count="1">
+      <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:16px;padding:14px 15px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <input type="text" value="{{ d.name }}" onChange="{{ d.setName }}" placeholder="Tên món" style="flex:1;border:1.5px solid var(--border-default);border-radius:10px;padding:9px 11px;font-family:var(--font-sans);font-size:14.5px;font-weight:600;color:var(--text-strong);background:var(--white)">
+          <div onClick="{{ d.remove }}" style="width:32px;height:32px;border-radius:8px;background:var(--surface-sunken);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2.2" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+          </div>
+        </div>
+        <div style="height:10px"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+          <sc-for list="{{ d.fields }}" as="fd" hint-placeholder-count="5">
+            <div style="display:flex;align-items:center;gap:6px;border:1.5px solid var(--border-subtle);border-radius:10px;padding:7px 9px;background:var(--surface-page)">
+              <span style="font-size:11.5px;font-weight:650;color:var(--text-muted);flex:1">{{ fd.label }}</span>
+              <input type="number" value="{{ fd.value }}" onChange="{{ fd.set }}" style="width:52px;border:none;background:transparent;font-family:var(--font-sans);font-size:14px;font-weight:700;text-align:right;color:var(--text-strong);outline:none">
+              <span style="font-size:11px;color:var(--text-subtle);width:26px">{{ fd.unit }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="height:12px"></div>
+  <div onClick="{{ addDraft }}" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border:1.5px dashed var(--border-default);border-radius:14px;color:var(--fpt-blue);font-size:14px;font-weight:650;cursor:pointer">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--fpt-blue)" strokeWidth="2.2" strokeLinecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+    Thêm món khác
+  </div>
+  <div style="height:14px"></div>
+  <div style="background:var(--surface-sunken);border-radius:14px;padding:14px 16px;display:flex;align-items:baseline;justify-content:space-between">
+    <div style="font-size:13.5px;font-weight:650;color:var(--text-muted)">Tổng bữa ăn</div>
+    <div style="display:flex;align-items:baseline;gap:4px"><span style="font-size:22px;font-weight:800;color:var(--text-strong);letter-spacing:-.02em">{{ draftKcal }}</span><span style="font-size:12px;color:var(--text-muted)">kcal</span></div>
+  </div>
+</div>
+<div style="flex:none;padding:12px 20px 34px;background:var(--surface-card);border-top:1px solid var(--border-subtle)">
+  <div onClick="{{ saveManual }}" style="cursor:pointer">
+    <x-import component-from-global-scope="FPTISDesignSystem_77c3dd.Button" size="lg" fullWidth="{{ true }}" hint-size="100%,52px">Lưu bữa ăn</x-import>
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════ HISTORY ══════════ -->
+<sc-if value="{{ isHistory }}">
+<div class="hcs" style="flex:1;overflow:auto;padding:2px 20px 108px">
+  <div style="font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--text-subtle)">LỊCH SỬ · HISTORY</div>
+  <div style="font-size:29px;font-weight:800;letter-spacing:-.025em;color:var(--text-strong);line-height:1.15">Bữa ăn đã ghi</div>
+  <div style="height:16px"></div>
+  <sc-for list="{{ historyDays }}" as="day" hint-placeholder-count="4">
+    <div style="margin-bottom:14px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;padding:0 4px 8px">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <div style="font-size:14px;font-weight:750;color:var(--text-strong)">{{ day.label }}</div>
+          <div style="font-size:11.5px;color:var(--text-subtle)">{{ day.sub }}</div>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--text-muted)">{{ day.kcal }} kcal</div>
+      </div>
+      <div style="height:5px;border-radius:3px;background:var(--neutral-150);overflow:hidden;margin:0 4px 9px">
+        <div style="height:5px;border-radius:3px;background:{{ day.barColor }};width:{{ day.pct }}"></div>
+      </div>
+      <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:14px;padding:2px 15px">
+        <sc-for list="{{ day.meals }}" as="m" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid {{ m.sep }}">
+            <div style="width:28px;height:28px;border-radius:8px;background:{{ m.chipBg }};display:flex;align-items:center;justify-content:center;flex:none">{{ m.icon }}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13.5px;font-weight:650;color:var(--text-strong)">{{ m.vi }}</div>
+              <div style="font-size:11px;color:var(--text-subtle);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ m.detail }}</div>
+            </div>
+            <div style="font-size:13px;font-weight:700;color:var(--text-muted)">{{ m.kcal }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-for>
+</div>
+</sc-if>
+
+<!-- ══════════ INSIGHTS ══════════ -->
+<sc-if value="{{ isInsights }}">
+<div class="hcs" style="flex:1;overflow:auto;padding:2px 20px 108px">
+  <div style="font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--text-subtle)">THỐNG KÊ · INSIGHTS</div>
+  <div style="font-size:29px;font-weight:800;letter-spacing:-.025em;color:var(--text-strong);line-height:1.15">7 ngày qua</div>
+  <div style="height:16px"></div>
+  <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:18px;padding:18px 16px;box-shadow:var(--shadow-sm)">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px">
+      <div><div style="font-size:13.5px;font-weight:700;color:var(--text-strong)">Calo mỗi ngày</div><div style="font-size:11px;color:var(--text-subtle)">vs mục tiêu {{ targetTxt }} kcal</div></div>
+      <div style="text-align:right"><div style="font-size:20px;font-weight:800;color:var(--text-strong);letter-spacing:-.02em">{{ avgKcal }}</div><div style="font-size:11px;color:var(--text-subtle)">trung bình</div></div>
+    </div>
+    <div style="position:relative;height:132px;display:flex;align-items:flex-end;gap:8px">
+      <div style="position:absolute;left:0;right:0;bottom:{{ targetLineBottom }};height:1px;border-top:1.5px dashed var(--neutral-300)"></div>
+      <sc-for list="{{ weekBars }}" as="b" hint-placeholder-count="7">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end">
+          <div style="font-size:10px;font-weight:650;color:var(--text-subtle)">{{ b.short }}</div>
+          <div style="width:100%;border-radius:6px 6px 3px 3px;background:{{ b.color }};height:{{ b.h }}"></div>
+          <div style="font-size:10.5px;font-weight:650;color:{{ b.labelColor }}">{{ b.day }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  <div style="height:12px"></div>
+  <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:18px;padding:18px 16px">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px">
+      <div><div style="font-size:13.5px;font-weight:700;color:var(--text-strong)">Cân nặng</div><div style="font-size:11px;color:var(--text-subtle)">6 tuần · mục tiêu {{ pTarget }} kg</div></div>
+      <div style="display:flex;align-items:baseline;gap:5px"><span style="font-size:20px;font-weight:800;color:var(--text-strong);letter-spacing:-.02em">{{ pWeight }}</span><span style="font-size:12px;color:var(--text-muted)">kg</span></div>
+    </div>
+    <svg width="100%" height="96" viewBox="0 0 320 96" preserveAspectRatio="none">
+      <polyline points="{{ weightPoints }}" fill="none" stroke="var(--fpt-green)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"></polyline>
+      <polyline points="{{ weightArea }}" fill="var(--green-100)" stroke="none"></polyline>
+    </svg>
+    <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--text-subtle);font-weight:600;margin-top:4px">
+      <span>T1</span><span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>Nay</span>
+    </div>
+  </div>
+  <div style="height:12px"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <sc-for list="{{ insightStats }}" as="s" hint-placeholder-count="4">
+      <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:14px;padding:14px">
+        <div style="font-size:22px;font-weight:800;letter-spacing:-.02em;color:{{ s.color }}">{{ s.value }}</div>
+        <div style="font-size:11.5px;font-weight:650;color:var(--text-muted);margin-top:2px">{{ s.vi }}</div>
+        <div style="font-size:10.5px;color:var(--text-subtle)">{{ s.en }}</div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="height:12px"></div>
+  <div style="background:var(--surface-sunken);border-radius:14px;padding:14px 16px;font-size:12.5px;line-height:1.55;color:var(--text-muted)">Bạn thường thiếu đạm vào buổi chiều. Còn {{ remainProtein }} g đạm cho hôm nay.</div>
+</div>
+</sc-if>
+
+<!-- ══════════ PROFILE ══════════ -->
+<sc-if value="{{ isProfile }}">
+<div class="hcs" style="flex:1;overflow:auto;padding:2px 20px 108px">
+  <div style="font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--text-subtle)">TÔI · PROFILE</div>
+  <div style="height:12px"></div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <div style="width:60px;height:60px;border-radius:50%;background:var(--blue-100);color:var(--blue-700);display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:750">TN</div>
+    <div style="flex:1">
+      <div style="font-size:19px;font-weight:750;color:var(--text-strong);letter-spacing:-.015em">Trần Ngọc</div>
+      <div style="font-size:12.5px;color:var(--text-muted)">{{ pAge }} tuổi · {{ pHeight }} cm · {{ pWeight }} kg</div>
+    </div>
+  </div>
+  <div style="height:18px"></div>
+  <div style="display:flex;gap:10px">
+    <div style="flex:1;background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:14px;padding:14px">
+      <div style="font-size:20px;font-weight:800;color:var(--fpt-blue);letter-spacing:-.02em">{{ goalKcal }}</div>
+      <div style="font-size:11px;font-weight:650;color:var(--text-muted)">kcal / ngày</div>
+    </div>
+    <div style="flex:1;background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:14px;padding:14px">
+      <div style="font-size:20px;font-weight:800;color:var(--text-strong);letter-spacing:-.02em">{{ bmiTxt }}</div>
+      <div style="font-size:11px;font-weight:650;color:var(--text-muted)">BMI · {{ bmiCatVi }}</div>
+    </div>
+    <div style="flex:1;background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:14px;padding:14px">
+      <div style="font-size:20px;font-weight:800;color:var(--fpt-green);letter-spacing:-.02em">{{ goalDeltaKg }}</div>
+      <div style="font-size:11px;font-weight:650;color:var(--text-muted)">kg tới mục tiêu</div>
+    </div>
+  </div>
+  <div style="height:18px"></div>
+  <div style="font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--text-subtle);padding:0 4px 8px">THIẾT LẬP</div>
+  <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:16px;padding:2px 16px">
+    <div onClick="{{ goOnboarding }}" style="display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border-subtle);cursor:pointer">
+      <div style="flex:1"><div style="font-size:14.5px;font-weight:650;color:var(--text-strong)">Thông tin cơ thể & mục tiêu</div><div style="font-size:11.5px;color:var(--text-subtle)">Body info & goal</div></div>
+      <svg width="8" height="14" viewBox="0 0 8 14"><path d="M1 1l6 6-6 6" stroke="var(--neutral-400)" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+    </div>
+    <div onClick="{{ goHealth }}" style="display:flex;align-items:center;gap:12px;padding:14px 0;cursor:pointer">
+      <div style="flex:1"><div style="font-size:14.5px;font-weight:650;color:var(--text-strong)">Apple Health</div><div style="font-size:11.5px;color:var(--text-subtle)">{{ healthStateTxt }}</div></div>
+      <svg width="8" height="14" viewBox="0 0 8 14"><path d="M1 1l6 6-6 6" stroke="var(--neutral-400)" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+    </div>
+  </div>
+  <div style="height:18px"></div>
+  <div style="font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--text-subtle);padding:0 4px 8px">THÔNG BÁO</div>
+  <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:16px;padding:2px 16px">
+    <sc-for list="{{ notifRows }}" as="n" hint-placeholder-count="5">
+      <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid {{ n.sep }}">
+        <div style="flex:1"><div style="font-size:14px;font-weight:650;color:var(--text-strong)">{{ n.vi }}</div><div style="font-size:11.5px;color:var(--text-subtle)">{{ n.en }}</div></div>
+        <div onClick="{{ n.toggle }}" style="cursor:pointer">
+          <x-import component-from-global-scope="FPTISDesignSystem_77c3dd.Switch" checked="{{ n.on }}" hint-size="44px,24px"></x-import>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="height:18px"></div>
+  <div style="font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--text-subtle);padding:0 4px 8px">QUYỀN RIÊNG TƯ</div>
+  <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:11px">
+    <sc-for list="{{ privacyLines }}" as="p" hint-placeholder-count="3">
+      <div style="display:flex;gap:10px;align-items:flex-start">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--fpt-green)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style="flex:none;margin-top:2px"><path d="M20 6 9 17l-5-5"></path></svg>
+        <div style="font-size:12.5px;line-height:1.5;color:var(--text-muted)">{{ p.text }}</div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="height:14px"></div>
+  <div onClick="{{ goWelcome }}" style="text-align:center;padding:12px;font-size:13.5px;font-weight:650;color:var(--text-subtle);cursor:pointer">Xem lại phần giới thiệu</div>
+</div>
+</sc-if>
+
+<!-- ══════════ EDIT SHEET ══════════ -->
+<sc-if value="{{ isEditing }}">
+<div onClick="{{ closeEdit }}" style="position:absolute;inset:0;background:rgba(15,27,39,.42);z-index:60"></div>
+<div style="position:absolute;left:0;right:0;bottom:0;z-index:61;background:var(--surface-card);border-radius:24px 24px 0 0;padding:18px 20px 34px;box-shadow:0 -12px 40px rgba(15,27,39,.18);animation:hc-sheet .24s cubic-bezier(.2,0,0,1)">
+  <div style="width:38px;height:4px;border-radius:2px;background:var(--neutral-300);margin:0 auto 16px"></div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div style="flex:1">
+      <input type="text" value="{{ editName }}" onChange="{{ setEditName }}" style="width:100%;border:1.5px solid var(--border-default);border-radius:10px;padding:10px 12px;font-family:var(--font-sans);font-size:16px;font-weight:700;color:var(--text-strong);background:var(--white);box-sizing:border-box">
+    </div>
+    <sc-if value="{{ showConfidence }}">
+      <x-import component-from-global-scope="FPTISDesignSystem_77c3dd.Badge" tone="{{ editTone }}" hint-size="96px,22px">{{ editConfLabel }}</x-import>
+    </sc-if>
+  </div>
+  <div style="height:8px"></div>
+  <div style="font-size:11.5px;color:var(--text-subtle)">AI ước lượng ban đầu: {{ editOriginal }} g</div>
+  <div style="height:18px"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface-page);border-radius:14px;padding:12px 14px">
+    <div onClick="{{ gramsDown }}" style="width:44px;height:44px;border-radius:12px;background:var(--white);border:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;color:var(--fpt-blue);cursor:pointer;user-select:none">−</div>
+    <div style="text-align:center">
+      <div style="display:flex;align-items:baseline;gap:5px;justify-content:center"><span style="font-size:34px;font-weight:800;letter-spacing:-.03em;color:var(--text-strong)">{{ editGrams }}</span><span style="font-size:15px;font-weight:600;color:var(--text-muted)">g</span></div>
+      <div style="font-size:12.5px;font-weight:650;color:var(--fpt-blue);margin-top:2px">{{ editKcal }} kcal</div>
+    </div>
+    <div onClick="{{ gramsUp }}" style="width:44px;height:44px;border-radius:12px;background:var(--white);border:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;color:var(--fpt-blue);cursor:pointer;user-select:none">+</div>
+  </div>
+  <div style="height:10px"></div>
+  <div style="display:flex;gap:8px">
+    <sc-for list="{{ servingPresets }}" as="sp" hint-placeholder-count="4">
+      <div onClick="{{ sp.pick }}" style="flex:1;text-align:center;padding:9px 2px;border-radius:10px;background:var(--surface-sunken);font-size:12px;font-weight:650;color:var(--text-body);cursor:pointer">{{ sp.label }}</div>
+    </sc-for>
+  </div>
+  <div style="height:16px"></div>
+  <div style="display:flex;gap:10px;align-items:center">
+    <div onClick="{{ removeEditing }}" style="cursor:pointer">
+      <x-import component-from-global-scope="FPTISDesignSystem_77c3dd.Button" variant="secondary" size="lg" hint-size="104px,52px">Xoá món</x-import>
+    </div>
+    <div onClick="{{ closeEdit }}" style="flex:1;cursor:pointer">
+      <x-import component-from-global-scope="FPTISDesignSystem_77c3dd.Button" size="lg" fullWidth="{{ true }}" hint-size="100%,52px">Xong</x-import>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ══════════ TOAST ══════════ -->
+<sc-if value="{{ hasToast }}">
+<div style="position:absolute;left:16px;right:16px;bottom:104px;z-index:70;background:var(--neutral-900);color:#fff;border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:11px;box-shadow:0 10px 30px rgba(15,27,39,.3);animation:hc-in .22s ease-out">
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--green-400)" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" style="flex:none"><path d="M20 6 9 17l-5-5"></path></svg>
+  <div style="font-size:13.5px;font-weight:600">{{ toastText }}</div>
+</div>
+</sc-if>
+
+<!-- ══════════ TAB BAR ══════════ -->
+<sc-if value="{{ showTabs }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;left:0;right:0;bottom:0;z-index:30;height:86px;background:rgba(255,255,255,.94);backdrop-filter:blur(18px);border-top:1px solid var(--border-subtle);display:flex;align-items:flex-start;padding:8px 6px 0">
+  <div onClick="{{ goDashboard }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding-top:4px">
+    <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="{{ tabDash }}" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7.5V12l3 2"></path></svg>
+    <span style="font-size:10.5px;font-weight:650;color:{{ tabDash }}">Hôm nay</span>
+  </div>
+  <div onClick="{{ goHistory }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding-top:4px">
+    <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="{{ tabHist }}" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 6h16M4 12h16M4 18h11"></path></svg>
+    <span style="font-size:10.5px;font-weight:650;color:{{ tabHist }}">Lịch sử</span>
+  </div>
+  <div style="width:74px;display:flex;justify-content:center">
+    <div onClick="{{ goCamera }}" style="width:60px;height:60px;margin-top:-24px;border-radius:50%;background:var(--fpt-orange);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 20px rgba(243,112,33,.42);border:4px solid #fff">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z"></path><circle cx="12" cy="12.5" r="3.6"></circle></svg>
+    </div>
+  </div>
+  <div onClick="{{ goInsights }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding-top:4px">
+    <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="{{ tabIns }}" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 19V11M12 19V5M19 19v-6"></path></svg>
+    <span style="font-size:10.5px;font-weight:650;color:{{ tabIns }}">Thống kê</span>
+  </div>
+  <div onClick="{{ goProfile }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding-top:4px">
+    <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="{{ tabProf }}" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="3.6"></circle><path d="M5 20c0-3.4 3.1-5.5 7-5.5s7 2.1 7 5.5"></path></svg>
+    <span style="font-size:10.5px;font-weight:650;color:{{ tabProf }}">Tôi</span>
+  </div>
+</div>
+</sc-if>
+
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:470,&quot;height&quot;:940},&quot;initialScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;welcome&quot;,&quot;onboarding&quot;,&quot;health&quot;,&quot;dashboard&quot;,&quot;mealDetail&quot;,&quot;camera&quot;,&quot;review&quot;,&quot;manual&quot;,&quot;history&quot;,&quot;insights&quot;,&quot;profile&quot;],&quot;default&quot;:&quot;dashboard&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;initialStep&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;min&quot;:0,&quot;max&quot;:3,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;calorieStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;ring&quot;,&quot;bar&quot;],&quot;default&quot;:&quot;ring&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Dashboard&quot;},&quot;demoState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;under&quot;,&quot;near&quot;,&quot;over&quot;],&quot;default&quot;:&quot;under&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Dashboard&quot;},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;vi&quot;,&quot;en&quot;],&quot;default&quot;:&quot;vi&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;showConfidence&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;AI review&quot;},&quot;mealPhotos&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;AI review&quot;}}">
+const R = (n, d) => { const m = Math.pow(10, d || 0); return Math.round(n * m) / m; };
+const N = (n) => Math.round(n).toLocaleString('en-US');
+const MULT = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725, veryActive: 1.9 };
+const DELTA = { lose: -500, maintain: 0, gain: 350 };
+const TYPES = [
+  { key: 'breakfast', vi: 'Bữa sáng', en: 'Breakfast' },
+  { key: 'lunch', vi: 'Bữa trưa', en: 'Lunch' },
+  { key: 'snack', vi: 'Bữa phụ', en: 'Snack' },
+  { key: 'dinner', vi: 'Bữa tối', en: 'Dinner' },
+];
+const el = React.createElement;
+const ico = (d, stroke, size) => el('svg', { width: size || 17, height: size || 17, viewBox: '0 0 24 24', fill: 'none', stroke: stroke, strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' }, el('path', { d: d }));
+
+class Component extends DCLogic {
+  state = {
+    screen: null,
+    step: null,
+    profile: { age: 32, heightCm: 174, weightKg: 78.5, sex: 'male', activity: 'light', goal: 'lose', targetWeightKg: 72 },
+    connected: true,
+    perms: { steps: true, energy: true, sleep: true, weight: true },
+    notifs: { p70: true, p90: true, reached: true, remind: false, daily: true },
+    logged: [
+      { id: 'b1', type: 'breakfast', items: [{ name: 'Bánh mì thịt nướng', en: 'Grilled pork banh mi', g: 180, kcal: 420, p: 18, c: 52, f: 14 }] },
+      { id: 'l1', type: 'lunch', items: [
+        { name: 'Cơm trắng', en: 'White rice', g: 180, kcal: 234, p: 4.3, c: 50, f: 0.4 },
+        { name: 'Sườn nướng', en: 'Grilled pork rib', g: 120, kcal: 312, p: 28, c: 6, f: 19 },
+        { name: 'Dưa chua', en: 'Pickled vegetables', g: 60, kcal: 24, p: 1, c: 5, f: 0.2 },
+        { name: 'Trứng ốp la', en: 'Fried egg', g: 55, kcal: 72, p: 6, c: 0.4, f: 5 } ] },
+      { id: 's1', type: 'snack', items: [
+        { name: 'Cà phê sữa đá', en: 'Iced milk coffee', g: 200, kcal: 130, p: 2, c: 22, f: 3.5 },
+        { name: 'Bánh flan', en: 'Flan', g: 90, kcal: 130, p: 4, c: 18, f: 4 } ] },
+    ],
+    ai: [
+      { name: 'Cơm trắng', en: 'White rice', g: 180, g0: 180, kcal: 234, p: 4.3, c: 50, f: 0.4, conf: 0.92 },
+      { name: 'Ức gà nướng', en: 'Grilled chicken breast', g: 140, g0: 140, kcal: 231, p: 43, c: 0, f: 5, conf: 0.88 },
+      { name: 'Trứng ốp la', en: 'Fried egg', g: 55, g0: 55, kcal: 72, p: 6, c: 0.4, f: 5, conf: 0.94 },
+      { name: 'Rau luộc', en: 'Boiled greens', g: 80, g0: 80, kcal: 26, p: 2, c: 4, f: 0.2, conf: 0.61 },
+    ],
+    pendingType: 'dinner',
+    detailType: 'lunch',
+    editing: -1,
+    progress: 0,
+    toast: null,
+    drafts: [{ name: '', g: 100, kcal: 0, p: 0, c: 0, f: 0 }],
+  };
+
+  componentWillUnmount() { clearInterval(this._t); clearTimeout(this._toast); }
+
+  get screen() { return this.state.screen || this.props.initialScreen || 'dashboard'; }
+  get demo() { return this.props.demoState || 'under'; }
+
+  go(s) { clearInterval(this._t); this.setState({ screen: s, editing: -1 }); }
+
+  flash(text) {
+    clearTimeout(this._toast);
+    this.setState({ toast: text });
+    this._toast = setTimeout(() => this.setState({ toast: null }), 2600);
+  }
+
+  // ── domain math (mirrors CalculateCalorieGoalUseCase) ──
+  bmr() {
+    const p = this.state.profile;
+    const k = p.sex === 'male' ? 5 : p.sex === 'female' ? -161 : -78;
+    return 10 * p.weightKg + 6.25 * p.heightCm - 5 * p.age + k;
+  }
+  goal() {
+    const p = this.state.profile, bmr = this.bmr();
+    const adjusted = bmr * MULT[p.activity] + DELTA[p.goal];
+    const calories = Math.max(adjusted, Math.max(bmr, 1200));
+    const protein = p.weightKg * (p.goal === 'lose' ? 1.8 : 1.6);
+    const fat = calories * 0.25 / 9;
+    const carbs = Math.max(0, calories - protein * 4 - fat * 9) / 4;
+    return { calories: calories, protein: protein, carbs: carbs, fat: fat };
+  }
+  bmi() { const p = this.state.profile; return p.weightKg / Math.pow(p.heightCm / 100, 2); }
+  bmiCat() { const v = this.bmi(); return v < 18.5 ? 0 : v < 25 ? 1 : v < 30 ? 2 : 3; }
+
+  meals() {
+    const extra = this.demo === 'near'
+      ? [{ name: 'Phở bò', en: 'Beef pho', g: 500, kcal: 400, p: 26, c: 54, f: 8 }]
+      : this.demo === 'over'
+      ? [{ name: 'Phở bò', en: 'Beef pho', g: 500, kcal: 400, p: 26, c: 54, f: 8 },
+         { name: 'Chè thái', en: 'Thai dessert', g: 220, kcal: 320, p: 4, c: 58, f: 9 }]
+      : [];
+    const base = this.state.logged.slice();
+    if (extra.length) base.push({ id: 'd-demo', type: 'dinner', items: extra });
+    return base;
+  }
+  totals() {
+    let t = { kcal: 0, p: 0, c: 0, f: 0 };
+    this.meals().forEach(m => m.items.forEach(i => { t.kcal += i.kcal; t.p += i.p; t.c += i.c; t.f += i.f; }));
+    return t;
+  }
+  status() {
+    const f = this.totals().kcal / this.goal().calories;
+    return f > 1 ? 'exceeded' : f >= 1 ? 'reached' : f >= 0.9 ? 'nearTarget' : f >= 0.7 ? 'informUser' : 'normal';
+  }
+  statusMsg() {
+    const g = this.goal().calories, t = this.totals().kcal, mag = N(Math.abs(g - t));
+    switch (this.status()) {
+      case 'informUser': return 'Bạn còn ' + mag + ' kcal cho hôm nay.';
+      case 'nearTarget': return 'Bạn đang gần mục tiêu calo hôm nay.';
+      case 'reached': return 'Bạn đã đạt mục tiêu calo hôm nay.';
+      case 'exceeded': return 'Bạn đã vượt mục tiêu hôm nay ' + mag + ' kcal.';
+      default: return null;
+    }
+  }
+
+  // ── scan ──
+  startScan = () => {
+    clearInterval(this._t);
+    this.setState({ screen: 'analyzing', progress: 0 });
+    this._t = setInterval(() => {
+      const p = this.state.progress + 4;
+      if (p >= 100) { clearInterval(this._t); this.setState({ progress: 100, screen: 'review' }); }
+      else this.setState({ progress: p });
+    }, 70);
+  };
+
+  confirmMeal = () => {
+    const items = this.state.ai.map(i => ({ name: i.name, en: i.en, g: i.g, kcal: i.kcal, p: i.p, c: i.c, f: i.f }));
+    const kcal = items.reduce((s, i) => s + i.kcal, 0);
+    this.setState(s => ({
+      logged: s.logged.concat([{ id: 'ai' + Date.now(), type: s.pendingType, items: items }]),
+      screen: 'dashboard', editing: -1,
+    }));
+    this.flash('Đã lưu bữa ăn · ' + N(kcal) + ' kcal');
+  };
+
+  scaleEditing(newG) {
+    this.setState(s => {
+      const ai = s.ai.slice(), it = Object.assign({}, ai[s.editing]);
+      const r = newG / it.g;
+      it.g = newG; it.kcal = it.kcal * r; it.p = it.p * r; it.c = it.c * r; it.f = it.f * r;
+      ai[s.editing] = it; return { ai: ai };
+    });
+  }
+
+  renderVals() {
+    const sc = this.screen, st = this.state, p = st.profile;
+    const step = st.step === null ? (Number(this.props.initialStep) || 0) : st.step;
+    const goal = this.goal(), tot = this.totals(), g = goal.calories;
+    const frac = tot.kcal / g, C = 2 * Math.PI * 95;
+    const remain = g - tot.kcal;
+    const active = this.demo === 'over' ? 512 : 425;
+    const blue = 'var(--fpt-blue)', muted = 'var(--text-subtle)';
+    const sepFor = (i, n) => i === n - 1 ? 'transparent' : 'var(--border-subtle)';
+    const catVi = ['Thiếu cân', 'Bình thường', 'Thừa cân', 'Béo phì'][this.bmiCat()];
+    const catEn = ['Underweight', 'Normal', 'Overweight', 'Obese'][this.bmiCat()];
+    const bmiVal = this.bmi();
+
+    const onbSteps = [
+      { eyebrow: 'BƯỚC 1 · VỀ BẠN', title: 'Cho chúng tôi biết về bạn', sub: 'Những số này quyết định mục tiêu calo của bạn — bạn có thể sửa bất cứ lúc nào.', cta: 'Tiếp tục' },
+      { eyebrow: 'BƯỚC 2 · VẬN ĐỘNG', title: 'Một tuần của bạn thế nào?', sub: 'Mức vận động nhân với chuyển hóa cơ bản để ra tổng năng lượng tiêu thụ.', cta: 'Tiếp tục' },
+      { eyebrow: 'BƯỚC 3 · MỤC TIÊU', title: 'Bạn muốn điều gì?', sub: 'Mục tiêu điều chỉnh calo hằng ngày, không thay đổi cách tính dinh dưỡng.', cta: 'Xem mục tiêu' },
+      { eyebrow: 'BƯỚC 4 · KẾT QUẢ', title: 'Mục tiêu hằng ngày của bạn', sub: 'Tính từ tuổi, chiều cao, cân nặng, giới tính, vận động và mục tiêu.', cta: 'Kết nối Apple Health' },
+    ];
+    const os = onbSteps[step];
+
+    const pick = (on) => ({
+      bg: on ? 'var(--blue-50)' : 'var(--surface-card)',
+      fg: on ? 'var(--blue-700)' : 'var(--text-body)',
+      bd: on ? 'var(--fpt-blue)' : 'var(--border-subtle)',
+    });
+    const sexM = pick(p.sex === 'male'), sexF = pick(p.sex === 'female'), sexN = pick(p.sex === 'none');
+    const gl = pick(p.goal === 'lose'), gk = pick(p.goal === 'maintain'), gg = pick(p.goal === 'gain');
+
+    const activityLabels = {
+      sedentary: ['Ít vận động', 'Almost no exercise'],
+      light: ['Nhẹ — 1–3 ngày/tuần', 'Light'],
+      moderate: ['Trung bình — 3–5 ngày/tuần', 'Moderate'],
+      active: ['Tích cực — 6–7 ngày/tuần', 'Active'],
+      veryActive: ['Rất tích cực — việc thể lực', 'Very active'],
+    };
+
+    const mealRows = TYPES.map((t, i) => {
+      const items = this.meals().filter(m => m.type === t.key).reduce((a, m) => a.concat(m.items), []);
+      const kcal = items.reduce((s, x) => s + x.kcal, 0);
+      const chip = ['var(--orange-100)', 'var(--blue-100)', 'var(--green-100)', 'var(--neutral-150)'][i];
+      const segC = ['var(--blue-300)', 'var(--fpt-blue)', 'var(--green-400)', 'var(--blue-500)'][i];
+      const stroke = ['var(--orange-700)', 'var(--blue-700)', 'var(--green-700)', 'var(--neutral-600)'][i];
+      const paths = ['M12 3v3M5 12h14a7 7 0 0 1-7 7 7 7 0 0 1-7-7z', 'M6 4v16M18 4v16M6 12h12', 'M7 8h10l-1 12H8L7 8zM9 8V5h6v3', 'M4 18h16M6 18c0-4 2.7-7 6-7s6 3 6 7'][i];
+      return {
+        vi: t.vi, en: t.en, chipBg: chip, sep: sepFor(i, 4),
+        segColor: segC, seg: { color: segC, w: kcal, pct: Math.min(100, kcal / g * 100) + '%' },
+        icon: ico(paths, stroke, 17),
+        detail: items.length ? items.map(x => x.name).join(', ') : 'Chưa ghi · not logged',
+        kcalTxt: items.length ? N(kcal) + ' kcal' : '—',
+        kcalColor: items.length ? 'var(--text-strong)' : muted,
+        open: () => items.length
+          ? this.setState({ screen: 'mealDetail', detailType: t.key })
+          : this.setState({ screen: 'manual', pendingType: t.key, drafts: [{ name: '', g: 100, kcal: 0, p: 0, c: 0, f: 0 }] }),
+      };
+    });
+
+    const aiTot = st.ai.reduce((s, i) => ({ kcal: s.kcal + i.kcal, p: s.p + i.p, c: s.c + i.c, f: s.f + i.f }), { kcal: 0, p: 0, c: 0, f: 0 });
+    const confOf = (c) => {
+      const pc = Math.round(c * 100), lbl = (en ? 'Confidence ' : 'Tin cậy ') + pc + '%';
+      return c >= 0.9 ? ['green', lbl, 'var(--border-subtle)']
+        : c >= 0.75 ? ['blue', lbl, 'var(--border-subtle)']
+        : ['orange', (en ? 'Please check · ' : 'Nên kiểm tra · ') + pc + '%', 'var(--orange-300)'];
+    };
+
+    const en = this.props.lang === 'en';
+    const dt = TYPES.find(t => t.key === st.detailType) || TYPES[1];
+    const dTime = { breakfast: '07:20', lunch: '12:15', snack: '15:40', dinner: '19:30' }[dt.key];
+    const dAccent = { breakfast: 'var(--fpt-orange)', lunch: 'var(--fpt-blue)', snack: 'var(--fpt-green)', dinner: 'var(--blue-500)' }[dt.key];
+    const dItems = this.meals().filter(m => m.type === dt.key).reduce((a, m) => a.concat(m.items), []);
+    const dTot = dItems.reduce((s, i) => ({ kcal: s.kcal + i.kcal, p: s.p + i.p, c: s.c + i.c, f: s.f + i.f }), { kcal: 0, p: 0, c: 0, f: 0 });
+    const dEnergy = dTot.p * 4 + dTot.c * 4 + dTot.f * 9;
+    const e = st.editing >= 0 ? st.ai[st.editing] : null;
+    const eConf = e ? confOf(e.conf) : ['blue', '', ''];
+
+    const histDays = [
+      { label: 'Thứ Sáu, 8/8', kcal: 1806, meals: [['breakfast', 'Phở bò', 420], ['lunch', 'Cơm gà xối mỡ', 690], ['snack', 'Sữa chua', 160], ['dinner', 'Bún thịt nướng', 536]] },
+      { label: 'Thứ Năm, 7/8', kcal: 1512, meals: [['breakfast', 'Bánh cuốn', 320], ['lunch', 'Cơm tấm sườn', 642], ['dinner', 'Salad ức gà', 550]] },
+      { label: 'Thứ Tư, 6/8', kcal: 2044, meals: [['breakfast', 'Bánh mì trứng', 380], ['lunch', 'Hủ tiếu', 610], ['snack', 'Trà sữa', 340], ['dinner', 'Bánh xèo', 714]] },
+      { label: 'Thứ Ba, 5/8', kcal: 1689, meals: [['breakfast', 'Xôi gà', 470], ['lunch', 'Gỏi cuốn + cơm', 585], ['dinner', 'Cá hấp + rau', 634]] },
+    ];
+    const historyDays = histDays.map(d => ({
+      label: d.label, sub: N(d.kcal) + ' / ' + N(g), kcal: N(d.kcal),
+      pct: Math.min(100, d.kcal / g * 100) + '%',
+      barColor: d.kcal > g ? 'var(--neutral-400)' : blue,
+      meals: d.meals.map((m, i) => {
+        const ti = TYPES.findIndex(t => t.key === m[0]);
+        return {
+          vi: TYPES[ti].vi, detail: m[1], kcal: N(m[2]) + ' kcal', sep: sepFor(i, d.meals.length),
+          chipBg: ['var(--orange-100)', 'var(--blue-100)', 'var(--green-100)', 'var(--neutral-150)'][ti],
+          icon: ico(['M12 3v3M5 12h14a7 7 0 0 1-7 7 7 7 0 0 1-7-7z', 'M6 4v16M18 4v16M6 12h12', 'M7 8h10l-1 12H8L7 8zM9 8V5h6v3', 'M4 18h16M6 18c0-4 2.7-7 6-7s6 3 6 7'][ti],
+            ['var(--orange-700)', 'var(--blue-700)', 'var(--green-700)', 'var(--neutral-600)'][ti], 14),
+        };
+      }),
+    }));
+
+    const week = [1689, 2044, 1512, 1806, 1742, 1598, tot.kcal];
+    const days = ['T3', 'T4', 'T5', 'T6', 'T7', 'CN', 'Nay'];
+    const dates = ['5', '6', '7', '8', '', '', '9'];
+    const maxK = Math.max.apply(null, week.concat([g])) * 1.08;
+    const weekBars = week.map((k, i) => ({
+      short: i === 6 ? N(k) : '',
+      day: days[i], h: Math.max(6, k / maxK * 100) + '%',
+      color: i === 6 ? blue : k > g ? 'var(--neutral-300)' : 'var(--blue-200)',
+      labelColor: i === 6 ? 'var(--text-strong)' : muted,
+    }));
+
+    const wSeries = [81.4, 80.6, 80.1, 79.4, 78.9, p.weightKg];
+    const wMin = Math.min.apply(null, wSeries) - 0.8, wMax = Math.max.apply(null, wSeries) + 0.8;
+    const pts = wSeries.map((w, i) => (i * 64) + ',' + R(88 - (w - wMin) / (wMax - wMin) * 76, 1)).join(' ');
+
+    return {
+      isWelcome: sc === 'welcome', isOnb: sc === 'onboarding', isHealth: sc === 'health',
+      isDash: sc === 'dashboard', isCamera: sc === 'camera', isAnalyzing: sc === 'analyzing',
+      isReview: sc === 'review', isManual: sc === 'manual', isHistory: sc === 'history',
+      isInsights: sc === 'insights', isProfile: sc === 'profile', isDetail: sc === 'mealDetail',
+      isRing: (this.props.calorieStyle || 'ring') === 'ring', isBar: this.props.calorieStyle === 'bar',
+      fracTxt: Math.round(frac * 100) + '%',
+      barSegs: mealRows.map(r => r.seg).filter(s => s.w > 0).map(s => ({ color: s.color, pct: s.pct })),
+      barLegend: mealRows.map(r => ({ vi: r.vi, color: r.segColor, kcal: r.kcalTxt, kcalColor: r.kcalColor })),
+      detailVi: dt.vi, detailEn: dt.en, detailTime: dTime, detailAccent: dAccent,
+      detailKcal: N(dTot.kcal), detailShare: Math.round(dTot.kcal / g * 100) + '%',
+      detailP: R(dTot.p, 1), detailC: R(dTot.c, 1), detailF: R(dTot.f, 1),
+      detailPShare: R(dTot.p * 4 / Math.max(1, dEnergy) * 100, 1) + '%',
+      detailCShare: R(dTot.c * 4 / Math.max(1, dEnergy) * 100, 1) + '%',
+      detailFShare: R(dTot.f * 9 / Math.max(1, dEnergy) * 100, 1) + '%',
+      detailCount: dItems.length,
+      detailItems: dItems.map((it, i) => ({
+        name: it.name, sub: it.en || 'Nhập tay', kcal: N(it.kcal), grams: Math.round(it.g), sep: sepFor(i, dItems.length),
+      })),
+      detailNote: 'Bữa này chiếm ' + Math.round(dTot.kcal / g * 100) + '% ngân sách calo hôm nay. Ghi lúc ' + dTime + '.',
+      detailBack: () => this.go('dashboard'),
+      detailAdd: () => this.setState({ screen: 'manual', pendingType: st.detailType, drafts: [{ name: '', g: 100, kcal: 0, p: 0, c: 0, f: 0 }] }),
+      detailDelete: () => { this.setState(s => ({ logged: s.logged.filter(m => m.type !== s.detailType), screen: 'dashboard' })); this.flash('Đã xoá ' + dt.vi.toLowerCase()); },
+      rvTitle: en ? 'AI result' : 'Kết quả AI',
+      rvSub: en ? 'Estimate · you confirm the serving' : 'AI ANALYSIS · you confirm',
+      rvRescan: en ? 'Rescan' : 'Quét lại',
+      rvNote: en
+        ? 'The AI identifies each food and estimates its portion. Calories come from the nutrition database — adjust the serving if it looks off.'
+        : 'AI nhận diện món và ước lượng khẩu phần. Calo do cơ sở dữ liệu dinh dưỡng tính — hãy sửa khẩu phần nếu chưa đúng.',
+      rvAdd: en ? 'Add a missing food' : 'Thêm món còn thiếu',
+      rvTotal: en ? 'Estimated total' : 'Tổng ước tính',
+      rvTotalSub: en ? 'YOU CAN STILL EDIT' : 'ESTIMATED TOTAL',
+      rvP: en ? 'Protein' : 'Đạm', rvC: en ? 'Carbs' : 'Tinh bột', rvF: en ? 'Fat' : 'Béo',
+      rvSource: en ? 'Sources: USDA FoodData Central · Vietnamese food DB' : 'Nguồn: USDA FoodData Central · CSDL món Việt',
+      rvSwitch: en ? 'change' : 'đổi bữa',
+      rvConfirm: en ? 'Confirm meal' : 'Xác nhận bữa ăn',
+      showTabs: ['dashboard', 'history', 'insights', 'profile'].indexOf(sc) >= 0,
+      showConfidence: this.props.showConfidence !== false,
+      mealPhotos: !!this.props.mealPhotos,
+
+      goWelcome: () => this.go('welcome'), goOnboarding: () => this.setState({ screen: 'onboarding', step: 0 }),
+      goDashboard: () => this.go('dashboard'), goHealth: () => this.go('health'),
+      goCamera: () => this.go('camera'), goHistory: () => this.go('history'),
+      goInsights: () => this.go('insights'), goProfile: () => this.go('profile'),
+      goManual: () => this.go('manual'), backToCamera: () => this.go('camera'),
+      startScan: this.startScan, confirmMeal: this.confirmMeal,
+      connectHealth: () => { this.setState({ connected: true }); this.go('dashboard'); this.flash('Đã kết nối Apple Health'); },
+      connected: st.connected, notConnected: !st.connected,
+      healthStateTxt: st.connected ? 'Đã kết nối · bước chân, năng lượng, giấc ngủ' : 'Chưa kết nối',
+
+      // onboarding
+      stepLabel: (step + 1) + '/4',
+      onbEyebrow: os.eyebrow, onbTitle: os.title, onbSub: os.sub, onbCta: os.cta,
+      dot0: step >= 0 ? blue : 'var(--neutral-200)', dot1: step >= 1 ? blue : 'var(--neutral-200)',
+      dot2: step >= 2 ? blue : 'var(--neutral-200)', dot3: step >= 3 ? blue : 'var(--neutral-200)',
+      isStep0: step === 0, isStep1: step === 1, isStep2: step === 2, isStep3: step === 3,
+      onbNext: () => { if (step === 3) this.go('health'); else this.setState({ step: step + 1 }); },
+      onbBack: () => { if (step === 0) this.go('welcome'); else this.setState({ step: step - 1 }); },
+      pAge: p.age, pHeight: p.heightCm, pWeight: p.weightKg, pTarget: p.targetWeightKg,
+      ageUp: () => this.setState({ profile: Object.assign({}, p, { age: Math.min(120, p.age + 1) }) }),
+      ageDown: () => this.setState({ profile: Object.assign({}, p, { age: Math.max(13, p.age - 1) }) }),
+      setHeight: (ev) => this.setState({ profile: Object.assign({}, p, { heightCm: Number(ev.target.value) || 0 }) }),
+      setWeight: (ev) => this.setState({ profile: Object.assign({}, p, { weightKg: Number(ev.target.value) || 0 }) }),
+      setTarget: (ev) => this.setState({ profile: Object.assign({}, p, { targetWeightKg: Number(ev.target.value) || 0 }) }),
+      sexMale: () => this.setState({ profile: Object.assign({}, p, { sex: 'male' }) }),
+      sexFemale: () => this.setState({ profile: Object.assign({}, p, { sex: 'female' }) }),
+      sexNone: () => this.setState({ profile: Object.assign({}, p, { sex: 'none' }) }),
+      sexUnknown: p.sex === 'none',
+      sexMaleBg: sexM.bg, sexMaleFg: sexM.fg, sexMaleBd: sexM.bd,
+      sexFemaleBg: sexF.bg, sexFemaleFg: sexF.fg, sexFemaleBd: sexF.bd,
+      sexNoneBg: sexN.bg, sexNoneFg: sexN.fg, sexNoneBd: sexN.bd,
+      goalLose: () => this.setState({ profile: Object.assign({}, p, { goal: 'lose' }) }),
+      goalKeep: () => this.setState({ profile: Object.assign({}, p, { goal: 'maintain' }) }),
+      goalGain: () => this.setState({ profile: Object.assign({}, p, { goal: 'gain' }) }),
+      goalLoseBg: gl.bg, goalLoseFg: gl.fg, goalLoseBd: gl.bd,
+      goalKeepBg: gk.bg, goalKeepFg: gk.fg, goalKeepBd: gk.bd,
+      goalGainBg: gg.bg, goalGainFg: gg.fg, goalGainBd: gg.bd,
+      needsTarget: p.goal !== 'maintain',
+      activityOptions: Object.keys(MULT).map(k => ({
+        vi: activityLabels[k][0], en: activityLabels[k][1], mult: MULT[k],
+        border: p.activity === k ? 'var(--fpt-blue)' : 'var(--border-subtle)',
+        ring: p.activity === k ? 'var(--fpt-blue)' : 'var(--neutral-300)',
+        dot: p.activity === k ? 'var(--fpt-blue)' : 'transparent',
+        pick: () => this.setState({ profile: Object.assign({}, p, { activity: k }) }),
+      })),
+      goalKcal: N(goal.calories), goalP: Math.round(goal.protein), goalC: Math.round(goal.carbs), goalF: Math.round(goal.fat),
+      bmrTxt: N(this.bmr()), multTxt: '×' + MULT[p.activity],
+      deltaTxt: DELTA[p.goal] === 0 ? '' : (DELTA[p.goal] > 0 ? '+' + DELTA[p.goal] : DELTA[p.goal]) + ' kcal',
+      bmiTxt: R(bmiVal, 1).toFixed(1), bmiCatVi: catVi, bmiCatEn: catEn,
+      bmiTone: ['blue', 'green', 'orange', 'neutral'][this.bmiCat()],
+      bmiPos: Math.min(97, Math.max(1, (bmiVal - 14) / 22 * 100)) + '%',
+
+      // health perms
+      permRows: [
+        ['steps', 'Bước chân', 'Step count', 'M6 20l3-9 3 2 1-6 2 5 3-4'],
+        ['energy', 'Năng lượng vận động', 'Active energy', 'M12 3c3 4 5 6 5 9a5 5 0 0 1-10 0c0-3 2-5 5-9z'],
+        ['sleep', 'Giấc ngủ', 'Sleep', 'M20 14a8 8 0 1 1-9.9-9.7A6.6 6.6 0 0 0 20 14z'],
+        ['weight', 'Cân nặng & BMI', 'Body mass', 'M5 8h14l1.5 12H3.5L5 8zM9 8V6a3 3 0 0 1 6 0v2'],
+      ].map((r, i, arr) => ({
+        vi: r[1], en: r[2], on: st.perms[r[0]], sep: sepFor(i, arr.length),
+        icon: ico(r[3], 'var(--blue-700)', 17),
+        toggle: () => this.setState({ perms: Object.assign({}, st.perms, { [r[0]]: !st.perms[r[0]] }) }),
+      })),
+
+      // dashboard
+      ringDash: R(C * Math.min(frac, 1), 1) + ' ' + R(C, 1),
+      overCap: frac > 1 ? 'round' : 'butt',
+      overDash: frac > 1 ? R(C * Math.min(frac - 1, 1), 1) + ' ' + R(C, 1) : '0 ' + R(C, 1),
+      remainAbs: N(Math.abs(remain)),
+      remainWord: remain >= 0 ? 'còn lại' : 'vượt mục tiêu',
+      remainWordEn: remain >= 0 ? 'remaining' : 'over target',
+      targetTxt: N(g), eatenTxt: N(tot.kcal), burnedTxt: st.connected ? N(active) : '—',
+      hasStatusMsg: !!this.statusMsg(), statusMsg: this.statusMsg(),
+      macroRows: [
+        ['Đạm', 'Protein', tot.p, goal.protein, blue, '0 0 14px'],
+        ['Tinh bột', 'Carbs', tot.c, goal.carbs, 'var(--fpt-orange)', '0 0 14px'],
+        ['Chất béo', 'Fat', tot.f, goal.fat, 'var(--fpt-green)', '0'],
+      ].map(m => ({
+        vi: m[0], en: m[1], now: Math.round(m[2]), goal: Math.round(m[3]),
+        color: m[4], pad: m[5], pct: Math.min(100, m[2] / m[3] * 100) + '%',
+      })),
+      mealRows: mealRows,
+      healthTiles: [
+        { vi: 'Bước chân', value: N(8420), icon: ico('M6 20l3-9 3 2 1-6 2 5 3-4', 'var(--blue-700)', 15) },
+        { vi: 'Năng lượng', value: N(active) + ' kcal', icon: ico('M12 3c3 4 5 6 5 9a5 5 0 0 1-10 0c0-3 2-5 5-9z', 'var(--fpt-orange)', 15) },
+        { vi: 'Giấc ngủ', value: '7h 32m', icon: ico('M20 14a8 8 0 1 1-9.9-9.7A6.6 6.6 0 0 0 20 14z', 'var(--blue-700)', 15) },
+        { vi: 'Cân nặng', value: p.weightKg + ' kg', icon: ico('M5 8h14l1.5 12H3.5L5 8zM9 8V6a3 3 0 0 1 6 0v2', 'var(--fpt-green)', 15) },
+      ],
+
+      // analyzing
+      progressPct: st.progress + '%',
+      scanSteps: [
+        ['Nhận diện món ăn', 30], ['Ước lượng khẩu phần', 65], ['Tra cứu dinh dưỡng', 95],
+      ].map(s => ({
+        label: s[0],
+        color: st.progress >= s[1] ? '#fff' : 'rgba(255,255,255,.4)',
+        mark: st.progress >= s[1]
+          ? ico('M20 6 9 17l-5-5', 'var(--green-400)', 18)
+          : el('div', { style: { width: 8, height: 8, borderRadius: 4, background: 'rgba(255,255,255,.4)', margin: '5px' } }),
+      })),
+
+      // review
+      aiRows: st.ai.map((it, i) => {
+        const cf = confOf(it.conf);
+        return {
+          name: en ? (it.en || it.name) : it.name, en: en ? it.name : it.en, kcal: N(it.kcal), grams: Math.round(it.g),
+          tone: cf[0], confLabel: cf[1], border: cf[2],
+          macroTxt: en
+            ? 'P ' + R(it.p, 1) + ' · C ' + R(it.c, 1) + ' · F ' + R(it.f, 1)
+            : 'Đ ' + R(it.p, 1) + ' · TB ' + R(it.c, 1) + ' · B ' + R(it.f, 1),
+          edit: () => this.setState({ editing: i }),
+        };
+      }),
+      aiTotalKcal: N(aiTot.kcal), aiP: R(aiTot.p, 1), aiC: R(aiTot.c, 1), aiF: R(aiTot.f, 1),
+      addAiItem: () => this.setState(s => ({
+        ai: s.ai.concat([{ name: 'Món mới', en: 'New item', g: 100, g0: 100, kcal: 120, p: 5, c: 15, f: 3, conf: 0.5 }]),
+        editing: s.ai.length,
+      })),
+      pendingTypeVi: (function (t) { return en ? t.en : t.vi; })(TYPES.find(t => t.key === st.pendingType) || TYPES[3]),
+      cycleMealType: () => {
+        const i = TYPES.findIndex(t => t.key === st.pendingType);
+        this.setState({ pendingType: TYPES[(i + 1) % 4].key });
+      },
+
+      // edit sheet
+      isEditing: st.editing >= 0 && !!e,
+      editName: e ? e.name : '', editGrams: e ? Math.round(e.g) : 0,
+      editKcal: e ? N(e.kcal) : '', editOriginal: e ? e.g0 : '',
+      editTone: eConf[0], editConfLabel: eConf[1],
+      setEditName: (ev) => { const v = ev.target.value; this.setState(s => { const ai = s.ai.slice(); ai[s.editing] = Object.assign({}, ai[s.editing], { name: v }); return { ai: ai }; }); },
+      gramsUp: () => this.scaleEditing(Math.round(e.g) + 10),
+      gramsDown: () => this.scaleEditing(Math.max(10, Math.round(e.g) - 10)),
+      servingPresets: [50, 100, 150, 200].map(v => ({ label: v + ' g', pick: () => this.scaleEditing(v) })),
+      removeEditing: () => this.setState(s => ({ ai: s.ai.filter((_, i) => i !== s.editing), editing: -1 })),
+      closeEdit: () => this.setState({ editing: -1 }),
+
+      // manual
+      typeChips: TYPES.map(t => {
+        const on = st.pendingType === t.key, s = pick(on);
+        return { vi: t.vi, bg: s.bg, fg: s.fg, bd: s.bd, pick: () => this.setState({ pendingType: t.key }) };
+      }),
+      draftRows: st.drafts.map((d, i) => ({
+        name: d.name,
+        setName: (ev) => { const v = ev.target.value; this.setState(s => { const ds = s.drafts.slice(); ds[i] = Object.assign({}, ds[i], { name: v }); return { drafts: ds }; }); },
+        remove: () => this.setState(s => ({ drafts: s.drafts.length > 1 ? s.drafts.filter((_, j) => j !== i) : s.drafts })),
+        fields: [['g', 'Khối lượng', 'g'], ['kcal', 'Calo', 'kcal'], ['p', 'Đạm', 'g'], ['c', 'Tinh bột', 'g'], ['f', 'Chất béo', 'g']].map(f => ({
+          label: f[1], unit: f[2], value: d[f[0]],
+          set: (ev) => { const v = Number(ev.target.value) || 0; this.setState(s => { const ds = s.drafts.slice(); ds[i] = Object.assign({}, ds[i], { [f[0]]: v }); return { drafts: ds }; }); },
+        })),
+      })),
+      addDraft: () => this.setState(s => ({ drafts: s.drafts.concat([{ name: '', g: 100, kcal: 0, p: 0, c: 0, f: 0 }]) })),
+      draftKcal: N(st.drafts.reduce((s, d) => s + d.kcal, 0)),
+      saveManual: () => {
+        const items = st.drafts.filter(d => d.kcal > 0).map(d => ({ name: d.name || 'Món tự nhập', en: '', g: d.g, kcal: d.kcal, p: d.p, c: d.c, f: d.f }));
+        if (!items.length) { this.flash('Nhập calo trước khi lưu'); return; }
+        this.setState(s => ({ logged: s.logged.concat([{ id: 'm' + Date.now(), type: s.pendingType, items: items }]), screen: 'dashboard' }));
+        this.flash('Đã lưu bữa ăn · ' + N(items.reduce((s2, i) => s2 + i.kcal, 0)) + ' kcal');
+      },
+
+      // history / insights
+      historyDays: historyDays,
+      weekBars: weekBars,
+      avgKcal: N(week.reduce((a, b) => a + b, 0) / 7),
+      targetLineBottom: R(g / maxK * 100, 1) + '%',
+      weightPoints: pts,
+      weightArea: pts + ' 320,96 0,96',
+      insightStats: [
+        { value: '5/7', vi: 'ngày trong mục tiêu', en: 'days on target', color: 'var(--fpt-blue)' },
+        { value: '−2.9', vi: 'kg trong 6 tuần', en: 'weight change', color: 'var(--fpt-green)' },
+        { value: '84%', vi: 'bữa ăn được ghi', en: 'logging streak', color: 'var(--text-strong)' },
+        { value: '31%', vi: 'AI cần sửa khẩu phần', en: 'AI corrections', color: 'var(--fpt-orange)' },
+      ],
+      remainProtein: Math.max(0, Math.round(goal.protein - tot.p)),
+
+      // profile
+      goalDeltaKg: R(p.weightKg - p.targetWeightKg, 1),
+      notifRows: [
+        ['p70', 'Khi dùng 70% ngân sách', 'At 70% of budget'],
+        ['p90', 'Khi gần mục tiêu (90%)', 'Near target'],
+        ['reached', 'Khi đạt mục tiêu', 'Target reached'],
+        ['remind', 'Nhắc ghi bữa ăn', 'Meal logging reminder'],
+        ['daily', 'Tóm tắt hằng ngày', 'Daily summary'],
+      ].map((n, i, arr) => ({
+        vi: n[1], en: n[2], on: st.notifs[n[0]], sep: sepFor(i, arr.length),
+        toggle: () => this.setState({ notifs: Object.assign({}, st.notifs, { [n[0]]: !st.notifs[n[0]] }) }),
+      })),
+      privacyLines: [
+        { text: 'Dữ liệu Apple Health, lịch sử bữa ăn và cân nặng chỉ lưu trên thiết bị.' },
+        { text: 'Ảnh bữa ăn chỉ dùng tạm thời để phân tích rồi được xoá.' },
+        { text: 'Không bán, không dùng dữ liệu sức khỏe cho quảng cáo.' },
+      ],
+
+      // toast + tabs
+      hasToast: !!st.toast, toastText: st.toast,
+      tabDash: sc === 'dashboard' ? blue : 'var(--neutral-400)',
+      tabHist: sc === 'history' ? blue : 'var(--neutral-400)',
+      tabIns: sc === 'insights' ? blue : 'var(--neutral-400)',
+      tabProf: sc === 'profile' ? blue : 'var(--neutral-400)',
+    };
+  }
+}
+</script>
+</body>
+</html>
