@@ -22,7 +22,18 @@ struct ScanFlowView: View {
             if let model {
                 switch model.state {
                 case .idle:
-                    chooser(model: model)
+                    // §6.6 is the camera screen. Where there is no capture
+                    // device — the simulator, an iPad without one — the picker
+                    // chooser stands in, since it is the only path that works.
+                    if CameraCaptureView.isAvailable {
+                        CameraCaptureView(
+                            onImage: { data in Task { await model.analyze(image: data) } },
+                            onManualEntry: { dismiss() },
+                            onClose: { dismiss() }
+                        )
+                    } else {
+                        chooser(model: model)
+                    }
                 case .analyzing:
                     AnalyzingView()
                 case .review:
@@ -87,15 +98,6 @@ struct ScanFlowView: View {
                     .background(DS.orange, in: RoundedRectangle(cornerRadius: DS.rControl, style: .continuous))
             }
             .accessibilityIdentifier("scan.pickPhoto")
-
-            // §6.6 draws a camera shutter. AVFoundation has no camera in the
-            // simulator, so this is offered only where one exists rather than
-            // shipping a button that cannot work.
-            if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                Text("Chụp ảnh trực tiếp sẽ được bổ sung sau.")
-                    .hfStyle(HFType.subLabel)
-                    .foregroundStyle(DS.textSubtle)
-            }
 
             Spacer(minLength: 0)
         }

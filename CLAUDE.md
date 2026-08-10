@@ -262,9 +262,31 @@ Still open: which hosted provider to use (Gemini free tier per `plan.md` §31,
 or a hosted Qwen such as DashScope / OpenRouter), and the key.
 
 **What is unverified:** every real provider. The mock path is exercised end to
-end on both sides; Gemini and Qwen have never been run. Camera capture is also
-unbuilt — AVFoundation has no camera in the simulator, so the flow uses
-`PhotosPicker`, which is the part that can actually be tested here.
+end on both sides; Gemini and Qwen have never been run.
+
+`CameraCaptureView` is §6.6 in full — `AVCaptureSession`, the preview layer, the
+1:1 viewfinder — but **none of it has ever run.** The simulator reports no
+camera, so `ScanFlowView` shows the `PhotosPicker` chooser instead and the camera
+path is never entered; only the picker path is covered by tests. It needs a
+device build to be believed. Two things about it worth knowing before that:
+
+- Photo **orientation** is left to EXIF. `fileDataRepresentation()` writes the
+  orientation tag rather than rotating pixels, so a decoder that ignores EXIF
+  sees the food sideways. Nothing here rotates the buffer, because rotation
+  logic that cannot be run is more likely to make it worse than better.
+- `NSCameraUsageDescription` is in `Config/Info.plist`. Without it the app
+  **crashes** the first time it touches the camera, on device, with no warning
+  from the simulator.
+- **The simulator lies about having a camera.**
+  `UIImagePickerController.isSourceTypeAvailable(.camera)` returns `true` there,
+  which sent the whole flow into the camera screen and broke the scan UI test.
+  It is asking about the legacy UIKit picker, not about capture. The gate that
+  is actually true is `CameraCaptureView.isAvailable`, which asks AVFoundation
+  for the very device the session needs — and that is `nil` on a simulator.
+
+The session is stopped on `.background` and restarted on `.active`: iOS stops it
+when the app leaves the foreground and `.task` does not run again on return, so
+without that the viewfinder comes back black after a call or a lock.
 
 Sending meal photos to a hosted service is what `plan.md` §20 and §21 already
 describe — the image is analysed and deleted, never persisted server-side. The
@@ -280,7 +302,7 @@ What was measured on this machine, so it need not be rediscovered:
 | `ollama`, `llama-server`, `lms` | none installed |
 | Model API keys | none set (no `GEMINI_*`, `DASHSCOPE_*`, `HF_TOKEN`, …) |
 | Hardware | M1 Pro, 32 GB — can run a quantised 3B–7B VLM if one is installed |
-| Camera | **AVFoundation does not work in the simulator.** `PhotosPicker` does, so the picker path is testable and the capture path is not. |
+| Camera | **AVFoundation does not work in the simulator.** `PhotosPicker` does, so the picker path is testable and the capture path is not — §6.6 is written but can only be verified on a device. |
 
 So with the machine as it stands, only a mock provider can be verified end to
 end. The Qwen and Gemini paths can be written but not run. Plan the work that
