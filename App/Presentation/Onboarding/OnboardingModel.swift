@@ -133,6 +133,19 @@ final class OnboardingModel {
         }
     }
 
+    /// Seeds the form from a stored profile so the same four steps can edit it
+    /// (§6.13 routes here). Without this, editing would silently reset every
+    /// field to the first-run defaults.
+    func apply(_ profile: UserProfile) {
+        age = profile.age
+        heightCm = profile.heightCm
+        weightKg = profile.weightKg
+        biologicalSex = profile.biologicalSex
+        activityLevel = profile.activityLevel
+        goal = profile.goal
+        targetWeightKg = profile.targetWeightKg
+    }
+
     // MARK: Step navigation
 
     /// Which of the four steps is showing. The shell is one screen (§6.2).

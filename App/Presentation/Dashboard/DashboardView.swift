@@ -6,6 +6,9 @@ import SwiftUI
 /// Cards on the cool page background rather than a grouped `List`: section
 /// headings sit *outside* the cards, which a `List` cannot express.
 struct DashboardView: View {
+    /// §6.4's avatar opens Profile, which is a sibling tab.
+    let onProfileTap: () -> Void
+
     @Environment(DependencyContainer.self) private var container
     @State private var model: DashboardModel?
     @State private var entryType: MealType?
@@ -13,24 +16,22 @@ struct DashboardView: View {
     @State private var toast: String?
 
     var body: some View {
-        NavigationStack {
-            Group {
-                if let model, let summary = model.summary {
-                    content(model: model, summary: summary)
-                } else if let message = model?.errorMessage {
-                    ContentUnavailableView(
-                        "Không tải được hôm nay",
-                        systemImage: "exclamationmark.triangle",
-                        description: Text(message)
-                    )
-                } else {
-                    ProgressView()
-                }
+        Group {
+            if let model, let summary = model.summary {
+                content(model: model, summary: summary)
+            } else if let message = model?.errorMessage {
+                ContentUnavailableView(
+                    "Không tải được hôm nay",
+                    systemImage: "exclamationmark.triangle",
+                    description: Text(message)
+                )
+            } else {
+                ProgressView()
             }
-            .background(DS.surfacePage)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar(.hidden, for: .navigationBar)
         }
+        .background(DS.surfacePage)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .navigationBar)
         .task {
             if model == nil { model = container.makeDashboardModel() }
             await model?.load()
@@ -101,16 +102,16 @@ struct DashboardView: View {
             }
             Spacer(minLength: DS.s3)
 
-            NavigationLink {
-                MealHistoryView()
-            } label: {
-                Image(systemName: "clock")
-                    .font(.system(size: 16, weight: .semibold))
+            Button(action: onProfileTap) {
+                Image(systemName: "person.fill")
+                    .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(DS.blue700)
                     .frame(width: 38, height: 38)
                     .background(DS.blue100, in: Circle())
             }
-            .accessibilityLabel("Lịch sử, History")
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("dashboard.profile")
+            .accessibilityLabel("Hồ sơ, Profile")
         }
     }
 

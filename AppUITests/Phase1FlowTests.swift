@@ -66,15 +66,34 @@ final class Phase1FlowTests: XCTestCase {
         XCTAssertFalse(app.buttons["health.allow"].isEnabled)
     }
 
-    func testEveryScreenHasAWayBack() {
-        // History is pushed from the dashboard but draws its own header, so it
-        // needs an explicit back control — swipe-from-edge is not an
-        // affordance anyone can see.
+    func testTabBarReachesEveryRootAndBack() {
         reachDashboard()
-        app.buttons["Lịch sử, History"].tap()
-        XCTAssertTrue(app.buttons["history.back"].waitForExistence(timeout: 30))
-        app.buttons["history.back"].tap()
+
+        // Each root is reachable and returnable — the earlier back-chip
+        // stopgap on History is gone now that it is a tab root.
+        app.buttons["tab.history"].tap()
+        XCTAssertTrue(app.staticTexts["Bữa ăn đã ghi"].waitForExistence(timeout: 30))
+
+        app.buttons["tab.profile"].tap()
+        XCTAssertTrue(app.buttons["profile.editBody"].waitForExistence(timeout: 30))
+
+        app.buttons["tab.today"].tap()
         XCTAssertTrue(app.buttons["mealRow.breakfast"].waitForExistence(timeout: 30))
+    }
+
+    func testProfileShowsTheDerivedTargetAndOpensEditing() {
+        reachDashboard()
+
+        // §6.4's avatar opens Profile, which is a sibling tab.
+        app.buttons["dashboard.profile"].tap()
+        XCTAssertTrue(app.buttons["profile.editBody"].waitForExistence(timeout: 30))
+        XCTAssertTrue(app.staticTexts["Mỗi ngày, \(vn(2378)) kcal"].exists)
+
+        // Editing reuses the onboarding steps, seeded from the stored profile
+        // rather than reset to the first-run defaults.
+        app.buttons["profile.editBody"].tap()
+        XCTAssertTrue(app.staticTexts["onboarding.counter"].waitForExistence(timeout: 30))
+        XCTAssertEqual(app.textFields["field.weight"].value as? String ?? "", "70")
     }
 
     func testAppleHealthCanReturnToTheGoalStep() {

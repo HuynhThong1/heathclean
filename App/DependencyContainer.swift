@@ -68,6 +68,14 @@ final class DependencyContainer {
         MealEntryModel(type: type, date: date, saveMeal: saveMeal)
     }
 
+    func makeProfileModel() -> ProfileModel {
+        ProfileModel(
+            userRepository: userRepository,
+            healthRepository: healthRepository,
+            calculateBMI: calculateBMI
+        )
+    }
+
     func makeMealDetailModel(
         type: MealType,
         meals: [Meal],

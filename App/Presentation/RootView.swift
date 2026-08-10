@@ -19,7 +19,7 @@ struct RootView: View {
             case .none:
                 ProgressView()
             case .some(true):
-                DashboardView()
+                MainTabView()
             case .some(false):
                 firstRun
             }

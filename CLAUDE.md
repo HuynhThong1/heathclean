@@ -197,21 +197,31 @@ folder is actually named `design_handoff_healthclean/`.)
 
 Order of work is §13 of the handoff README: tokens + six shared views →
 Dashboard → Onboarding → Manual/Detail/History → HealthKit → Scan/Review →
-Insights/Profile → localization. Items 1–5 are done, plus Welcome (§6.1). The
-next items are camera/AI (§6.6–6.9) and Insights/Profile (§6.12–6.13).
+Insights/Profile → localization. Items 1–5 are done, plus Welcome (§6.1),
+Profile (§6.13) and the tab bar. What remains is camera/AI (§6.6–6.9),
+Insights (§6.12) and the localization pass.
+
+Profile omits §6.13's five notification switches: there is no notification
+system, and a switch that schedules nothing is a broken control. Add them with
+UserNotifications, not before. It also shows a generic avatar rather than
+initials, because nothing in the app ever asks for a name.
 
 **Insights is blocked**: §6.12 wants a six-week weight series, but the Domain
 has no weight history — `UserProfile` holds one current value. Building it means
 adding a weight-log entity and repository first.
 
-Screens that draw their own header instead of a navigation bar must supply
-`HFBackChip` themselves — hiding the navigation bar also hides the system back
-button, and edge-swipe alone is not a visible affordance. History and Apple
-Health both needed one. `testEveryScreenHasAWayBack` guards this.
+Hiding the navigation bar also hides the system back button, so any screen that
+draws its own header must supply `HFBackChip` — edge-swipe is not a visible
+affordance. This applies to pushed and sheet-presented screens; tab roots do not
+need one. Apple Health still uses it.
 
-Two things §6 specifies that are deliberately absent: Welcome's "Tôi đã có tài
+The §5 tab bar exists over the three roots that have something to open — Hôm
+nay, Lịch sử, Tôi. Two things §5 specifies are absent: Welcome's "Tôi đã có tài
 khoản" link, because there is no account system to sign into and a link that
-cannot do what it says is worse than none; and the §5 tab bar. Three of its four destinations
+cannot do what it says is worse than none; the "Thống kê" tab, which needs
+weight history the Domain does not hold; and the raised orange scan action,
+which needs the AI pipeline. A tab that opens nothing is worse than an absent
+one. Three of its four destinations
 (Camera, Insights, Profile) do not exist yet, so a tab bar now would ship three
 dead tabs. History is reached from the dashboard header instead.
 
