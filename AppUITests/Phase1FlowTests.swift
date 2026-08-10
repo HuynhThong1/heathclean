@@ -15,6 +15,13 @@ final class Phase1FlowTests: XCTestCase {
         app = XCUIApplication()
         app.launchArguments = ["-uiTesting"]
         app.launch()
+        startOnboarding()
+    }
+
+    /// First run opens on Welcome (§5); every test below starts from step 1.
+    private func startOnboarding() {
+        XCTAssertTrue(app.buttons["welcome.start"].waitForExistence(timeout: 30))
+        app.buttons["welcome.start"].tap()
     }
 
     func testOnboardingWalksFourStepsAndProducesTargets() {
@@ -37,6 +44,26 @@ final class Phase1FlowTests: XCTestCase {
             "\(vn(2378)) kcal mỗi ngày"
         )
         XCTAssertTrue(app.staticTexts["Đạm, \(vn(112)) gam"].exists)
+    }
+
+    func testAppleHealthScreenFollowsTheLastStep() {
+        XCTAssertTrue(app.buttons["onboarding.cta"].waitForExistence(timeout: 30))
+        for _ in 0..<4 {
+            app.buttons["onboarding.cta"].tap()
+        }
+
+        // The switches express which types will be asked for (§6.3).
+        XCTAssertTrue(app.switches["health.steps"].waitForExistence(timeout: 30))
+        XCTAssertTrue(app.switches["health.sleep"].exists)
+        XCTAssertTrue(app.buttons["health.allow"].isEnabled)
+
+        app.switches["health.steps"].tap()
+        app.switches["health.energy"].tap()
+        app.switches["health.sleep"].tap()
+        app.switches["health.weight"].tap()
+
+        // Nothing left to ask for, so there is nothing to allow.
+        XCTAssertFalse(app.buttons["health.allow"].isEnabled)
     }
 
     func testGoingBackReturnsToTheEarlierStep() {
@@ -146,15 +173,18 @@ final class Phase1FlowTests: XCTestCase {
         return formatter.string(from: NSNumber(value: value)) ?? "\(value)"
     }
 
-    /// Walks all four steps with the defaults. The final step is left via
-    /// "Để sau" rather than the primary CTA — the CTA opens the system
+    /// Walks Welcome → all four steps → the Apple Health screen, leaving it via
+    /// "Để sau" rather than "Cho phép truy cập" — the latter opens the system
     /// HealthKit sheet, which cannot be driven reliably from a test.
     private func reachDashboard() {
         XCTAssertTrue(app.buttons["onboarding.cta"].waitForExistence(timeout: 30))
-        for _ in 0..<3 {
+        for _ in 0..<4 {
             app.buttons["onboarding.cta"].tap()
         }
-        app.buttons["onboarding.skipHealth"].tap()
+        // Step 4 hands off to the Apple Health screen; "Để sau" leaves it
+        // without opening the system sheet, which a test cannot drive.
+        XCTAssertTrue(app.buttons["health.later"].waitForExistence(timeout: 30))
+        app.buttons["health.later"].tap()
         XCTAssertTrue(app.buttons["mealRow.breakfast"].waitForExistence(timeout: 30))
     }
 

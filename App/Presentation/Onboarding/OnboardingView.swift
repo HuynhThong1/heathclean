@@ -3,22 +3,12 @@ import SwiftUI
 
 /// Onboarding — handoff §6.2. One shell, four steps, a sticky bottom CTA.
 struct OnboardingView: View {
-    @Environment(DependencyContainer.self) private var container
-    @State private var model: OnboardingModel?
-
+    let model: OnboardingModel
+    /// Called once the profile is saved; the caller moves on to Apple Health.
     let onComplete: () -> Void
 
     var body: some View {
-        Group {
-            if let model {
-                OnboardingShell(model: model, onComplete: onComplete)
-            } else {
-                ProgressView()
-            }
-        }
-        .onAppear {
-            if model == nil { model = container.makeOnboardingModel() }
-        }
+        OnboardingShell(model: model, onComplete: onComplete)
     }
 }
 
@@ -130,16 +120,9 @@ private struct OnboardingShell: View {
                 Task { await primaryAction() }
             }
             .buttonStyle(.ds(.primary, size: .large, fullWidth: true))
-            .disabled(!model.canAdvance || model.isSaving || model.isConnectingHealth)
+            .disabled(!model.canAdvance || model.isSaving)
             .accessibilityIdentifier("onboarding.cta")
 
-            if model.step == .result {
-                Button("Để sau") {
-                    Task { await finish() }
-                }
-                .buttonStyle(.ds(.ghost, size: .medium))
-                .accessibilityIdentifier("onboarding.skipHealth")
-            }
         }
         .padding(.horizontal, 20)
         .padding(.top, DS.s3)
@@ -155,12 +138,12 @@ private struct OnboardingShell: View {
             model.advance()
             return
         }
-        await model.connectAppleHealth()
         await finish()
     }
 
     /// The profile is saved once, at the end — nothing is persisted while the
-    /// user is still moving between steps.
+    /// user is still moving between steps. Apple Health is asked for on its own
+    /// screen afterwards (§5).
     private func finish() async {
         if await model.save() { onComplete() }
     }

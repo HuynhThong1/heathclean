@@ -1,19 +1,27 @@
 import SwiftUI
 
-/// Sends the user to onboarding until a profile exists, then to the dashboard.
+/// Runs the first-run flow from §5 — Welcome → Onboarding → Apple Health →
+/// Dashboard — and goes straight to the dashboard once a profile exists.
 struct RootView: View {
     @Environment(DependencyContainer.self) private var container
+
     @State private var hasProfile: Bool?
+    @State private var stage: FirstRunStage = .welcome
+    @State private var onboardingModel: OnboardingModel?
+
+    private enum FirstRunStage {
+        case welcome, onboarding, health
+    }
 
     var body: some View {
         Group {
             switch hasProfile {
             case .none:
                 ProgressView()
-            case .some(false):
-                OnboardingView { hasProfile = true }
             case .some(true):
                 DashboardView()
+            case .some(false):
+                firstRun
             }
         }
         .task {
@@ -25,5 +33,26 @@ struct RootView: View {
                 hasProfile = false
             }
         }
+    }
+
+    @ViewBuilder
+    private var firstRun: some View {
+        switch stage {
+        case .welcome:
+            WelcomeView { stage = .onboarding }
+        case .onboarding:
+            OnboardingView(model: onboardingOrNew) { stage = .health }
+        case .health:
+            // Carries the same model, so the types chosen here belong to the
+            // profile that was just filled in.
+            HealthPermissionView(model: onboardingOrNew) { hasProfile = true }
+        }
+    }
+
+    private var onboardingOrNew: OnboardingModel {
+        if let onboardingModel { return onboardingModel }
+        let model = container.makeOnboardingModel()
+        Task { @MainActor in onboardingModel = model }
+        return model
     }
 }

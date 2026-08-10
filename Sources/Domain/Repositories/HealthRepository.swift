@@ -19,7 +19,10 @@ public protocol HealthRepository: Sendable {
     /// Presents the system permission sheet the first time; subsequent calls
     /// return without prompting. Succeeding does **not** imply access was
     /// granted.
-    func requestAuthorization() async throws
+    ///
+    /// `types` is what the user asked for on the permission screen — the sheet
+    /// lists exactly these, so it can never show a type they were not shown.
+    func requestAuthorization(for types: Set<HealthDataType>) async throws
 
     func snapshot(on date: Date) async throws -> HealthSnapshot
 }

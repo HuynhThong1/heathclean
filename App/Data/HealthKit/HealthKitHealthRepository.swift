@@ -14,26 +14,29 @@ import HealthKit
 actor HealthKitHealthRepository: HealthRepository {
     private let store = HKHealthStore()
 
-    /// Everything the app reads. Nothing is written — nutrition write-back is a
-    /// later phase.
-    private static var readTypes: Set<HKObjectType> {
-        var types: Set<HKObjectType> = []
-        for identifier: HKQuantityTypeIdentifier in [
-            .stepCount, .activeEnergyBurned, .basalEnergyBurned, .bodyMass, .height
-        ] {
-            types.insert(HKQuantityType(identifier))
+    /// Maps the app's own vocabulary onto HealthKit's. Nothing is written —
+    /// nutrition write-back is a later phase.
+    private static func objectTypes(for types: Set<HealthDataType>) -> Set<HKObjectType> {
+        var result: Set<HKObjectType> = []
+        for type in types {
+            switch type {
+            case .steps: result.insert(HKQuantityType(.stepCount))
+            case .activeEnergy: result.insert(HKQuantityType(.activeEnergyBurned))
+            case .sleep: result.insert(HKCategoryType(.sleepAnalysis))
+            case .bodyMass: result.insert(HKQuantityType(.bodyMass))
+            }
         }
-        types.insert(HKCategoryType(.sleepAnalysis))
-        return types
+        return result
     }
 
     nonisolated var isAvailable: Bool {
         HKHealthStore.isHealthDataAvailable()
     }
 
-    func requestAuthorization() async throws {
+    func requestAuthorization(for types: Set<HealthDataType>) async throws {
         guard isAvailable else { throw HealthUnavailableReason.notSupportedOnThisDevice }
-        try await store.requestAuthorization(toShare: [], read: Self.readTypes)
+        guard !types.isEmpty else { return }
+        try await store.requestAuthorization(toShare: [], read: Self.objectTypes(for: types))
     }
 
     func snapshot(on date: Date) async throws -> HealthSnapshot {
@@ -47,19 +50,15 @@ actor HealthKitHealthRepository: HealthRepository {
         // Sendable date bounds rather than sharing one across child tasks.
         async let steps = sum(.stepCount, unit: .count(), from: start, to: end)
         async let active = sum(.activeEnergyBurned, unit: .kilocalorie(), from: start, to: end)
-        async let basal = sum(.basalEnergyBurned, unit: .kilocalorie(), from: start, to: end)
         async let sleep = sleepDuration(from: start, to: end)
         async let weight = mostRecent(.bodyMass, unit: .gramUnit(with: .kilo))
-        async let height = mostRecent(.height, unit: .meterUnit(with: .centi))
 
         return await HealthSnapshot(
             date: start,
             steps: steps.map { Int($0.rounded()) },
             activeEnergyKcal: active,
-            basalEnergyKcal: basal,
             sleepDuration: sleep,
-            weightKg: weight,
-            heightCm: height
+            weightKg: weight
         )
     }
 

@@ -197,10 +197,16 @@ folder is actually named `design_handoff_healthclean/`.)
 
 Order of work is §13 of the handoff README: tokens + six shared views →
 Dashboard → Onboarding → Manual/Detail/History → HealthKit → Scan/Review →
-Insights/Profile → localization. Items 1–4 are done; the next unstarted item is
-the Apple Health permissions screen (§6.3), then camera/AI (§6.6–6.9).
+Insights/Profile → localization. Items 1–5 are done, plus Welcome (§6.1). The
+next items are camera/AI (§6.6–6.9) and Insights/Profile (§6.12–6.13).
 
-Not built, and deliberately so: the §5 tab bar. Three of its four destinations
+**Insights is blocked**: §6.12 wants a six-week weight series, but the Domain
+has no weight history — `UserProfile` holds one current value. Building it means
+adding a weight-log entity and repository first.
+
+Two things §6 specifies that are deliberately absent: Welcome's "Tôi đã có tài
+khoản" link, because there is no account system to sign into and a link that
+cannot do what it says is worse than none; and the §5 tab bar. Three of its four destinations
 (Camera, Insights, Profile) do not exist yet, so a tab bar now would ship three
 dead tabs. History is reached from the dashboard header instead.
 

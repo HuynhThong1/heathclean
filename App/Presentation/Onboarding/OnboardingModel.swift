@@ -42,6 +42,18 @@ final class OnboardingModel {
     /// access was granted — HealthKit deliberately never reveals that for reads.
     private(set) var hasRequestedHealth = false
 
+    /// Which types the permission screen will ask for. All on by default —
+    /// the user turns off what they would rather not share.
+    var requestedHealthKinds: Set<HealthDataKind> = Set(HealthDataKind.allCases)
+
+    func setHealthKind(_ kind: HealthDataKind, requested: Bool) {
+        if requested {
+            requestedHealthKinds.insert(kind)
+        } else {
+            requestedHealthKinds.remove(kind)
+        }
+    }
+
     /// Connecting is optional; declining must not block onboarding, so a failure
     /// here is recorded and moved past rather than surfaced as an error.
     func connectAppleHealth() async {
@@ -50,7 +62,7 @@ final class OnboardingModel {
         defer { isConnectingHealth = false }
 
         do {
-            try await healthRepository.requestAuthorization()
+            try await healthRepository.requestAuthorization(for: requestedDataTypes)
             // Only on success. Declining inside the sheet still succeeds here —
             // HealthKit never reports a denied read — but a thrown error means
             // the request itself failed, and claiming "connected" would be a lie.
@@ -63,6 +75,10 @@ final class OnboardingModel {
     /// Shown only when the request itself failed; declining inside the sheet is
     /// silent by design.
     var healthMessage: String?
+
+    private var requestedDataTypes: Set<HealthDataType> {
+        Set(requestedHealthKinds.flatMap(\.dataTypes))
+    }
 
     var profile: UserProfile {
         UserProfile(
