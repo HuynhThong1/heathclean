@@ -28,6 +28,7 @@ struct MealHistoryView: View {
             }
         }
         .navigationTitle("History")
+        .dsScreen()
         .task {
             if model == nil { model = container.makeMealHistoryModel() }
             await model?.load()
@@ -39,18 +40,26 @@ struct MealHistoryView: View {
             ForEach(model.days) { day in
                 Section {
                     ForEach(day.meals) { meal in
-                        LabeledContent(meal.type.title) {
-                            Text("\(Int(meal.calories.rounded())) kcal")
-                                .foregroundStyle(.secondary)
-                        }
+                        DSValueRow(
+                            name: meal.type.title,
+                            value: "\(Int(meal.calories.rounded())) kcal",
+                            valueColor: DSColor.brandOnSurface
+                        )
                     }
                 } header: {
-                    LabeledContent {
-                        Text("\(Int(day.calories.rounded())) kcal")
-                    } label: {
+                    HStack {
                         Text(day.date, format: .dateTime.weekday(.abbreviated).day().month())
+                            .font(DSType.overline)
+                            .kerning(1.44)
+                            .foregroundStyle(DSColor.textMuted)
+                        Spacer()
+                        DSBadge(
+                            text: "\(Int(day.calories.rounded()).formatted()) kcal",
+                            tone: .blue
+                        )
                     }
                 }
+                .dsRow()
             }
         }
     }

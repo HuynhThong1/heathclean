@@ -27,8 +27,10 @@ private struct OnboardingForm: View {
 
     var body: some View {
         Form {
-            Section("About you") {
+            Section {
                 Stepper("Age: \(model.age)", value: $model.age, in: 13...120)
+                    .font(DSType.body)
+                    .foregroundStyle(DSColor.textBody)
 
                 MeasurementField(title: "Height", unit: "cm", value: $model.heightCm)
                 MeasurementField(title: "Weight", unit: "kg", value: $model.weightKg)
@@ -38,18 +40,26 @@ private struct OnboardingForm: View {
                     Text("Female").tag(BiologicalSex?.some(.female))
                     Text("Male").tag(BiologicalSex?.some(.male))
                 }
+                .font(DSType.body)
+            } header: {
+                DSSectionHeader(title: "About you")
             }
+            .dsRow()
 
-            Section("Activity") {
+            Section {
                 Picker("Typical week", selection: $model.activityLevel) {
                     ForEach(ActivityLevel.allCases, id: \.self) { level in
                         Text(level.title).tag(level)
                     }
                 }
                 .pickerStyle(.menu)
+                .font(DSType.body)
+            } header: {
+                DSSectionHeader(title: "Activity")
             }
+            .dsRow()
 
-            Section("Goal") {
+            Section {
                 Picker("I want to", selection: $model.goal) {
                     ForEach(WeightGoal.allCases, id: \.self) { goal in
                         Text(goal.title).tag(goal)
@@ -67,54 +77,41 @@ private struct OnboardingForm: View {
                         )
                     )
                 }
+            } header: {
+                DSSectionHeader(title: "Goal")
             }
+            .dsRow()
 
-            Section("Your daily targets") {
-                LabeledContent("BMI") {
-                    Text("\(model.bmi.value, format: .number.precision(.fractionLength(1)))")
-                        + Text(" · \(model.bmi.category.title)")
-                }
-                LabeledContent("Calories") {
-                    Text("\(Int(model.nutritionGoal.calories.rounded())) kcal")
-                }
-                LabeledContent("Protein") {
-                    Text("\(Int(model.nutritionGoal.protein.rounded())) g")
-                }
-                LabeledContent("Carbs") {
-                    Text("\(Int(model.nutritionGoal.carbohydrates.rounded())) g")
-                }
-                LabeledContent("Fat") {
-                    Text("\(Int(model.nutritionGoal.fat.rounded())) g")
-                }
-
-                if model.usesEstimatedSexConstant {
-                    Text(
-                        """
-                        Without a biological sex these targets use an average \
-                        estimate, so they are less precise.
-                        """
-                    )
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                }
+            Section {
+                targetsCard
+                    .listRowInsets(EdgeInsets(top: Space.s2, leading: Space.s4,
+                                              bottom: Space.s2, trailing: Space.s4))
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+            } header: {
+                DSSectionHeader(title: "Your daily targets")
             }
 
             Section {
                 Text("BMI is health context only — your calorie target comes from your age, height, weight, activity and goal.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .font(DSType.caption)
+                    .foregroundStyle(DSColor.textMuted)
             }
+            .dsRow()
         }
         .navigationTitle("Set up")
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button("Continue") {
-                    Task {
-                        if await model.save() { onComplete() }
-                    }
+        .dsScreen()
+        .safeAreaInset(edge: .bottom) {
+            Button("Continue") {
+                Task {
+                    if await model.save() { onComplete() }
                 }
-                .disabled(!model.isValid || model.isSaving)
             }
+            .buttonStyle(.ds(.primary, size: .large, fullWidth: true))
+            .disabled(!model.isValid || model.isSaving)
+            .padding(.horizontal, Space.s4)
+            .padding(.vertical, Space.s3)
+            .background(.bar)
         }
         .alert(
             "Something went wrong",
@@ -128,6 +125,45 @@ private struct OnboardingForm: View {
             Text(model.errorMessage ?? "")
         }
     }
+
+    private var targetsCard: some View {
+        DSCard(padding: .medium, accent: .blue) {
+            VStack(alignment: .leading, spacing: Space.s3) {
+                DSStatBlock(
+                    value: Int(model.nutritionGoal.calories.rounded()).formatted(),
+                    label: "kcal per day",
+                    tone: .blue
+                )
+
+                Divider().overlay(DSColor.borderSubtle)
+
+                BMILine(bmi: model.bmi)
+                MacroLine(name: "Protein", grams: model.nutritionGoal.protein)
+                MacroLine(name: "Carbs", grams: model.nutritionGoal.carbohydrates)
+                MacroLine(name: "Fat", grams: model.nutritionGoal.fat)
+
+                if model.usesEstimatedSexConstant {
+                    Text(
+                        """
+                        Without a biological sex these targets use an average \
+                        estimate, so they are less precise.
+                        """
+                    )
+                    .font(DSType.caption)
+                    .foregroundStyle(DSColor.textMuted)
+                }
+            }
+        }
+    }
+}
+
+private struct MacroLine: View {
+    let name: String
+    let grams: Double
+
+    var body: some View {
+        DSValueRow(name: name, value: "\(Int(grams.rounded())) g")
+    }
 }
 
 private struct MeasurementField: View {
@@ -136,14 +172,22 @@ private struct MeasurementField: View {
     @Binding var value: Double
 
     var body: some View {
-        LabeledContent(title) {
+        LabeledContent {
             HStack {
                 TextField(title, value: $value, format: .number)
                     .keyboardType(.decimalPad)
                     .multilineTextAlignment(.trailing)
+                    .font(DSType.bodyMedium)
+                    .foregroundStyle(DSColor.textStrong)
+                    .accessibilityIdentifier("field.\(title.lowercased())")
                 Text(unit)
-                    .foregroundStyle(.secondary)
+                    .font(DSType.bodySmall)
+                    .foregroundStyle(DSColor.textSubtle)
             }
+        } label: {
+            Text(title)
+                .font(DSType.body)
+                .foregroundStyle(DSColor.textBody)
         }
     }
 }

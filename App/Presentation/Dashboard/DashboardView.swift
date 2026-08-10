@@ -22,6 +22,7 @@ struct DashboardView: View {
                 }
             }
             .navigationTitle("Today")
+            .dsScreen()
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
@@ -46,78 +47,84 @@ struct DashboardView: View {
     private func content(model: DashboardModel, summary: DailyNutritionSummary) -> some View {
         List {
             Section {
-                CalorieRing(summary: summary, status: model.status)
-                if let message = model.statusMessage {
-                    Text(message)
-                        .font(.subheadline)
-                        .foregroundStyle(model.status.tint)
-                }
+                budgetCard(model: model, summary: summary)
+                    .listRowInsets(EdgeInsets(top: Space.s2, leading: Space.s4,
+                                              bottom: Space.s2, trailing: Space.s4))
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
             }
 
-            Section("Macros") {
+            Section {
                 MacroRow(name: "Protein", consumed: summary.consumedProtein, target: summary.goal.protein)
                 MacroRow(name: "Carbs", consumed: summary.consumedCarbohydrates, target: summary.goal.carbohydrates)
                 MacroRow(name: "Fat", consumed: summary.consumedFat, target: summary.goal.fat)
+            } header: {
+                DSSectionHeader(title: "Macros")
             }
+            .dsRow()
 
-            Section("Meals") {
+            Section {
                 ForEach(MealType.allCases, id: \.self) { type in
                     let calories = summary.meals(of: type).reduce(0) { $0 + $1.calories }
                     Button {
                         entryType = type
                     } label: {
-                        LabeledContent(type.title) {
-                            Text("\(Int(calories.rounded())) kcal")
-                                .foregroundStyle(.secondary)
-                        }
-                        // Without this the gap between label and value is dead
-                        // space and the row only responds on the text itself.
-                        .contentShape(Rectangle())
+                        MealRow(title: type.title, calories: calories)
                     }
                     .buttonStyle(.plain)
                     .accessibilityIdentifier("mealRow.\(type.rawValue)")
                 }
+            } header: {
+                DSSectionHeader(title: "Meals")
             }
+            .dsRow()
 
             if let bmi = model.bmi {
-                Section("Health context") {
-                    LabeledContent("BMI") {
-                        Text("\(bmi.value, format: .number.precision(.fractionLength(1))) · \(bmi.category.title)")
-                    }
+                Section {
+                    BMILine(bmi: bmi)
+                } header: {
+                    DSSectionHeader(title: "Health context")
+                }
+                .dsRow()
+            }
+        }
+    }
+
+    private func budgetCard(model: DashboardModel, summary: DailyNutritionSummary) -> some View {
+        DSCard(padding: .medium, accent: model.status.accent) {
+            VStack(alignment: .leading, spacing: Space.s4) {
+                DSStatBlock(
+                    value: Int(summary.consumedCalories.rounded()).formatted(),
+                    label: "kcal eaten",
+                    sublabel: remainingLabel(for: summary),
+                    tone: model.status.statTone
+                )
+
+                ProgressView(value: min(summary.budget.fractionUsed, 1))
+                    .tint(model.status.tint)
+
+                HStack {
+                    Text("Target")
+                        .font(DSType.bodySmall)
+                        .foregroundStyle(DSColor.textMuted)
+                    Spacer()
+                    Text("\(Int(summary.goal.calories.rounded()).formatted()) kcal")
+                        .font(DSType.bodySmallSemibold)
+                        .foregroundStyle(DSColor.textBody)
+                }
+
+                if let message = model.statusMessage {
+                    Text(message)
+                        .font(DSType.bodySmall)
+                        .foregroundStyle(DSColor.textBody)
+                        .padding(.top, Space.s1)
                 }
             }
         }
     }
-}
 
-private struct CalorieRing: View {
-    let summary: DailyNutritionSummary
-    let status: CalorieBudgetStatus
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("\(Int(summary.consumedCalories.rounded())) kcal eaten")
-                .font(.title2.weight(.semibold))
-
-            Text(remainingLabel)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-
-            ProgressView(value: min(summary.budget.fractionUsed, 1))
-                .tint(status.tint)
-
-            LabeledContent("Target") {
-                Text("\(Int(summary.goal.calories.rounded())) kcal")
-            }
-            .font(.footnote)
-        }
-        .padding(.vertical, 4)
-    }
-
-    private var remainingLabel: String {
+    private func remainingLabel(for summary: DailyNutritionSummary) -> String {
         let remaining = summary.budget.remaining
-        // `.formatted()` so this groups digits the same way the interpolated
-        // totals elsewhere on this screen do.
         let magnitude = Int(abs(remaining).rounded()).formatted()
         return remaining >= 0 ? "\(magnitude) kcal remaining" : "\(magnitude) kcal over"
     }
@@ -129,9 +136,25 @@ private struct MacroRow: View {
     let target: Double
 
     var body: some View {
-        LabeledContent(name) {
-            Text("\(Int(consumed.rounded())) / \(Int(target.rounded())) g")
-                .foregroundStyle(.secondary)
-        }
+        DSValueRow(
+            name: name,
+            value: "\(Int(consumed.rounded())) / \(Int(target.rounded())) g"
+        )
+    }
+}
+
+private struct MealRow: View {
+    let title: String
+    let calories: Double
+
+    var body: some View {
+        DSValueRow(
+            name: title,
+            value: "\(Int(calories.rounded())) kcal",
+            valueColor: calories > 0 ? DSColor.brandOnSurface : DSColor.textSubtle
+        )
+        // Without this the gap between label and value is dead space and the
+        // row only responds on the text itself.
+        .contentShape(Rectangle())
     }
 }

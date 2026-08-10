@@ -34,6 +34,14 @@ extension BMICategory {
         case .obese: "Obese"
         }
     }
+
+    var badgeTone: DSBadgeTone {
+        switch self {
+        case .normal: .green
+        case .underweight, .overweight: .orange
+        case .obese: .danger
+        }
+    }
 }
 
 extension MealType {
@@ -48,13 +56,39 @@ extension MealType {
 }
 
 extension CalorieBudgetStatus {
-    /// Neutral, informative colouring — nothing alarming.
+    /// Neutral, informative colouring — nothing alarming. Maps onto the brand
+    /// ramp: green while there is room, the orange accent as the target nears,
+    /// the danger red only once it is met or passed.
     var tint: Color {
         switch self {
-        case .normal: .green
-        case .informUser: .green
+        case .normal, .informUser: DSColor.success
+        case .nearTarget: DSColor.actionAccent
+        case .reached, .exceeded: DSColor.danger
+        }
+    }
+
+    var badgeTone: DSBadgeTone {
+        switch self {
+        case .normal, .informUser: .green
         case .nearTarget: .orange
-        case .reached, .exceeded: .red
+        case .reached, .exceeded: .danger
+        }
+    }
+
+    var statTone: DSStatTone {
+        switch self {
+        case .normal, .informUser: .blue
+        case .nearTarget: .orange
+        case .reached, .exceeded: .neutral
+        }
+    }
+
+    /// The card's top accent bar follows the same progression.
+    var accent: DSAccent {
+        switch self {
+        case .normal, .informUser: .blue
+        case .nearTarget: .orange
+        case .reached, .exceeded: .orange
         }
     }
 }

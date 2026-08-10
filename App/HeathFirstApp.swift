@@ -9,6 +9,10 @@ struct HeathFirstApp: App {
         inMemory: ProcessInfo.processInfo.arguments.contains("-uiTesting")
     )
 
+    init() {
+        DSAppearance.apply()
+    }
+
     var body: some Scene {
         WindowGroup {
             RootView()

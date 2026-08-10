@@ -98,6 +98,38 @@ Warning thresholds (`EvaluateCalorieBudgetUseCase`) are boundary-sensitive:
 - Totals render with locale grouping ("2.378"), so build expected strings with
   `.formatted()` rather than hardcoding separators.
 
+### Design system
+
+`App/Presentation/DesignSystem/` is a hand port of the **FPT IS Design System**
+(Claude Design project `77c3dd08-7139-46b4-9df4-1a11e3ad2130`). Claude Design
+emits React + CSS, so nothing is generated — tokens were transcribed and
+components re-implemented from their `.jsx`/`.d.ts` specs.
+
+- `DSPalette` holds the raw ramps verbatim and is **absolute** — never varies by
+  appearance. `DSColor` is the semantic layer and is what app code should use.
+- **The dark palette is invented.** The source design system is light-only; every
+  dark value in `DSColor` was derived here and is documented in that file's
+  header. Replace it wholesale if the brand team ever publishes real values.
+- Type steps carry `relativeTo:` so Dynamic Type still scales them; the 64pt and
+  52pt display steps are dropped as unusable on phone.
+- Web-only concepts are deliberately absent: hover states (`:hover` became the
+  pressed state), focus rings, and `--container-max`.
+- The brand font is bundled in `App/Resources/Fonts/` and registered through
+  `Config/Info.plist`. That plist must stay **outside** `App/` — inside the
+  file-system-synchronized group it gets copied as a resource *and* generated,
+  which fails the build with "Multiple commands produce Info.plist".
+- Navigation titles need `DSAppearance.apply()` (UIKit proxy); `navigationTitle`
+  ignores `.font`.
+
+When adding a label/value row, use `DSValueRow` rather than `LabeledContent`.
+`LabeledContent` merges its two sides into one accessibility element only with a
+plain string label inside a `Form`/`List` — with styled labels or inside a card
+it splits into two, which both hurts VoiceOver and breaks UI tests that match
+strings like `"Protein, 112 g"`. `DSValueRow` and `DSStatBlock` declare the
+merge explicitly, including `.accessibilityAddTraits(.isStaticText)` — without
+that trait a combined element is exposed as an `otherElement` and
+`app.staticTexts[…]` will not find it.
+
 ### SwiftUI gotcha already hit once
 
 A `Button` with `.buttonStyle(.plain)` wrapping a `LabeledContent` only hit-tests

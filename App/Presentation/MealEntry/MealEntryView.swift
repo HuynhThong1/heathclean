@@ -20,9 +20,11 @@ struct MealEntryView: View {
                 }
             }
             .navigationTitle(type.title)
+            .dsScreen()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
+                        .font(DSType.bodyMedium)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
@@ -33,6 +35,7 @@ struct MealEntryView: View {
                             }
                         }
                     }
+                    .font(DSType.bodySemibold)
                     .disabled(model?.canSave != true)
                 }
             }
@@ -48,32 +51,41 @@ struct MealEntryView: View {
         @Bindable var model = model
 
         return Form {
-            ForEach($model.drafts) { $draft in
+            ForEach(Array($model.drafts.enumerated()), id: \.element.id) { index, $draft in
                 Section {
                     TextField("Food", text: $draft.name)
+                        .font(DSType.bodyMedium)
+                        .foregroundStyle(DSColor.textStrong)
                         .accessibilityIdentifier("field.food")
                     NumberField(title: "Weight", unit: "g", value: $draft.weightGrams)
                     NumberField(title: "Calories", unit: "kcal", value: $draft.calories)
                     NumberField(title: "Protein", unit: "g", value: $draft.protein)
                     NumberField(title: "Carbs", unit: "g", value: $draft.carbohydrates)
                     NumberField(title: "Fat", unit: "g", value: $draft.fat)
+                } header: {
+                    DSSectionHeader(title: model.drafts.count > 1 ? "Food \(index + 1)" : "Food")
                 }
+                .dsRow()
             }
             .onDelete { model.removeDrafts(at: $0) }
 
             Section {
-                Button("Add another food", systemImage: "plus") {
+                Button {
                     model.addDraft()
+                } label: {
+                    Label("Add another food", systemImage: "plus")
+                        .font(DSType.bodyMedium)
+                        .foregroundStyle(DSColor.brandOnSurface)
                 }
             }
+            .dsRow()
 
-            Section("Meal total") {
-                LabeledContent("Calories") {
-                    Text("\(Int(model.totalCalories.rounded())) kcal")
-                }
-                LabeledContent("Protein") { Text("\(Int(model.totalProtein.rounded())) g") }
-                LabeledContent("Carbs") { Text("\(Int(model.totalCarbohydrates.rounded())) g") }
-                LabeledContent("Fat") { Text("\(Int(model.totalFat.rounded())) g") }
+            Section {
+                totalsCard(model: model)
+                    .listRowInsets(EdgeInsets(top: Space.s2, leading: Space.s4,
+                                              bottom: Space.s2, trailing: Space.s4))
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
             }
         }
         .alert(
@@ -88,6 +100,31 @@ struct MealEntryView: View {
             Text(model.errorMessage ?? "")
         }
     }
+
+    private func totalsCard(model: MealEntryModel) -> some View {
+        DSCard(padding: .medium, accent: .green) {
+            VStack(alignment: .leading, spacing: Space.s3) {
+                DSStatBlock(
+                    value: Int(model.totalCalories.rounded()).formatted(),
+                    label: "kcal in this meal",
+                    tone: .green
+                )
+                Divider().overlay(DSColor.borderSubtle)
+                TotalLine(name: "Protein", grams: model.totalProtein)
+                TotalLine(name: "Carbs", grams: model.totalCarbohydrates)
+                TotalLine(name: "Fat", grams: model.totalFat)
+            }
+        }
+    }
+}
+
+private struct TotalLine: View {
+    let name: String
+    let grams: Double
+
+    var body: some View {
+        DSValueRow(name: name, value: "\(Int(grams.rounded())) g")
+    }
 }
 
 private struct NumberField: View {
@@ -96,15 +133,22 @@ private struct NumberField: View {
     @Binding var value: Double
 
     var body: some View {
-        LabeledContent(title) {
+        LabeledContent {
             HStack {
                 TextField(title, value: $value, format: .number)
                     .keyboardType(.decimalPad)
                     .multilineTextAlignment(.trailing)
+                    .font(DSType.bodyMedium)
+                    .foregroundStyle(DSColor.textStrong)
                     .accessibilityIdentifier("field.\(title.lowercased())")
                 Text(unit)
-                    .foregroundStyle(.secondary)
+                    .font(DSType.bodySmall)
+                    .foregroundStyle(DSColor.textSubtle)
             }
+        } label: {
+            Text(title)
+                .font(DSType.body)
+                .foregroundStyle(DSColor.textBody)
         }
     }
 }
