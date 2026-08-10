@@ -225,6 +225,29 @@ one. Three of its four destinations
 (Camera, Insights, Profile) do not exist yet, so a tab bar now would ship three
 dead tabs. History is reached from the dashboard header instead.
 
+### Camera / AI (§6.6–6.9) — not started, and what blocks it
+
+Two decisions are open and were not made: whether the FastAPI gateway lives in
+this repo under `backend/` or in its own, and which model to verify against.
+
+What was measured on this machine, so it need not be rediscovered:
+
+| | |
+| --- | --- |
+| Python | 3.9.6 (system). `mlx-vlm` may need 3.10+ — check before planning MLX. |
+| `uv` / `poetry` | absent; only `pip3` |
+| `ollama`, `llama-server`, `lms` | none installed |
+| Model API keys | none set (no `GEMINI_*`, `DASHSCOPE_*`, `HF_TOKEN`, …) |
+| Hardware | M1 Pro, 32 GB — can run a quantised 3B–7B VLM if one is installed |
+| Camera | **AVFoundation does not work in the simulator.** `PhotosPicker` does, so the picker path is testable and the capture path is not. |
+
+So with the machine as it stands, only a mock provider can be verified end to
+end. The Qwen and Gemini paths can be written but not run. Plan the work that
+way, or install a model first.
+
+The contract to build against is §25 (`POST /v1/meals/analyze`) and the Domain
+seam is `FoodRecognitionRepository` from `plan.md` §9 — which does not exist yet.
+
 ### Localization
 
 `App/Resources/Localizable.xcstrings` holds every user-facing string; the
