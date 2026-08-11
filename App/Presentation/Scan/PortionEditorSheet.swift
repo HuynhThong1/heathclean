@@ -27,6 +27,34 @@ struct PortionEditorSheet: View {
     private var canSupply: Bool { (Double(caloriesText) ?? 0) > 0 }
 
     var body: some View {
+        // The sheet is a fixed detent, every font in it scales with Dynamic
+        // Type, and the footer is the only way to commit or delete the portion —
+        // so at larger text sizes "Xoá món" / "Xong" was cut off at the sheet
+        // edge with no way to reach it. The body scrolls; the footer is pinned
+        // outside the scroll view so it cannot be the part that disappears.
+        VStack(alignment: .leading, spacing: 0) {
+            ScrollView {
+                editorBody
+            }
+            .scrollBounceBehavior(.basedOnSize)
+
+            footer
+                .padding(.top, DS.s4)
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 18)
+        .padding(.bottom, 34)
+        // The sheet's own backing, not the content's: this sheet also has a fixed
+        // detent, so any height the content does not use would otherwise show the
+        // system background through — near-black in dark mode.
+        .presentationBackground(DS.surfaceCard)
+        .onAppear {
+            name = food.name
+            grams = food.weightGrams
+        }
+    }
+
+    private var editorBody: some View {
         VStack(alignment: .leading, spacing: DS.s4) {
             Capsule()
                 .fill(DS.neutral300)
@@ -75,27 +103,33 @@ struct PortionEditorSheet: View {
                 nutritionEntry
             }
 
-            Spacer(minLength: 0)
-
-            HStack(spacing: DS.s3) {
-                Button("Xoá món") { onRemove() }
-                    .buttonStyle(.ds(.secondary, size: .large))
-                    .accessibilityIdentifier("portion.remove")
-                Button("Xong") {
-                    onRename(name)
-                    onDone()
-                }
-                .buttonStyle(.ds(.primary, size: .large, fullWidth: true))
-                .accessibilityIdentifier("portion.done")
-            }
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 18)
-        .padding(.bottom, 34)
-        .background(DS.surfaceCard)
-        .onAppear {
-            name = food.name
-            grams = food.weightGrams
+    }
+
+    private var footer: some View {
+        HStack(spacing: DS.s3) {
+            Button("Xoá món") { onRemove() }
+                .buttonStyle(.ds(.secondary, size: .large))
+                .accessibilityIdentifier("portion.remove")
+            Button("Xong") {
+                // Applies the nutrition before closing, so what was typed is what
+                // takes effect. Only when the food is unresolved and calories were
+                // actually entered — supplying zeros would mark an unknown food
+                // "resolved" at 0 kcal, which is exactly the silent under-count
+                // the unresolved state exists to prevent.
+                if !food.isResolved, canSupply {
+                    onSupplyNutrition(
+                        Double(caloriesText) ?? 0,
+                        Double(proteinText) ?? 0,
+                        Double(carbsText) ?? 0,
+                        Double(fatText) ?? 0
+                    )
+                }
+                onRename(name)
+                onDone()
+            }
+            .buttonStyle(.ds(.primary, size: .large, fullWidth: true))
+            .accessibilityIdentifier("portion.done")
         }
     }
 
@@ -106,7 +140,7 @@ struct PortionEditorSheet: View {
         VStack(alignment: .leading, spacing: DS.s3) {
             LabelPair(vi: "Chưa có trong cơ sở dữ liệu", en: "Not in the database")
 
-            Text("Nhập dinh dưỡng cho \(VNNumber.int(grams)) g đang hiển thị. Đổi khẩu phần sau đó vẫn tính lại đúng.")
+            Text("Nhập kcal cho \(VNNumber.int(grams)) g đang hiển thị rồi bấm Xong. Đổi khẩu phần sau đó vẫn tính lại đúng.")
                 .hfStyle(HFType.subLabel)
                 .foregroundStyle(DS.textSubtle)
                 .fixedSize(horizontal: false, vertical: true)
@@ -118,17 +152,11 @@ struct PortionEditorSheet: View {
                 nutrientField("Béo g", text: $fatText, id: "fat")
             }
 
-            Button("Dùng số này") {
-                onSupplyNutrition(
-                    Double(caloriesText) ?? 0,
-                    Double(proteinText) ?? 0,
-                    Double(carbsText) ?? 0,
-                    Double(fatText) ?? 0
-                )
-            }
-            .buttonStyle(.ds(.primary, size: .medium, fullWidth: true))
-            .disabled(!canSupply)
-            .accessibilityIdentifier("portion.supplyNutrition")
+            // No "apply" button of its own. There was one, and it was a trap:
+            // it sat inside the scroll view below the fields, so the keyboard and
+            // the pinned footer hid it — leaving "Xong" as the only button in
+            // sight, and "Xong" threw the typed figures away. Two buttons where
+            // the first is invisible is worse than one. "Xong" applies them now.
         }
         .padding(DS.s3)
         .background(DS.surfaceSunken, in: RoundedRectangle(cornerRadius: 12, style: .continuous))

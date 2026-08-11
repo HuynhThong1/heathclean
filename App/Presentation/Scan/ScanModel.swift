@@ -18,7 +18,11 @@ final class ScanModel {
     private(set) var isSaving = false
     var editingFoodID: RecognizedFood.ID?
 
-    let type: MealType
+    /// `var` because §6.8 lets the review screen change it. It has to be
+    /// changeable there: the scan opens on `MealType.suggestedForNow()`, so a
+    /// late lunch scanned at 15:10 arrives as "Bữa phụ", and without this the
+    /// only way out was to cancel the scan and come back at a different hour.
+    private(set) var type: MealType
     private let recognitionRepository: any FoodRecognitionRepository
     private let saveMeal: SaveMealUseCase
 
@@ -94,6 +98,14 @@ final class ScanModel {
         else { return }
         result.foods[index] = result.foods[index].scaled(toWeightGrams: grams)
         state = .review(result)
+    }
+
+    /// §6.8's "đổi bữa": breakfast → lunch → snack → dinner → breakfast. The
+    /// wrap comes from `MealType.allCases`, which is declared in that order.
+    func cycleMealType() {
+        let all = MealType.allCases
+        guard let index = all.firstIndex(of: type) else { return }
+        type = all[(index + 1) % all.count]
     }
 
     /// Nutrition the database did not have, for the portion currently shown.

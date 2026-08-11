@@ -82,10 +82,18 @@ struct ScanReviewView: View {
 
             Spacer(minLength: DS.s2)
 
-            Button("Quét lại") { onRescan() }
-                .font(.custom(DSFontName.semibold, size: 13))
-                .foregroundStyle(DS.blue)
-                .accessibilityIdentifier("scan.rescan")
+            // Styled inside the label and `.plain`, or the default style tints it
+            // system blue instead of `DS.blue`; 44pt tall because §4 sets that
+            // floor and this was an 18pt strip in the hardest corner to hit.
+            Button { onRescan() } label: {
+                Text("Quét lại")
+                    .font(.custom(DSFontName.semibold, size: 13))
+                    .foregroundStyle(DS.blue)
+                    .frame(minWidth: 44, minHeight: 44, alignment: .trailing)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("scan.rescan")
         }
     }
 
@@ -159,15 +167,24 @@ struct ScanReviewView: View {
 
     private var bottomBar: some View {
         HStack(spacing: DS.s3) {
-            VStack(spacing: 1) {
-                Text(model.type.vi)
-                    .font(.custom(DSFontName.bold, size: 13))
-                    .foregroundStyle(DS.textStrong)
-                Text("bữa ăn")
-                    .hfStyle(HFType.subLabel)
-                    .foregroundStyle(DS.textSubtle)
+            // §6.8's 104pt meal-type button. It was inert text captioned
+            // "bữa ăn", which named the value without offering to change it.
+            Button { model.cycleMealType() } label: {
+                VStack(spacing: 1) {
+                    Text(model.type.vi)
+                        .font(.custom(DSFontName.bold, size: 13))
+                        .foregroundStyle(DS.textStrong)
+                    Text("đổi bữa")
+                        .hfStyle(HFType.subLabel)
+                        .foregroundStyle(DS.blue)
+                }
+                .frame(width: 104)
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
             }
-            .frame(width: 104)
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("scan.mealType")
+            .accessibilityLabel("Bữa ăn: \(model.type.vi). Chạm để đổi bữa.")
 
             Button("Xác nhận bữa ăn") {
                 Task {

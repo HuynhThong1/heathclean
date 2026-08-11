@@ -13,6 +13,16 @@ struct ScanFlowView: View {
 
     @State private var model: ScanModel?
     @State private var pickerItem: PhotosPickerItem?
+    /// Manual entry is presented from inside the scan flow rather than by
+    /// dismissing it first: closing a full-screen cover and opening a sheet in
+    /// the same update races, and this keeps one owner for the saved-meal
+    /// callback either way the user logs the meal.
+    @State private var manualEntry: MealType?
+    /// A captured photo waiting to be confirmed. Not in the handoff, and worth
+    /// the extra step: analysing is one request against a small daily free-tier
+    /// quota — exhausted once already — so sending a blurry frame costs a call
+    /// and returns a wrong dish. Confirming is cheap; re-earning the quota is not.
+    @State private var pendingImage: Data?
 
     let type: MealType
     let onSaved: (Double) -> Void
@@ -21,14 +31,27 @@ struct ScanFlowView: View {
         Group {
             if let model {
                 switch model.state {
+                case .idle where pendingImage != nil:
+                    CapturedPhotoView(
+                        imageData: pendingImage ?? Data(),
+                        onUse: { data in
+                            pendingImage = nil
+                            Task { await model.analyze(image: data) }
+                        },
+                        onRetake: { pendingImage = nil }
+                    )
                 case .idle:
                     // §6.6 is the camera screen. Where there is no capture
                     // device — the simulator, an iPad without one — the picker
                     // chooser stands in, since it is the only path that works.
                     if CameraCaptureView.isAvailable {
                         CameraCaptureView(
-                            onImage: { data in Task { await model.analyze(image: data) } },
-                            onManualEntry: { dismiss() },
+                            onImage: { data in pendingImage = data },
+                            // §6.6's third control is manual entry, not an exit.
+                            // It used to call `dismiss()`, so the button simply
+                            // closed the scan and did nothing — a control that
+                            // looks like it goes somewhere and does not.
+                            onManualEntry: { manualEntry = type },
                             onClose: { dismiss() }
                         )
                     } else {
@@ -57,13 +80,22 @@ struct ScanFlowView: View {
         .onAppear {
             if model == nil { model = container.makeScanModel(type: type) }
         }
+        .sheet(item: $manualEntry) { type in
+            MealEntryView(type: type) { calories in
+                onSaved(calories)
+                dismiss()
+            }
+        }
         .onChange(of: pickerItem) { _, item in
-            guard let item, let model else { return }
+            guard let item else { return }
             Task {
                 guard let data = try? await item.loadTransferable(type: Data.self) else {
                     return
                 }
-                await model.analyze(image: data)
+                // Through the same confirmation step as a capture: a photo picked
+                // from the library can be just as wrong for the job, and one code
+                // path means one place where the quota is spent.
+                pendingImage = data
             }
         }
     }

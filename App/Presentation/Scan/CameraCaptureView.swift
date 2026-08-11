@@ -147,7 +147,7 @@ struct CameraCaptureView: View {
     private var controls: some View {
         HStack {
             PhotosPicker(selection: $pickerItem, matching: .images) {
-                SideButton(symbol: "photo.on.rectangle")
+                SideButton(symbol: "photo.on.rectangle", caption: "Thư viện")
             }
             .accessibilityIdentifier("camera.library")
             .accessibilityLabel("Chọn ảnh từ thư viện")
@@ -156,12 +156,16 @@ struct CameraCaptureView: View {
             shutter
             Spacer(minLength: 0)
 
+            // `keyboard` with a caption, not `square.and.pencil`. §8 assigns the
+            // pencil to "Edit portion", so on this screen it read as "edit
+            // something" rather than "type the meal instead" — the icon alone was
+            // not answerable, which is how it got asked about.
             Button(action: onManualEntry) {
-                SideButton(symbol: "square.and.pencil")
+                SideButton(symbol: "keyboard", caption: "Nhập tay")
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("camera.manual")
-            .accessibilityLabel("Nhập tay")
+            .accessibilityLabel("Nhập tay thay vì chụp ảnh")
         }
     }
 
@@ -191,13 +195,20 @@ struct CameraCaptureView: View {
 /// than a method because `PhotosPicker`'s label is built outside the main actor.
 private struct SideButton: View {
     let symbol: String
+    let caption: String
 
     var body: some View {
-        Image(systemName: symbol)
-            .font(.system(size: 19, weight: .medium))
-            .foregroundStyle(.white)
-            .frame(width: 52, height: 52)
-            .background(Color.white.opacity(0.14), in: Circle())
+        VStack(spacing: 5) {
+            Image(systemName: symbol)
+                .font(.system(size: 19, weight: .medium))
+                .foregroundStyle(.white)
+                .frame(width: 52, height: 52)
+                .background(Color.white.opacity(0.14), in: Circle())
+            Text(caption)
+                .font(.custom(DSFontName.medium, size: 11))
+                .foregroundStyle(.white.opacity(0.72))
+        }
+        .accessibilityHidden(true) // the Button around this carries the label
     }
 }
 
