@@ -2,9 +2,26 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>com.apple.developer.healthkit</key>
-	<true/>
-	<key>com.apple.developer.healthkit.access</key>
-	<array/>
+	<!--
+	  TEMPORARY — HealthKit is removed so a free Apple ID (Personal Team) can
+	  provision a device build for camera testing. HealthKit is not in the
+	  capability set free provisioning grants, and leaving it here fails the
+	  build at provisioning rather than at compile time.
+
+	  The build setting CODE_SIGN_ENTITLEMENTS = Config/HeathFirst.entitlements
+	  is deliberately left in place — losing it is the failure mode CLAUDE.md
+	  warns about. Only the keys were taken out.
+
+	  RESTORE before shipping, or as soon as a paid Developer Program account
+	  is used, by putting these back:
+
+	      <key>com.apple.developer.healthkit</key>
+	      <true/>
+	      <key>com.apple.developer.healthkit.access</key>
+	      <array/>
+
+	  Until then Apple Health reads fail on device and the onboarding screen
+	  says "Apple Health hiện không khả dụng" — handled, not a crash.
+	-->
 </dict>
 </plist>

@@ -118,6 +118,14 @@ Warning thresholds (`EvaluateCalorieBudgetUseCase`) are boundary-sensitive:
   `CODE_SIGN_ENTITLEMENTS = Config/HeathFirst.entitlements` and
   `NSHealthShareUsageDescription` in `Config/Info.plist`. The app reads only —
   there is no `NSHealthUpdateUsageDescription` and `toShare` is empty.
+- **The HealthKit entitlement is currently taken out**, so that a free Apple ID
+  (Personal Team) can provision a device build for camera testing — free
+  provisioning does not grant HealthKit, and it fails at provisioning rather
+  than at compile time. The *build setting* is untouched; only the keys were
+  removed, and `Config/HeathFirst.entitlements` carries the exact text to put
+  back. Health reads therefore fail on device and onboarding says "Apple Health
+  hiện không khả dụng" — the error path, not a crash. **Restore the keys before
+  shipping or as soon as a paid account is used.**
 - Checking embedded entitlements on a simulator build is misleading:
   `HeathFirst.app.xcent` is empty (no provisioning profile configured), while
   `HeathFirst.app-Simulated.xcent` is the one actually used and does carry
