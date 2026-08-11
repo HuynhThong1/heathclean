@@ -65,6 +65,36 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
         abs(weightGrams - originalWeightGrams) > 0.5
     }
 
+    /// Nutrition the database did not have, supplied by the user for the weight
+    /// currently shown.
+    ///
+    /// Without this an unresolved food is a dead end: the gateway sets
+    /// `isResolved`, renaming in the client cannot flip it, and confirming is
+    /// blocked while anything is unresolved — so a dish outside the nutrition
+    /// table could never be saved at all. `plan.md` §2 gives nutrition to the
+    /// database, but says nothing about a dish the database does not know; this
+    /// is that branch, and §4's "always correctable" is the reason it belongs to
+    /// the user rather than to a guess.
+    ///
+    /// `originalWeightGrams` is deliberately left alone. It is what §22 measures
+    /// a portion correction against, and `scaled(toWeightGrams:)` already
+    /// derives its baseline from the current values — so figures entered here
+    /// rescale correctly without pretending the model estimated this weight.
+    public func resolved(
+        calories: Double,
+        protein: Double,
+        carbohydrates: Double,
+        fat: Double
+    ) -> RecognizedFood {
+        var copy = self
+        copy.calories = max(0, calories)
+        copy.protein = max(0, protein)
+        copy.carbohydrates = max(0, carbohydrates)
+        copy.fat = max(0, fat)
+        copy.isResolved = true
+        return copy
+    }
+
     /// Nutrition scales linearly with weight, so a correction rescales it from
     /// the original estimate rather than compounding earlier edits.
     public func scaled(toWeightGrams newWeight: Double) -> RecognizedFood {

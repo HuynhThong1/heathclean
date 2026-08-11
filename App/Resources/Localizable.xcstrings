@@ -246,6 +246,9 @@
     "Chưa có quyền dùng máy ảnh." : {
 
     },
+    "Chưa có trong cơ sở dữ liệu — mở món này để nhập dinh dưỡng." : {
+
+    },
     "Chưa có trong cơ sở dữ liệu — sửa tên hoặc bỏ món này." : {
 
     },
@@ -274,6 +277,9 @@
 
     },
     "DINH DƯỠNG HẰNG NGÀY" : {
+
+    },
+    "Dùng số này" : {
 
     },
     "Dịch vụ nhận diện đang bận. Thử lại sau ít phút." : {
@@ -385,6 +391,9 @@
           }
         }
       }
+    },
+    "Nhập dinh dưỡng cho %@ g đang hiển thị. Đổi khẩu phần sau đó vẫn tính lại đúng." : {
+
     },
     "Nhập tay" : {
 

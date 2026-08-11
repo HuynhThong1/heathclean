@@ -35,13 +35,24 @@ struct ScanReviewView: View {
                 food: food,
                 onChange: { model.updateWeight(of: food.id, to: $0) },
                 onRename: { model.rename(food.id, to: $0) },
+                onSupplyNutrition: { calories, protein, carbs, fat in
+                    model.supplyNutrition(
+                        for: food.id,
+                        calories: calories,
+                        protein: protein,
+                        carbohydrates: carbs,
+                        fat: fat
+                    )
+                },
                 onRemove: {
                     model.remove(food.id)
                     model.editingFoodID = nil
                 },
                 onDone: { model.editingFoodID = nil }
             )
-            .presentationDetents([.height(460)])
+            // Taller when the nutrition entry is showing, or its Dùng số này
+            // button sits below the sheet.
+            .presentationDetents([.height(food.isResolved ? 460 : 620)])
             .presentationCornerRadius(DS.rSheet)
         }
     }
@@ -229,7 +240,9 @@ private struct ScanItemCard: View {
                     .hfStyle(HFType.subLabel)
                     .foregroundStyle(DS.textSubtle)
             } else {
-                Text("Chưa có trong cơ sở dữ liệu — sửa tên hoặc bỏ món này.")
+                // Points at the portion editor, where nutrition can be entered.
+                // It used to say "sửa tên", which does not resolve anything.
+                Text("Chưa có trong cơ sở dữ liệu — mở món này để nhập dinh dưỡng.")
                     .hfStyle(HFType.subLabel)
                     .foregroundStyle(DS.orange700)
             }

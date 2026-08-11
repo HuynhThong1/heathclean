@@ -7,13 +7,24 @@ struct PortionEditorSheet: View {
     let food: RecognizedFood
     let onChange: (Double) -> Void
     let onRename: (String) -> Void
+    /// Nutrition for a food the database did not have, entered for the portion
+    /// currently shown.
+    let onSupplyNutrition: (Double, Double, Double, Double) -> Void
     let onRemove: () -> Void
     let onDone: () -> Void
 
     @State private var name: String = ""
     @State private var grams: Double = 0
 
+    @State private var caloriesText: String = ""
+    @State private var proteinText: String = ""
+    @State private var carbsText: String = ""
+    @State private var fatText: String = ""
+
     private let presets: [Double] = [50, 100, 150, 200]
+
+    /// Calories are what makes an item usable; the macros can be left blank.
+    private var canSupply: Bool { (Double(caloriesText) ?? 0) > 0 }
 
     var body: some View {
         VStack(alignment: .leading, spacing: DS.s4) {
@@ -60,6 +71,10 @@ struct PortionEditorSheet: View {
                 }
             }
 
+            if !food.isResolved {
+                nutritionEntry
+            }
+
             Spacer(minLength: 0)
 
             HStack(spacing: DS.s3) {
@@ -81,6 +96,61 @@ struct PortionEditorSheet: View {
         .onAppear {
             name = food.name
             grams = food.weightGrams
+        }
+    }
+
+    /// Shown only for a food the nutrition database did not have. Without it the
+    /// item can never resolve — renaming does not re-look-it-up — and confirming
+    /// stays blocked, so the scan would be a dead end.
+    private var nutritionEntry: some View {
+        VStack(alignment: .leading, spacing: DS.s3) {
+            LabelPair(vi: "Chưa có trong cơ sở dữ liệu", en: "Not in the database")
+
+            Text("Nhập dinh dưỡng cho \(VNNumber.int(grams)) g đang hiển thị. Đổi khẩu phần sau đó vẫn tính lại đúng.")
+                .hfStyle(HFType.subLabel)
+                .foregroundStyle(DS.textSubtle)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: DS.s2) {
+                nutrientField("kcal", text: $caloriesText, id: "calories")
+                nutrientField("Đạm g", text: $proteinText, id: "protein")
+                nutrientField("Tinh bột g", text: $carbsText, id: "carbs")
+                nutrientField("Béo g", text: $fatText, id: "fat")
+            }
+
+            Button("Dùng số này") {
+                onSupplyNutrition(
+                    Double(caloriesText) ?? 0,
+                    Double(proteinText) ?? 0,
+                    Double(carbsText) ?? 0,
+                    Double(fatText) ?? 0
+                )
+            }
+            .buttonStyle(.ds(.primary, size: .medium, fullWidth: true))
+            .disabled(!canSupply)
+            .accessibilityIdentifier("portion.supplyNutrition")
+        }
+        .padding(DS.s3)
+        .background(DS.surfaceSunken, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+
+    private func nutrientField(
+        _ placeholder: String,
+        text: Binding<String>,
+        id: String
+    ) -> some View {
+        VStack(spacing: 2) {
+            TextField(placeholder, text: text)
+                .keyboardType(.decimalPad)
+                .multilineTextAlignment(.center)
+                .font(.custom(DSFontName.bold, size: 15))
+                .foregroundStyle(DS.textStrong)
+                .frame(height: 44)
+                .background(DS.surfaceCard, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .accessibilityIdentifier("portion.field.\(id)")
+            Text(placeholder)
+                .hfStyle(HFType.subLabel)
+                .foregroundStyle(DS.textSubtle)
         }
     }
 

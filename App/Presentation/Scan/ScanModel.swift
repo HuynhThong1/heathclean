@@ -58,7 +58,9 @@ final class ScanModel {
         guard let result, !isSaving else { return nil }
         if result.foods.isEmpty { return "Không nhận ra món nào. Thử chụp lại hoặc nhập tay." }
         if result.foods.contains(where: { !$0.isResolved }) {
-            return "Sửa hoặc bỏ món chưa rõ trước khi lưu"
+            // Names the action that actually works. It used to say "sửa", which
+            // invited renaming — and renaming never resolves anything.
+            return "Nhập dinh dưỡng hoặc bỏ món chưa rõ trước khi lưu"
         }
         return nil
     }
@@ -91,6 +93,31 @@ final class ScanModel {
               let index = result.foods.firstIndex(where: { $0.id == id })
         else { return }
         result.foods[index] = result.foods[index].scaled(toWeightGrams: grams)
+        state = .review(result)
+    }
+
+    /// Nutrition the database did not have, for the portion currently shown.
+    ///
+    /// This is the only way an unresolved food ever resolves. `rename` cannot do
+    /// it — the gateway decided `isResolved` and the client does not look names
+    /// up — so without this, confirming stays blocked forever on any dish
+    /// outside the nutrition table.
+    func supplyNutrition(
+        for id: RecognizedFood.ID,
+        calories: Double,
+        protein: Double,
+        carbohydrates: Double,
+        fat: Double
+    ) {
+        guard case var .review(result) = state,
+              let index = result.foods.firstIndex(where: { $0.id == id })
+        else { return }
+        result.foods[index] = result.foods[index].resolved(
+            calories: calories,
+            protein: protein,
+            carbohydrates: carbohydrates,
+            fat: fat
+        )
         state = .review(result)
     }
 

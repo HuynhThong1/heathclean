@@ -310,6 +310,37 @@ what ends that screen is the response arriving. The three checklist rows are
 still driven by the timer, not by real pipeline stages, because the gateway
 reports one result rather than progress.
 
+### An unresolved food, and why renaming does not fix it
+
+The gateway decides `isResolved`; the client never looks a name up. So
+`ScanModel.rename` changes a string and nothing else — and because `canConfirm`
+requires *every* food to be resolved, a dish outside the gateway's nutrition
+table could not be saved at all. The first live scan hit this immediately: the
+16-row table is small, so this is the common case, not the edge.
+
+`RecognizedFood.resolved(calories:protein:carbohydrates:fat:)` is the way out,
+reached from the portion editor. Only calories are required; the macros may be
+left blank. `plan.md` §2 gives nutrition to the database but says nothing about a
+dish the database does not know — this is that branch, and §4's "always
+correctable" is why it belongs to the user rather than to a guess.
+
+**Nutrition is entered for the portion on screen, not per 100 g**, and
+`originalWeightGrams` is deliberately *not* reset to that weight. Resetting it
+is the obvious implementation and it silently destroys `wasCorrected`, which is
+what §22 measures a portion correction against. It turns out to be unnecessary:
+`scaled(toWeightGrams:)` already derives its baseline from the current values,
+so hand-entered figures rescale correctly on their own. Two tests pin both
+halves of that.
+
+The UI copy is load-bearing here and was wrong at first. It said "sửa tên hoặc
+bỏ món này", inviting the one action that cannot work. Anything written next to
+an unresolved item has to point at the nutrition entry or at removing the item.
+
+None of this path has a UI test: reaching §6.8 means driving the system Photos
+sheet, which the suite avoids for the same reason it avoids the HealthKit sheet.
+`MockFoodRecognitionRepository` does return one unresolved food, so the path is
+exercisable by hand on a simulator.
+
 Sending meal photos to a hosted service is what `plan.md` §20 and §21 already
 describe — the image is analysed and deleted, never persisted server-side. The
 privacy line on Profile is about *health* data staying on device, which remains
