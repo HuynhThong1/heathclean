@@ -42,6 +42,9 @@
     "%@ kcal vượt mục tiêu" : {
 
     },
+    "%@ kg" : {
+
+    },
     "%@ · %@" : {
       "localizations" : {
         "vi" : {
@@ -82,6 +85,16 @@
         }
       }
     },
+    "%@, %@ gam, %@ kcal, %@" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@ gam, %3$@ kcal, %4$@"
+          }
+        }
+      }
+    },
     "%@, %@ kcal" : {
       "localizations" : {
         "vi" : {
@@ -115,13 +128,31 @@
     "%lld" : {
 
     },
+    "%lld g" : {
+
+    },
     "%lld%%" : {
+
+    },
+    "7 ngày qua" : {
 
     },
     "AI" : {
 
     },
+    "AI ANALYSIS · you confirm" : {
+
+    },
+    "AI nhận diện món và ước lượng khẩu phần. Calo do cơ sở dữ liệu dinh dưỡng tính — hãy sửa khẩu phần nếu chưa đúng." : {
+
+    },
     "AI nhận diện món ăn, cơ sở dữ liệu dinh dưỡng tính calo, và bạn là người xác nhận cuối cùng." : {
+
+    },
+    "AI ước lượng ban đầu: %@ g" : {
+
+    },
+    "Analyzing your meal" : {
 
     },
     "Apple Health hiện không khả dụng. Bạn có thể kết nối sau." : {
@@ -179,6 +210,9 @@
     "Bạn còn %@ kcal cho hôm nay." : {
 
     },
+    "Bạn vẫn có thể chọn ảnh từ thư viện." : {
+
+    },
     "Bạn đang gần mục tiêu calo hôm nay." : {
 
     },
@@ -200,13 +234,40 @@
     "CALO MỖI NGÀY" : {
 
     },
+    "Calo mỗi ngày" : {
+
+    },
     "Cho phép truy cập" : {
+
+    },
+    "Chưa có mục tiêu" : {
+
+    },
+    "Chưa có quyền dùng máy ảnh." : {
+
+    },
+    "Chưa có trong cơ sở dữ liệu — sửa tên hoặc bỏ món này." : {
 
     },
     "Chưa kết nối" : {
 
     },
+    "Chọn ảnh bữa ăn" : {
+
+    },
+    "Chọn ảnh từ thư viện" : {
+
+    },
     "Chụp bữa ăn.\nBiết ngay calo." : {
+
+    },
+    "Chụp từ trên xuống giúp ước lượng khẩu phần chính xác hơn." : {
+
+    },
+    "Chụp ảnh bữa ăn" : {
+
+    },
+    "Cân nặng" : {
 
     },
     "Có lỗi xảy ra" : {
@@ -215,10 +276,16 @@
     "DINH DƯỠNG HẰNG NGÀY" : {
 
     },
+    "Dịch vụ nhận diện đang bận. Thử lại sau ít phút." : {
+
+    },
     "HealthClean" : {
 
     },
     "HealthClean chỉ đọc những gì bạn cho phép. Ứng dụng vẫn hoạt động đầy đủ nếu bạn từ chối." : {
+
+    },
+    "Hiện tại %@ kg" : {
 
     },
     "Huỷ" : {
@@ -239,10 +306,16 @@
     "Không khả dụng trên thiết bị này" : {
 
     },
+    "Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại." : {
+
+    },
     "Không lưu được bữa ăn. Vui lòng thử lại." : {
 
     },
     "Không lưu được hồ sơ. Vui lòng thử lại." : {
+
+    },
+    "Không phân tích được ảnh. Vui lòng thử lại." : {
 
     },
     "Không tải được bữa ăn hôm nay." : {
@@ -254,6 +327,9 @@
     "Không tải được lịch sử bữa ăn." : {
 
     },
+    "Không tải được thống kê." : {
+
+    },
     "Không xoá được bữa ăn. Vui lòng thử lại." : {
 
     },
@@ -263,16 +339,28 @@
     "Kết nối Apple Health để thấy bước chân, năng lượng và giấc ngủ." : {
 
     },
+    "Kết quả AI" : {
+
+    },
     "Lưu" : {
 
     },
     "LỊCH SỬ · HISTORY" : {
 
     },
+    "Mở Cài đặt" : {
+
+    },
     "Mục tiêu giảm cân thường thấp hơn cân nặng hiện tại." : {
 
     },
     "Mục tiêu tăng cân thường cao hơn cân nặng hiện tại." : {
+
+    },
+    "Nay" : {
+
+    },
+    "Nguồn: CSDL món Việt · %@" : {
 
     },
     "Nhập calo trước khi lưu" : {
@@ -313,7 +401,19 @@
     "Quay lại" : {
 
     },
+    "Quét bữa ăn" : {
+
+    },
+    "Quét lại" : {
+
+    },
+    "T%lld" : {
+
+    },
     "THIẾT LẬP" : {
+
+    },
+    "THỐNG KÊ · INSIGHTS" : {
 
     },
     "Thao tác này không thể hoàn tác." : {
@@ -325,10 +425,22 @@
     "Thêm món khác" : {
 
     },
+    "Thử lại" : {
+
+    },
+    "Trung bình %@ kcal mỗi ngày" : {
+
+    },
     "TÔI · PROFILE" : {
 
     },
+    "Tên món" : {
+
+    },
     "TỔNG BỮA ĂN" : {
+
+    },
+    "TỔNG ƯỚC TÍNH · ESTIMATED TOTAL" : {
 
     },
     "Tổng %@ kcal" : {
@@ -340,6 +452,9 @@
     "Ví dụ: Phở bò" : {
 
     },
+    "Xong" : {
+
+    },
     "Xoá bữa ăn" : {
 
     },
@@ -349,7 +464,16 @@
     "Xoá bữa ăn này?" : {
 
     },
+    "Xoá món" : {
+
+    },
     "Xoá món %lld" : {
+
+    },
+    "Xác nhận bữa ăn" : {
+
+    },
+    "bữa ăn" : {
 
     },
     "kcal" : {
@@ -367,13 +491,44 @@
     "remaining" : {
 
     },
+    "trung bình" : {
+
+    },
+    "vs mục tiêu %@ kcal" : {
+
+    },
     "vượt mục tiêu" : {
+
+    },
+    "Đ %@ · TB %@ · B %@" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Đ %1$@ · TB %2$@ · B %3$@"
+          }
+        }
+      }
+    },
+    "Đang phân tích" : {
+
+    },
+    "Đang phân tích ảnh…" : {
 
     },
     "Đã kết nối · bước chân, năng lượng, giấc ngủ" : {
 
     },
+    "Đóng" : {
+
+    },
+    "Đặt cả đĩa ăn vào khung." : {
+
+    },
     "Để sau" : {
+
+    },
+    "Ảnh chỉ dùng để phân tích rồi xoá." : {
 
     }
   },

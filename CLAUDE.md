@@ -288,6 +288,20 @@ The session is stopped on `.background` and restarted on `.active`: iOS stops it
 when the app leaves the foreground and `.task` does not run again on return, so
 without that the viewfinder comes back black after a call or a lock.
 
+**The scan flow is the one place the app goes dark.** §6.6 (camera), §6.7
+(analysing) and §6.7's failure state all sit on `DS.scanSurface`; §6.8 (review)
+returns to the light surface, which is what the handoff draws. `DS.scanSurface`
+and `DS.scanViewfinder` live beside the camera code rather than in
+`DesignTokens.swift` because nothing else uses them. The `.ds(.ghost)` button
+style is drawn for a light surface, so the dark screens style their text actions
+inline instead of reusing it.
+
+§6.7's progress bar stops at 95% and waits. The real work is one network request
+of unknown length, so filling the bar would be a claim the app cannot make —
+what ends that screen is the response arriving. The three checklist rows are
+still driven by the timer, not by real pipeline stages, because the gateway
+reports one result rather than progress.
+
 Sending meal photos to a hosted service is what `plan.md` §20 and §21 already
 describe — the image is analysed and deleted, never persisted server-side. The
 privacy line on Profile is about *health* data staying on device, which remains

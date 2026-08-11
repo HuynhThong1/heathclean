@@ -106,61 +106,137 @@ struct ScanFlowView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 
+    /// §6.7: a failure stays on the analysing screen — so on its dark surface —
+    /// with a neutral message and the two ways out.
     private func failure(message: String, model: ScanModel) -> some View {
         VStack(spacing: DS.s4) {
             Spacer()
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 28, weight: .semibold))
-                .foregroundStyle(DS.neutral400)
+                .foregroundStyle(.white.opacity(0.45))
             Text(message)
                 .hfStyle(HFType.body)
-                .foregroundStyle(DS.textBody)
+                .foregroundStyle(.white.opacity(0.82))
                 .multilineTextAlignment(.center)
                 .accessibilityIdentifier("scan.error")
             Spacer()
+
             Button("Thử lại") { model.reset() }
                 .buttonStyle(.ds(.primary, size: .large, fullWidth: true))
+            // The ghost style is drawn for a light surface, so the text action
+            // is styled here rather than reused.
             Button("Nhập tay") { dismiss() }
-                .buttonStyle(.ds(.ghost, size: .medium))
+                .buttonStyle(.plain)
+                .font(.custom(DSFontName.semibold, size: 15))
+                .foregroundStyle(.white.opacity(0.72))
+                .frame(height: 44)
         }
         .padding(.horizontal, 20)
         .padding(.bottom, 34)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(DS.scanSurface.ignoresSafeArea())
     }
 }
 
-/// §6.7 — the analysing state. The three labels are the real pipeline stages.
+/// §6.7 — the analysing state, on §6.6's dark surface so the camera does not
+/// flash white on its way here.
 private struct AnalyzingView: View {
-    @State private var stage = 0
+    /// §6.7's prototype timing: 70ms × 25 ticks ≈ 1.8s.
+    private static let tick = Duration.milliseconds(70)
+    private static let tickCount = 25
+    /// The bar stops just short of full and waits. The real work is one network
+    /// request whose length is unknown, so filling the bar would be a claim the
+    /// app cannot make — what ends this screen is the response arriving.
+    private static let ceiling = 0.95
 
-    private let stages = [
-        "Đang nhận diện món ăn…",
-        "Đang ước lượng khẩu phần…",
-        "Đang tra cứu dinh dưỡng…"
+    @State private var progress = 0.0
+
+    private let steps = [
+        (vi: "Nhận diện món ăn", threshold: 0.30),
+        (vi: "Ước lượng khẩu phần", threshold: 0.65),
+        (vi: "Tra cứu dinh dưỡng", threshold: 0.95),
     ]
 
     var body: some View {
-        VStack(spacing: DS.s4) {
+        VStack(spacing: 0) {
             Spacer()
-            ProgressView()
-                .controlSize(.large)
-                .tint(DS.blue)
-            Text(stages[min(stage, stages.count - 1)])
-                .hfStyle(HFType.body)
-                .foregroundStyle(DS.textBody)
+
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .fill(DS.scanViewfinder)
+                .frame(width: 110, height: 110)
+                .overlay {
+                    Image(systemName: "camera.viewfinder")
+                        .font(.system(size: 40, weight: .light))
+                        .foregroundStyle(.white.opacity(0.72))
+                }
+
+            Text("Đang phân tích ảnh…")
+                .font(.custom(DSFontName.bold, size: 19))
+                .foregroundStyle(.white)
+                .padding(.top, DS.s5)
                 .accessibilityIdentifier("scan.analyzing")
-            Text("Ảnh chỉ dùng để phân tích rồi xoá.")
-                .hfStyle(HFType.subLabel)
-                .foregroundStyle(DS.textSubtle)
+            Text("Analyzing your meal")
+                .font(.custom(DSFontName.regular, size: 12.5))
+                .foregroundStyle(.white.opacity(0.45))
+                .padding(.top, 2)
+
+            progressBar
+                .padding(.top, DS.s5)
+
+            VStack(alignment: .leading, spacing: DS.s3) {
+                ForEach(steps, id: \.vi) { step in
+                    checklistRow(step.vi, isDone: progress >= step.threshold)
+                }
+            }
+            .padding(.top, DS.s6)
+
             Spacer()
+
+            Text("Ảnh chỉ dùng để phân tích rồi xoá.")
+                .font(.custom(DSFontName.regular, size: 12))
+                .foregroundStyle(.white.opacity(0.45))
+                .padding(.bottom, 34)
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(DS.scanSurface.ignoresSafeArea())
         .task {
-            // Purely presentational pacing; the real work is one request.
-            for index in stages.indices.dropFirst() {
-                try? await Task.sleep(for: .milliseconds(600))
-                stage = index
+            for step in 1...Self.tickCount {
+                try? await Task.sleep(for: Self.tick)
+                withAnimation(.linear(duration: 0.07)) {
+                    progress = Double(step) / Double(Self.tickCount) * Self.ceiling
+                }
             }
         }
+    }
+
+    private var progressBar: some View {
+        GeometryReader { geometry in
+            ZStack(alignment: .leading) {
+                Capsule().fill(.white.opacity(0.14))
+                Capsule()
+                    .fill(DS.orange)
+                    .frame(width: geometry.size.width * progress)
+            }
+        }
+        .frame(maxWidth: 260)
+        .frame(height: 5)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Đang phân tích")
+    }
+
+    private func checklistRow(_ label: String, isDone: Bool) -> some View {
+        HStack(spacing: DS.s2) {
+            Image(systemName: isDone ? "checkmark.circle.fill" : "circle")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(isDone ? DS.green : .white.opacity(0.4))
+            Text(label)
+                .font(.custom(DSFontName.medium, size: 13.5))
+                .foregroundStyle(isDone ? .white : .white.opacity(0.4))
+        }
+        .animation(DS.ease, value: isDone)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(label)
+        .accessibilityAddTraits(.isStaticText)
     }
 }
 
