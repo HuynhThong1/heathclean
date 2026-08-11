@@ -7,16 +7,16 @@ struct ProfileView: View {
     @State private var model: ProfileModel?
     @State private var isEditingProfile = false
     @State private var isShowingHealth = false
+    @AppStorage(AppAppearance.storageKey) private var appearance: AppAppearance = .light
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: DS.s5) {
-                header
-
                 if let model, let profile = model.profile, let goal = model.goal {
                     identityRow(model: model)
                     statCards(model: model, profile: profile, goal: goal)
                     settingsSection(model: model)
+                    appearanceSection
                     privacySection
                 } else {
                     ProgressView().frame(maxWidth: .infinity)
@@ -30,6 +30,15 @@ struct ProfileView: View {
         .background(DS.surfacePage)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .navigationBar)
+        // Hiding the nav bar leaves nothing masking the top inset, so the stat
+        // cards scrolled up through the clock. Same fix as the dashboard.
+        .safeAreaInset(edge: .top, spacing: 0) {
+            header
+                .padding(.horizontal, 20)
+                .padding(.top, DS.s1)
+                .padding(.bottom, DS.s3)
+                .background(DS.surfacePage)
+        }
         .task {
             if model == nil { model = container.makeProfileModel() }
             await model?.load()
@@ -48,9 +57,6 @@ struct ProfileView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: DS.s1) {
-            Text("TÔI · PROFILE")
-                .hfStyle(HFType.eyebrow)
-                .foregroundStyle(DS.textSubtle)
         }
     }
 
@@ -171,6 +177,35 @@ struct ProfileView: View {
                         detail: model.healthStatusText,
                         identifier: "profile.health"
                     ) { isShowingHealth = true }
+                }
+            }
+        }
+    }
+
+    /// Appearance is its own section rather than a row with a chevron: there is
+    /// nowhere to go, the choice is made here.
+    private var appearanceSection: some View {
+        VStack(alignment: .leading, spacing: DS.s3) {
+            Text("HIỂN THỊ")
+                .hfStyle(HFType.eyebrow)
+                .foregroundStyle(DS.textSubtle)
+
+            HFCard {
+                VStack(alignment: .leading, spacing: DS.s3) {
+                    LabelPair(vi: "Giao diện", en: "Appearance")
+
+                    Picker("Giao diện", selection: $appearance) {
+                        ForEach(AppAppearance.allCases) { option in
+                            Text(option.vi).tag(option)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .accessibilityIdentifier("profile.appearance")
+
+                    Text("Bảng màu tối được suy ra trong dự án này, không phải màu chính thức của bộ nhận diện.")
+                        .hfStyle(HFType.subLabel)
+                        .foregroundStyle(DS.textSubtle)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
         }

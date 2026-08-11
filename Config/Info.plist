@@ -15,6 +15,16 @@
 	  and private addresses only, and leaves ATS enforced everywhere else. A
 	  production gateway would be an HTTPS host and would need neither key.
 	-->
+	<!--
+	  There is deliberately no `UIUserInterfaceStyle` key here.
+
+	  It was set to Light for a while, because `DS.*` had no dark values and only
+	  `DSButtonStyle` (which reads the adaptive `DSColor` set) responded to dark
+	  mode — so the buttons moved and the screens did not. `DS.*` now has a dark
+	  palette and `AppAppearance` owns the choice, applied as
+	  `preferredColorScheme` at the app root. This key would override that and
+	  silently make the "Tối" setting do nothing.
+	-->
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsLocalNetworking</key>

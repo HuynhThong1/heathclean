@@ -168,6 +168,39 @@ merge explicitly, including `.accessibilityAddTraits(.isStaticText)` — without
 that trait a combined element is exposed as an `otherElement` and
 `app.staticTexts[…]` will not find it.
 
+### Style a Button *inside* its label, never around it
+
+```swift
+// Wrong — the tap area stays where the glyphs are drawn.
+Button("Xoá món này") { … }
+    .frame(maxWidth: .infinity).frame(height: 52).background(…)
+
+// Right.
+Button { … } label: {
+    Text("Xoá món này")
+        .frame(maxWidth: .infinity).frame(minHeight: 52).background(…)
+        .contentShape(Rectangle())
+}
+.buttonStyle(.plain)
+```
+
+Modifiers outside a `Button` dress a box the button does not own, so a 52pt-tall
+full-width control answers only on its text. `.buttonStyle(.plain)` matters for a
+second reason: the default borderless style tints `configuration.label` from the
+inside, which beats an outer `.foregroundStyle` — that is how §6.10's quiet grey
+delete action ended up drawing in system accent blue.
+
+**This was written three times in this codebase before landing here**, twice after
+being fixed elsewhere with a comment explaining it. A comment at the fix site did
+not stop the next occurrence; this is the place that might.
+
+### Sheets need `presentationBackground`, not `.background`
+
+A fixed `presentationDetents` height with `.background(DS.surfaceCard)` on the
+content leaves any unused height showing the sheet's own backing. In light mode
+that is near-white and invisible; in dark mode it is a black band above and below
+the content. Colour the sheet — `.presentationBackground(DS.surfaceCard)`.
+
 ### SwiftUI gotcha already hit once
 
 A `Button` with `.buttonStyle(.plain)` wrapping a `LabeledContent` only hit-tests
@@ -310,6 +343,15 @@ what ends that screen is the response arriving. The three checklist rows are
 still driven by the timer, not by real pipeline stages, because the gateway
 reports one result rather than progress.
 
+**A high confidence is not evidence the dish is right.** Three photos through
+`gemini-3.1-flash-lite`: phở → Phở bò at 1.00, bánh mì → Bánh mì thịt at 0.95,
+and **bún bò Huế → Phở bò at 0.98**. The miss is fair — both are beef noodle
+soups — but `RecognizedFood.lowConfidenceThreshold` (0.75, §4) will never flag
+it, so §6.8's "Nên kiểm tra" badge does not catch this class of error. What
+protects the user is that the dish name is prominent and correctable, not the
+number beside it. Do not add behaviour that treats a high confidence as a
+guarantee.
+
 ### An unresolved food, and why renaming does not fix it
 
 The gateway decides `isResolved`; the client never looks a name up. So
@@ -414,7 +456,48 @@ vs `#F4F7FA`, `textBody` `#1F2E3D` vs `#2B3947`, `danger` `#D5342B` vs
 
 Dashboard, onboarding, manual entry, meal detail and history are all on `DS.*`
 now. What still uses the older set is `DisplayNames.swift` and the `DS*`
-components under `DesignSystem/` that nothing on a handoff screen references.
+components under `DesignSystem/`.
+
+**`DSButtonStyle` is the exception that matters**, and it is not decoration:
+`.ds(.primary)` / `.ds(.ghost)` are on Welcome, Onboarding, Apple Health, the
+scan failure screen, review and the portion editor, and they read `DSColor`,
+which is appearance-adaptive. Every *light* value there matches `DS.*` exactly
+(brand `#0062B0`, accent `#F37021`, card white), so in light mode the two
+palettes agree — but in dark mode the buttons moved while the screens, being on
+light-only `DS.*`, did not. Apple Health's "Để sau" drew `#86BEEA` on a white bar
+at ~1.9:1.
+
+`DS.*` now has a dark palette of its own, so the two sets move together. **Every
+dark value in `DesignTokens.swift` was derived in this repo**, exactly as
+`DSColor`'s was — the handoff and the FPT IS system behind it are light-only.
+That file's header records how each group was derived; replace the lot if the
+brand team publishes real values.
+
+The one non-obvious rule in it: **the tint ramps swap role between appearances.**
+`blue50`…`blue200`, `orange100`, `green100` are tint *backgrounds* in light, so
+they become deep tints in dark; `blue700`, `orange700`, `green700` are *text on
+those tints*, so they become light. Getting that backwards is the fastest way to
+make a screen unreadable. `neutral900` also *lifts* rather than darkens, because
+it is §6.14's toast fill and a #0F1B27 pill on a #0B1219 page is invisible. The
+three brand colours stay absolute — an identity that changed with the appearance
+would not be an identity.
+
+`AppAppearance` (`@AppStorage`, chosen on Profile) owns the choice and is applied
+as `preferredColorScheme` at the app root, which is why there is **deliberately
+no `UIUserInterfaceStyle` key** in `Config/Info.plist` — it would override the
+setting and make "Tối" do nothing silently. It is a display preference with no
+bearing on any calculation, so it is not Domain state.
+
+**The default is `.light`, on purpose**, so nobody gets an invented palette just
+because their phone is dark. `.system` becomes the right default once the dark
+values are real.
+
+A language switch is **not** part of this and should not be added casually: §4's
+`LabelPair` shows Vietnamese and English *at the same time*, so "English mode"
+would render "Step count / Step count" unless `LabelPair` is redesigned to show
+one language — which changes every screen. The catalog also still has 140 keys
+and only a `vi` locale, so there is nothing to switch to yet. It needs a design
+decision first, not a toggle.
 
 ## Scope
 
