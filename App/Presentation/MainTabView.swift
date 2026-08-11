@@ -17,12 +17,14 @@ enum MainTab: String, CaseIterable, Identifiable {
         }
     }
 
+    /// §8's icon table. Today and History had `clock` the wrong way round, which
+    /// read as two swapped tabs rather than as a different choice.
     var symbol: String {
         switch self {
-        case .today: "circle.dashed.inset.filled"
-        case .history: "clock"
+        case .today: "clock"
+        case .history: "list.bullet"
         case .insights: "chart.bar"
-        case .profile: "person"
+        case .profile: "person.crop.circle"
         }
     }
 }
@@ -32,18 +34,33 @@ struct MainTabView: View {
     @State private var scanType: MealType?
     @State private var toast: String?
 
+    /// Bumped whenever something outside a tab root writes a meal, so the roots
+    /// know to re-read.
+    ///
+    /// The scan flow is owned here, not by the dashboard, so saving from it had
+    /// no way to reach the dashboard's model — and because the scan button lives
+    /// on the tab bar, the user is usually *already* on Hôm nay, which makes
+    /// `selection = .today` a no-op: the `switch` branch does not change, the view
+    /// is never rebuilt, and its `.task` never runs again. The figures simply
+    /// stayed as they were. Manual entry never showed this because the dashboard
+    /// owns that sheet and reloads itself.
+    @State private var dataVersion = 0
+
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
                 switch selection {
                 case .today:
                     NavigationStack {
-                        DashboardView { selection = .profile }
+                        DashboardView(
+                            onScanRequested: { scanType = $0 },
+                            refreshID: dataVersion
+                        )
                     }
                 case .history:
-                    NavigationStack { MealHistoryView() }
+                    NavigationStack { MealHistoryView(refreshID: dataVersion) }
                 case .insights:
-                    NavigationStack { InsightsView() }
+                    NavigationStack { InsightsView(refreshID: dataVersion) }
                 case .profile:
                     NavigationStack { ProfileView() }
                 }
@@ -61,7 +78,9 @@ struct MainTabView: View {
         .fullScreenCover(item: $scanType) { type in
             ScanFlowView(type: type) { calories in
                 toast = "Đã lưu bữa ăn · \(VNNumber.int(calories)) kcal"
-                // Bring the dashboard forward so the new total is visible.
+                // Every root re-reads, not just the one in front: history and
+                // insights are as stale as the dashboard after a scan.
+                dataVersion += 1
                 selection = .today
             }
         }
@@ -102,9 +121,31 @@ struct HFTabBar: View {
         }
         .padding(.horizontal, DS.s2)
         .padding(.top, DS.s2)
-        .background(.ultraThinMaterial)
-        .overlay(alignment: .top) {
-            Rectangle().fill(DS.borderSubtle).frame(height: 1)
+        // §5 is white at 94% *over* a blur, and both halves matter. The material
+        // alone samples whatever is behind it, which on a device rendered the
+        // whole bar as a grey slab and left the inactive `neutral400` labels
+        // barely readable on it. The simulator did not show this.
+        //
+        // The 1px top border belongs in the *background*, not in an `.overlay`.
+        // As an overlay it was composited after the HStack — which holds the
+        // raised scan button — and drew a line straight across the button, since
+        // `.offset` moves the button out of the bar visually while leaving the
+        // layout frame, and therefore the border, where it was.
+        //
+        // `.ignoresSafeArea(edges: .bottom)` because this is the ViewBuilder
+        // overload of `background`, which — unlike the ShapeStyle one — stops at
+        // the safe area. Without it the bar floated with a 34pt strip of page
+        // grey beneath it and the home indicator sitting on that strip, and §5's
+        // 86pt height is only reachable if the bar owns the bottom inset.
+        .background(alignment: .top) {
+            ZStack(alignment: .top) {
+                // `DS.surfaceCard`, not `Color.white`: §5's value is white
+                // because §5 is light-only, and a hardcoded white bar under a
+                // dark app would be the brightest thing on the screen.
+                DS.surfaceCard.opacity(0.94).background(.ultraThinMaterial)
+                Rectangle().fill(DS.borderSubtle).frame(height: 1)
+            }
+            .ignoresSafeArea(edges: .bottom)
         }
     }
 

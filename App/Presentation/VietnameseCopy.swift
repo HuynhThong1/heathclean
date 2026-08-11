@@ -36,12 +36,15 @@ extension MealType {
         }
     }
 
+    /// §8's icon table. Breakfast and lunch used to be two suns — `sun.horizon`
+    /// and `sun.max` — which in adjacent rows of the same card read as the same
+    /// glyph twice.
     var chipSymbol: String {
         switch self {
-        case .breakfast: "sun.horizon"
-        case .lunch: "sun.max"
-        case .snack: "leaf"
-        case .dinner: "moon.stars"
+        case .breakfast: "sunrise"
+        case .lunch: "fork.knife"
+        case .snack: "cup.and.saucer"
+        case .dinner: "moon"
         }
     }
 }

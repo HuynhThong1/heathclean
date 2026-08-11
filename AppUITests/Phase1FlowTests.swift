@@ -94,8 +94,9 @@ final class Phase1FlowTests: XCTestCase {
     func testProfileShowsTheDerivedTargetAndOpensEditing() {
         reachDashboard()
 
-        // §6.4's avatar opens Profile, which is a sibling tab.
-        app.buttons["dashboard.profile"].tap()
+        // Profile is reached from its own tab. §6.4's avatar used to open it too
+        // and is gone: it duplicated the tab, and was a 38pt target besides.
+        app.buttons["tab.profile"].tap()
         XCTAssertTrue(app.buttons["profile.editBody"].waitForExistence(timeout: 30))
         XCTAssertTrue(app.staticTexts["Mỗi ngày, \(vn(2378)) kcal"].exists)
 
@@ -183,7 +184,11 @@ final class Phase1FlowTests: XCTestCase {
         )
 
         app.buttons["mealDetail.delete"].tap()
-        app.buttons["Xoá bữa ăn"].tap()
+        // The system `confirmationDialog` was replaced by `HFDestructiveConfirm`,
+        // so this is an identifier now rather than the old dialog's button label.
+        let confirmDelete = app.buttons["confirm.destructive"]
+        XCTAssertTrue(confirmDelete.waitForExistence(timeout: 30))
+        confirmDelete.tap()
 
         XCTAssertTrue(app.buttons["mealRow.lunch"].waitForExistence(timeout: 30))
         XCTAssertEqual(app.staticTexts["hero.remaining"].label, "\(vn(2378)) kcal còn lại")
@@ -239,7 +244,56 @@ final class Phase1FlowTests: XCTestCase {
         XCTAssertEqual(app.staticTexts["insights.weightChange"].label, "— trong 6 tuần")
     }
 
+    /// The three edits the user reported as not refreshing the figures: adding a
+    /// second food, changing a food's calories, and removing a food. Each is
+    /// checked against the meal total *and* the dashboard, because those are two
+    /// different refresh paths.
+    func testAddingEditingAndRemovingAFoodKeepsTheTotalsInStep() {
+        reachDashboard()
+
+        app.buttons["mealRow.breakfast"].tap()
+        let total = app.staticTexts["mealEntry.total"]
+        XCTAssertTrue(total.waitForExistence(timeout: 30))
+
+        // First food: 500 kcal.
+        let name = app.textFields["field.food"]
+        name.tap()
+        name.typeText("Pho bo")
+        setCalories(at: 0, to: 500)
+        XCTAssertEqual(total.label, "Tổng \(vn(500)) kcal", "total after the first food")
+
+        // Editing the same food has to move the total, not just the field.
+        setCalories(at: 0, to: 250)
+        XCTAssertEqual(total.label, "Tổng \(vn(250)) kcal", "total after editing a food")
+
+        // Adding a second food card leaves the total alone until it has figures,
+        // which is the point: 0 kcal of a nameless food is not 0 kcal eaten.
+        app.buttons["mealEntry.addFood"].tap()
+        let secondName = app.textFields.matching(identifier: "field.food").element(boundBy: 1)
+        XCTAssertTrue(secondName.waitForExistence(timeout: 10))
+        XCTAssertEqual(total.label, "Tổng \(vn(250)) kcal", "total after adding an empty food")
+
+        // Removing it must not disturb the total either.
+        app.buttons["mealEntry.removeFood.1"].tap()
+        XCTAssertFalse(secondName.exists, "the second card is gone")
+        XCTAssertEqual(total.label, "Tổng \(vn(250)) kcal", "total after removing a food")
+
+        // And the dashboard has to agree once it is saved.
+        app.buttons["mealEntry.save"].tap()
+        let hero = app.staticTexts["hero.remaining"]
+        XCTAssertTrue(hero.waitForExistence(timeout: 30))
+        XCTAssertEqual(hero.label, "\(vn(2128)) kcal còn lại", "dashboard after saving")
+    }
+
     // MARK: Helpers
+
+    /// Number fields start populated and tapping puts the caret at the start, so
+    /// the existing value has to be selected rather than backspaced.
+    private func setCalories(at index: Int, to value: Int) {
+        let field = app.textFields.matching(identifier: "field.calories").element(boundBy: index)
+        field.doubleTap()
+        field.typeText("\(value)")
+    }
 
     /// The app formats every number as `vi_VN` ("1.878") whatever the device
     /// locale is, so expectations are built the same way.

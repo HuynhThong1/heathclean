@@ -34,9 +34,11 @@ private struct ToastModifier: ViewModifier {
                 if let message {
                     HFToast(text: message)
                         .padding(.horizontal, DS.s4)
-                        // No tab bar yet, so this sits above the home indicator
-                        // rather than the 104pt the spec allows for one.
-                        .padding(.bottom, 34)
+                        // §6.14's 104pt, which is there to clear the tab bar.
+                        // This was 34pt while the app had no tab bar; once §5
+                        // landed the toast was composited over the bar and sat
+                        // squarely on the raised orange scan button for 2.6s.
+                        .padding(.bottom, 104)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                         .task(id: message) {
                             try? await Task.sleep(for: .seconds(2.6))

@@ -6,8 +6,13 @@ import SwiftUI
 /// Cards on the cool page background rather than a grouped `List`: section
 /// headings sit *outside* the cards, which a `List` cannot express.
 struct DashboardView: View {
-    /// §6.4's avatar opens Profile, which is a sibling tab.
-    let onProfileTap: () -> Void
+    /// Asks the tab shell to open the scan flow, because it owns that cover.
+    /// Manual entry offers this for a user who meant to scan.
+    var onScanRequested: ((MealType) -> Void)?
+    /// Changes when a meal is written from outside this screen — the scan flow —
+    /// so `.task(id:)` re-reads. `.task` alone runs once per appearance, and this
+    /// view is not rebuilt when the tab it is already on is re-selected.
+    var refreshID: Int = 0
 
     @Environment(DependencyContainer.self) private var container
     @State private var model: DashboardModel?
@@ -32,15 +37,24 @@ struct DashboardView: View {
         .background(DS.surfacePage)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .navigationBar)
-        .task {
+        .task(id: refreshID) {
             if model == nil { model = container.makeDashboardModel() }
             await model?.load()
         }
         .sheet(item: $entryType) { type in
-            MealEntryView(type: type) { savedCalories in
-                toast = "Đã lưu bữa ăn · \(VNNumber.int(savedCalories)) kcal"
-                Task { await model?.load() }
-            }
+            MealEntryView(
+                type: type,
+                onSaved: { savedCalories in
+                    toast = "Đã lưu bữa ăn · \(VNNumber.int(savedCalories)) kcal"
+                    Task { await model?.load() }
+                },
+                onScanInstead: onScanRequested.map { request in
+                    {
+                        entryType = nil
+                        request(type)
+                    }
+                }
+            )
         }
         .hfToast(message: $toast)
     }
@@ -93,25 +107,16 @@ struct DashboardView: View {
     private var header: some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: DS.s1) {
-                Text("HÔM NAY · TODAY")
-                    .hfStyle(HFType.eyebrow)
-                    .foregroundStyle(DS.textSubtle)
                 Text(VietnameseDate.headerText(for: Date()))
                     .hfStyle(HFType.screenTitle)
                     .foregroundStyle(DS.textStrong)
             }
             Spacer(minLength: DS.s3)
 
-            Button(action: onProfileTap) {
-                Image(systemName: "person.fill")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(DS.blue700)
-                    .frame(width: 38, height: 38)
-                    .background(DS.blue100, in: Circle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("dashboard.profile")
-            .accessibilityLabel("Hồ sơ, Profile")
+            // §6.4 puts an avatar here that opens Profile, and it was right when
+            // it was written — there was no tab bar. Now that §5's "Tôi" tab
+            // exists it is a second door to the same room, three inches from the
+            // first, and it was also a 38pt target under §4's 44pt floor.
         }
     }
 
@@ -122,7 +127,14 @@ struct DashboardView: View {
             VStack(spacing: DS.s5) {
                 ZStack {
                     CalorieRing(fraction: summary.budget.fractionUsed)
+                    // Bounded by the ring's *inner* diameter — 214 less the 17pt
+                    // stroke either side (§6.4) — and not by the card. The ZStack
+                    // is card-width, so the centre text's layout limit was ~250pt
+                    // against a 180pt hole: a four-digit value at a larger text
+                    // size crossed the blue stroke before `minimumScaleFactor`
+                    // was forced to do anything.
                     ringCentre(summary: summary)
+                        .frame(maxWidth: 214 - 17 * 2)
                 }
                 .frame(maxWidth: .infinity)
 
@@ -150,7 +162,10 @@ struct DashboardView: View {
                 .lineLimit(1)
             Text(overBudget ? "vượt mục tiêu" : "kcal còn lại")
                 .hfStyle(HFType.caption)
-                .foregroundStyle(DS.textBody)
+                // Matches the overflow arc so the two halves of the same signal
+                // agree. The big number stays `textStrong`: it is the figure, and
+                // colouring it too would shout.
+                .foregroundStyle(overBudget ? DS.danger : DS.textBody)
             Text(overBudget ? "over target" : "remaining")
                 .hfStyle(HFType.subLabel)
                 .foregroundStyle(DS.textSubtle)

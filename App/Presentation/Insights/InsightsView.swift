@@ -9,14 +9,15 @@ import SwiftUI
 /// confidence but not whether the user corrected the portion. Inventing either
 /// number would be worse than leaving it out.
 struct InsightsView: View {
+    /// See `DashboardView.refreshID`.
+    var refreshID: Int = 0
+
     @Environment(DependencyContainer.self) private var container
     @State private var model: InsightsModel?
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: DS.s5) {
-                header
-
                 if let model {
                     if let message = model.errorMessage {
                         GrayNote(text: message)
@@ -37,7 +38,16 @@ struct InsightsView: View {
         .background(DS.surfacePage)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .navigationBar)
-        .task {
+        // Hiding the nav bar leaves nothing masking the top inset, so the title
+        // and cards scrolled up through the clock. Same fix as the dashboard.
+        .safeAreaInset(edge: .top, spacing: 0) {
+            header
+                .padding(.horizontal, 20)
+                .padding(.top, DS.s1)
+                .padding(.bottom, DS.s3)
+                .background(DS.surfacePage)
+        }
+        .task(id: refreshID) {
             if model == nil { model = container.makeInsightsModel() }
             await model?.load()
         }
@@ -45,9 +55,6 @@ struct InsightsView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: DS.s1) {
-            Text("THỐNG KÊ · INSIGHTS")
-                .hfStyle(HFType.eyebrow)
-                .foregroundStyle(DS.textSubtle)
             Text("7 ngày qua")
                 .font(.custom(DSFontName.extrabold, size: 29))
                 .tracking(-0.725)
@@ -147,7 +154,9 @@ struct InsightsView: View {
     {
         let isToday = Calendar.current.isDateInToday(day.date)
         let isOver = model.dailyGoalCalories > 0 && day.calories > model.dailyGoalCalories
-        let fill: Color = isToday ? DS.blue : (isOver ? DS.neutral300 : DS.blue200)
+        // A day over goal reads red, matching the dashboard ring. Today still
+        // wins on colour so "which bar is now" stays the first thing legible.
+        let fill: Color = isToday ? (isOver ? DS.danger : DS.blue) : (isOver ? DS.danger.opacity(0.55) : DS.blue200)
 
         return VStack(spacing: 3) {
             if isToday && day.isLogged {
@@ -348,15 +357,21 @@ private struct WeightChart: View {
         guard let lowest = values.min(), let highest = values.max() else { return [] }
         // A flat series would divide by zero; draw it down the middle instead.
         let span = highest - lowest
-        let columns = max(series.weekCount - 1, 1)
         let inset: CGFloat = 4
 
+        // x is the *centre of the week's column*, matching how the T1…Nay labels
+        // below are laid out — an `HStack` of equal-width cells. Spreading the
+        // points edge-to-edge instead (weekIndex / (weekCount - 1)) put the first
+        // and last markers a column-half away from their own labels, so the line
+        // drifted visibly out of register with the axis.
+        let columnWidth = size.width / CGFloat(max(series.weekCount, 1))
+
         return series.points.map { point in
-            let x = size.width * CGFloat(point.weekIndex) / CGFloat(columns)
+            let x = columnWidth * (CGFloat(point.weekIndex) + 0.5)
             let ratio = span > 0 ? (point.kilograms - lowest) / span : 0.5
             // Heavier is higher on the chart, so the ratio inverts.
             let y = (size.height - inset * 2) * CGFloat(1 - ratio) + inset
-            return CGPoint(x: min(max(x, inset), size.width - inset), y: y)
+            return CGPoint(x: x, y: y)
         }
     }
 

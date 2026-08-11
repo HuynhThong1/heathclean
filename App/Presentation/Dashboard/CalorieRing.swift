@@ -5,10 +5,16 @@ import SwiftUI
 /// Three stacked circles, stroke 17, rotated −90° so progress starts at the top:
 /// 1. track — `neutral150`
 /// 2. progress — brand blue, round cap, `min(fraction, 1)`
-/// 3. overflow — `neutral400`, drawn only past 100%, `min(fraction − 1, 1)`
+/// 3. overflow — drawn only past 100%, `min(fraction − 1, 1)`
 ///
-/// The overflow arc is the entire over-budget signal. It is grey on purpose:
-/// §4 rules out red, and rules out anything that reads as a reprimand.
+/// The overflow arc is the entire over-budget signal, and it is `DS.danger`
+/// rather than §6.4's `neutral400` **at the product owner's request**. Worth
+/// knowing what that trades away: §4 and `plan.md` §18 chose grey deliberately —
+/// the app states a fact and never scolds — and red is the one colour a casual
+/// user reads as "you did something wrong". The copy stays neutral, so the note
+/// under the ring still says what happened rather than what to do about it; only
+/// the arc changed. Reverting means this line and the history and Insights bars,
+/// which follow it.
 struct CalorieRing: View {
     let fraction: Double
     let side: CGFloat = 214
@@ -27,7 +33,7 @@ struct CalorieRing: View {
                 Circle()
                     .trim(from: 0, to: min(fraction - 1, 1))
                     .stroke(
-                        DS.neutral400,
+                        DS.danger,
                         style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
                     )
             }

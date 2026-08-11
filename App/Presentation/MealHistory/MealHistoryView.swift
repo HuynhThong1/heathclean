@@ -3,14 +3,17 @@ import SwiftUI
 
 /// Meal history — handoff §6.11.
 struct MealHistoryView: View {
+    /// See `DashboardView.refreshID`.
+    var refreshID: Int = 0
+
     @Environment(DependencyContainer.self) private var container
     @State private var model: MealHistoryModel?
+    @State private var route: DetailRoute?
+    @State private var toast: String?
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: DS.s5) {
-                header
-
                 if let model {
                     if let message = model.errorMessage {
                         GrayNote(text: message)
@@ -37,7 +40,35 @@ struct MealHistoryView: View {
         .background(DS.surfacePage)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .navigationBar)
-        .task {
+        // With the nav bar hidden nothing masks the top inset, so the title and
+        // the day cards scrolled up through the clock and battery. The dashboard
+        // already solves this the same way.
+        .safeAreaInset(edge: .top, spacing: 0) {
+            header
+                .padding(.horizontal, 20)
+                .padding(.top, DS.s1)
+                .padding(.bottom, DS.s3)
+                .background(DS.surfacePage)
+        }
+        .hfToast(message: $toast)
+        .navigationDestination(item: $route) { route in
+            MealDetailView(
+                model: container.makeMealDetailModel(
+                    type: route.type,
+                    meals: model?.meals(of: route.type, on: route.date) ?? [],
+                    dailyGoalCalories: model?.dailyGoalCalories ?? 0
+                ),
+                // History is a record, not a place to keep eating from — adding
+                // more belongs to today, which the dashboard owns.
+                onAddMore: { self.route = nil },
+                onDeleted: {
+                    toast = "Đã xoá bữa ăn"
+                    self.route = nil
+                    Task { await model?.load() }
+                }
+            )
+        }
+        .task(id: refreshID) {
             if model == nil { model = container.makeMealHistoryModel() }
             await model?.load()
         }
@@ -46,9 +77,6 @@ struct MealHistoryView: View {
     private var header: some View {
         HStack(alignment: .top, spacing: DS.s3) {
             VStack(alignment: .leading, spacing: DS.s1) {
-                Text("LỊCH SỬ · HISTORY")
-                    .hfStyle(HFType.eyebrow)
-                    .foregroundStyle(DS.textSubtle)
                 Text("Bữa ăn đã ghi")
                     .font(.custom(DSFontName.extrabold, size: 29))
                     .tracking(-0.725)
@@ -85,7 +113,7 @@ struct MealHistoryView: View {
             HFCard(padding: 0) {
                 VStack(spacing: 0) {
                     ForEach(Array(day.meals.enumerated()), id: \.element.id) { index, meal in
-                        mealRow(meal)
+                        mealRow(meal, on: day.date)
                         if index < day.meals.count - 1 {
                             Rectangle().fill(DS.borderSubtle)
                                 .frame(height: 1)
@@ -106,7 +134,8 @@ struct MealHistoryView: View {
             ZStack(alignment: .leading) {
                 Capsule().fill(DS.neutral150)
                 Capsule()
-                    .fill(isOver ? DS.neutral400 : DS.blue)
+                    // Follows the dashboard ring's overflow arc.
+                    .fill(isOver ? DS.danger : DS.blue)
                     .frame(width: geometry.size.width * fraction)
             }
         }
@@ -114,7 +143,17 @@ struct MealHistoryView: View {
         .accessibilityHidden(true)
     }
 
-    private func mealRow(_ meal: Meal) -> some View {
+    private func mealRow(_ meal: Meal, on date: Date) -> some View {
+        Button {
+            route = DetailRoute(date: date, type: meal.type)
+        } label: {
+            mealRowLabel(meal)
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("history.meal.\(meal.type.rawValue)")
+    }
+
+    private func mealRowLabel(_ meal: Meal) -> some View {
         HStack(spacing: DS.s3) {
             Image(systemName: meal.type.chipSymbol)
                 .font(.system(size: 13, weight: .semibold))
@@ -141,7 +180,21 @@ struct MealHistoryView: View {
         }
         .padding(.horizontal, DS.s4)
         .frame(minHeight: 54)
+        // Without this the row only hit-tests where text is drawn, so the gap
+        // between the name and the kcal figure is dead space — the case
+        // CLAUDE.md records the dashboard rows already hitting.
+        .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(meal.type.vi), \(VNNumber.int(meal.calories)) kcal")
     }
+}
+
+/// Which meal on which day the detail screen should open. History needs both,
+/// where the dashboard only ever needs the type because it is always showing
+/// today.
+private struct DetailRoute: Identifiable, Hashable {
+    let date: Date
+    let type: MealType
+
+    var id: String { "\(date.timeIntervalSince1970)-\(type.rawValue)" }
 }

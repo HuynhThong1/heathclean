@@ -11,6 +11,10 @@ struct MealEntryView: View {
 
     let type: MealType
     let onSaved: (Double) -> Void
+    /// Offered so a user who meant to scan is not stuck typing. `nil` where scan
+    /// is not reachable from — the scan flow presents this screen itself, and
+    /// offering a way back into the camera from there would just be a loop.
+    var onScanInstead: (() -> Void)?
 
     var body: some View {
         NavigationStack {
@@ -75,8 +79,29 @@ struct MealEntryView: View {
                                 .strokeBorder(DS.borderDefault, lineWidth: 1.5)
                         }
                 }
+                // Stroke-only overlays do not hit-test where nothing is drawn, so
+                // without this the empty thirds either side of the label were
+                // dead space on a 52pt-tall button.
+                .contentShape(Rectangle())
                 .buttonStyle(.plain)
                 .accessibilityIdentifier("mealEntry.addFood")
+
+                if let onScanInstead {
+                    Button(action: onScanInstead) {
+                        Label("Quét ảnh thay vì nhập tay", systemImage: "camera")
+                            .font(.custom(DSFontName.semibold, size: 15))
+                            .foregroundStyle(DS.orange700)
+                            .frame(maxWidth: .infinity)
+                            .frame(minHeight: 52)
+                            .background(
+                                DS.orange100,
+                                in: RoundedRectangle(cornerRadius: DS.rControl, style: .continuous)
+                            )
+                    }
+                    .contentShape(Rectangle())
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("mealEntry.scanInstead")
+                }
 
                 totalsCard(model: model)
 
@@ -124,6 +149,7 @@ struct MealEntryView: View {
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
+                    .accessibilityIdentifier("mealEntry.removeFood.\(index)")
                     .accessibilityLabel("Xoá món \(index + 1)")
                 }
             }

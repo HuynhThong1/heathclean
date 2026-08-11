@@ -25,6 +25,15 @@ final class MealHistoryModel {
         self.userRepository = userRepository
     }
 
+    /// The meals of one type on one day, for the detail screen. History needs the
+    /// day too, where the dashboard only ever asks about today.
+    func meals(of type: MealType, on date: Date) -> [Meal] {
+        let calendar = Calendar.current
+        return days
+            .first { calendar.isDate($0.date, inSameDayAs: date) }?
+            .meals.filter { $0.type == type } ?? []
+    }
+
     func load(daysBack: Int = 30) async {
         let calendar = Calendar.current
         let end = calendar.startOfDay(for: Date()).addingTimeInterval(24 * 60 * 60)

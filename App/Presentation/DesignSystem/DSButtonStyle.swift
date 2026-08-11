@@ -66,10 +66,19 @@ struct DSButtonStyle: ButtonStyle {
             configuration.label
                 .font(size.font)
                 .kerning(-0.15) // --tracking-snug
-                .lineLimit(1)
+                // §9's type scale is Dynamic-Type-aware throughout, and this
+                // button was the one element that could not follow it:
+                // `lineLimit(1)` forbade wrapping while `frame(height:)` refused
+                // to grow, so "Kết nối Apple Health" and "Xác nhận bữa ăn"
+                // truncated mid-word at larger accessibility sizes. Two lines and
+                // a minimum height instead — the label still fits one line at
+                // every ordinary size, so nothing moves for most users.
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
                 .foregroundStyle(foreground)
-                .frame(height: size.height)
+                .frame(minHeight: size.height)
                 .frame(maxWidth: fullWidth ? .infinity : nil)
+                .padding(.vertical, DS.s2)
                 .padding(.horizontal, size.horizontalPadding)
                 .background(background, in: shape)
                 .overlay {
