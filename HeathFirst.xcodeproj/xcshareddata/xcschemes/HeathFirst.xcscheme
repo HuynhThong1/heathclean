@@ -60,6 +60,13 @@
             ReferencedContainer = "container:HeathFirst.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "GATEWAY_URL"
+            value = "http://HuynhThongs-MacBook-Pro.local:8000"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

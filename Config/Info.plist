@@ -2,6 +2,26 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<!--
+	  Both of the next two keys exist so the app can talk to the gateway running
+	  on a Mac on the same Wi-Fi (GATEWAY_URL=http://192.168.1.x:8000).
+
+	  App Transport Security blocks plaintext HTTP, and iOS 14+ additionally
+	  requires local-network permission before an app may open a connection to a
+	  private address — without either, the request fails and the scan falls back
+	  to looking like a network error.
+
+	  NSAllowsLocalNetworking is the narrow exception: it permits HTTP to local
+	  and private addresses only, and leaves ATS enforced everywhere else. A
+	  production gateway would be an HTTPS host and would need neither key.
+	-->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>HeathFirst connects to the meal-recognition gateway running on your computer over the local network. This is used for development builds only.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>HeathFirst uses the camera to photograph your meal so the food in it can be recognised. The photo is analysed and then discarded — it is never stored.</string>
 	<key>NSHealthShareUsageDescription</key>
