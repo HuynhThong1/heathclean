@@ -120,7 +120,8 @@ final class DependencyContainer {
             type: type,
             meals: meals,
             dailyGoalCalories: dailyGoalCalories,
-            mealRepository: mealRepository
+            mealRepository: mealRepository,
+            removeFoodItem: RemoveFoodItemUseCase(mealRepository: mealRepository)
         )
     }
 

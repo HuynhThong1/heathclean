@@ -34,22 +34,43 @@ struct MealDetailView: View {
                     .accessibilityIdentifier("mealDetail.addMore")
             }
         }
-        .confirmationDialog(
-            "Xoá bữa ăn này?",
-            isPresented: $model.isConfirmingDelete,
-            titleVisibility: .visible
-        ) {
-            Button("Xoá bữa ăn", role: .destructive) {
-                Task {
-                    if await model.delete() {
-                        onDeleted()
-                        dismiss()
+        .sheet(isPresented: $model.isConfirmingDelete) {
+            HFDestructiveConfirm(
+                title: "Xoá cả \(model.type.vi.lowercased())?",
+                message: "Tất cả \(model.items.count) món trong bữa này sẽ bị xoá. Thao tác không thể hoàn tác.",
+                confirmLabel: "Xoá cả bữa ăn",
+                onConfirm: {
+                    model.isConfirmingDelete = false
+                    Task {
+                        if await model.delete() {
+                            onDeleted()
+                            dismiss()
+                        }
                     }
-                }
-            }
-            Button("Huỷ", role: .cancel) {}
-        } message: {
-            Text("Thao tác này không thể hoàn tác.")
+                },
+                onCancel: { model.isConfirmingDelete = false }
+            )
+        }
+        .sheet(item: $model.itemPendingRemoval) { item in
+            HFDestructiveConfirm(
+                title: "Xoá “\(item.name)”?",
+                // Says what is left afterwards, because the alternative — deleting
+                // the last food — quietly removes the whole meal.
+                message: model.items.count > 1
+                    ? "Bữa ăn còn lại \(model.items.count - 1) món."
+                    : "Đây là món cuối cùng, nên cả bữa ăn sẽ bị xoá.",
+                confirmLabel: "Xoá món này",
+                onConfirm: {
+                    model.itemPendingRemoval = nil
+                    Task {
+                        if await model.removeItem(item) {
+                            onDeleted()
+                            dismiss()
+                        }
+                    }
+                },
+                onCancel: { model.itemPendingRemoval = nil }
+            )
         }
         .alert(
             "Có lỗi xảy ra",
@@ -181,10 +202,30 @@ struct MealDetailView: View {
                     .font(.custom(DSFontName.regular, size: 11))
                     .foregroundStyle(DS.textSubtle)
             }
+
+            // An explicit button rather than swipe-to-delete: these rows live in a
+            // `VStack` inside a card, not a `List`, so there is no swipe to hook —
+            // and a hidden gesture is a poor way to offer the one action that
+            // cannot be undone.
+            Button {
+                model.itemPendingRemoval = item
+            } label: {
+                Image(systemName: "trash")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(DS.textSubtle)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("mealDetail.removeItem")
+            .accessibilityLabel("Xoá \(item.name)")
         }
         .padding(.horizontal, DS.s4)
         .frame(minHeight: 58)
-        .accessibilityElement(children: .ignore)
+        // `.contain` rather than `.ignore`: the row now holds a button, and
+        // collapsing it into one static element would hide the only way to delete
+        // a food from VoiceOver entirely.
+        .accessibilityElement(children: .contain)
         .accessibilityLabel(
             "\(item.name), \(VNNumber.int(item.calories)) kcal, \(VNNumber.int(item.weightGrams)) gam"
         )
@@ -198,17 +239,27 @@ struct MealDetailView: View {
     }
 
     private var deleteButton: some View {
-        Button("Xoá bữa ăn này") {
+        // `.buttonStyle(.plain)` and the styling *inside* the label, both for the
+        // same reason: the default borderless style tints its own label, so an
+        // outer `.foregroundStyle` lost and §6.10's quiet grey action drew in
+        // system accent blue — the loudest thing on the screen. `.contentShape`
+        // because a stroke-only overlay hit-tests nowhere it has not drawn, so
+        // taps on the empty thirds of a 52pt box did nothing.
+        Button {
             model.isConfirmingDelete = true
+        } label: {
+            Text("Xoá bữa ăn này")
+                .font(.custom(DSFontName.semibold, size: 15))
+                .foregroundStyle(DS.textMuted)
+                .frame(maxWidth: .infinity)
+                .frame(minHeight: 52)
+                .overlay {
+                    RoundedRectangle(cornerRadius: DS.rControl, style: .continuous)
+                        .strokeBorder(DS.borderDefault, lineWidth: 1.5)
+                }
+                .contentShape(Rectangle())
         }
-        .font(.custom(DSFontName.semibold, size: 15))
-        .foregroundStyle(DS.textMuted)
-        .frame(maxWidth: .infinity)
-        .frame(height: 52)
-        .overlay {
-            RoundedRectangle(cornerRadius: DS.rControl, style: .continuous)
-                .strokeBorder(DS.borderDefault, lineWidth: 1.5)
-        }
+        .buttonStyle(.plain)
         .accessibilityIdentifier("mealDetail.delete")
     }
 }

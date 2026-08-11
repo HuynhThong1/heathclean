@@ -11,17 +11,20 @@ final class MealDetailModel {
     let type: MealType
     private let dailyGoalCalories: Double
     private let mealRepository: any MealRepository
+    private let removeFoodItem: RemoveFoodItemUseCase
 
     init(
         type: MealType,
         meals: [Meal],
         dailyGoalCalories: Double,
-        mealRepository: any MealRepository
+        mealRepository: any MealRepository,
+        removeFoodItem: RemoveFoodItemUseCase
     ) {
         self.type = type
         self.meals = meals
         self.dailyGoalCalories = dailyGoalCalories
         self.mealRepository = mealRepository
+        self.removeFoodItem = removeFoodItem
     }
 
     var items: [FoodItem] { meals.flatMap(\.items) }
@@ -60,6 +63,37 @@ final class MealDetailModel {
         let total = protein + carbs + fat
         guard total > 0 else { return (0, 0, 0) }
         return (protein / total, carbs / total, fat / total)
+    }
+
+    /// The food the user is being asked about, or `nil` when nothing is pending.
+    /// One optional rather than a Bool plus a separate id, so the sheet cannot be
+    /// shown without knowing which food it is about.
+    var itemPendingRemoval: FoodItem?
+
+    /// Removes one food. Returns `true` when the whole meal went with it — the
+    /// last food was removed — so the caller can leave a screen that no longer
+    /// has anything to show.
+    func removeItem(_ item: FoodItem) async -> Bool {
+        guard let owner = meals.first(where: { meal in meal.items.contains { $0.id == item.id } })
+        else { return false }
+
+        do {
+            switch try await removeFoodItem.execute(itemID: item.id, from: owner) {
+            case let .itemRemoved(updated):
+                if let index = meals.firstIndex(where: { $0.id == updated.id }) {
+                    meals[index] = updated
+                }
+                return false
+            case .mealDeleted:
+                meals.removeAll { $0.id == owner.id }
+                return meals.isEmpty
+            case .notFound:
+                return false
+            }
+        } catch {
+            errorMessage = String(localized: "Không xoá được món. Vui lòng thử lại.")
+            return false
+        }
     }
 
     func delete() async -> Bool {

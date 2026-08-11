@@ -116,7 +116,14 @@ actor InMemoryMealRepository: MealRepository {
         stored.filter { $0.date >= start && $0.date < end }
     }
 
+    func update(_ meal: Meal) async throws {
+        guard let index = stored.firstIndex(where: { $0.id == meal.id }) else { return }
+        stored[index] = meal
+    }
+
     func delete(mealID: UUID) async throws {
         stored.removeAll { $0.id == mealID }
     }
+
+    func all() -> [Meal] { stored }
 }
