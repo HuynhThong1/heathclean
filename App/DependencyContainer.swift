@@ -14,6 +14,7 @@ final class DependencyContainer {
     private let weightRepository: any WeightRepository
     private let healthRepository: any HealthRepository
     private let recognitionRepository: any FoodRecognitionRepository
+    private var didSeedHistoryFixture = false
 
     /// `nonisolated` so it can be built in a stored-property initializer, and
     /// because nothing it touches is main-actor bound.
@@ -70,6 +71,39 @@ final class DependencyContainer {
     }
 
     var user: any UserRepository { userRepository }
+
+    /// Gives the calendar UI test a real meal on the same weekday one week ago.
+    /// The double launch-argument guard keeps this path unreachable in normal
+    /// builds while still exercising the production SwiftData repository.
+    func seedUITestHistoryFixtureIfNeeded() async {
+        let arguments = ProcessInfo.processInfo.arguments
+        guard !didSeedHistoryFixture,
+              arguments.contains("-uiTesting"),
+              arguments.contains("-seedHistoryFixture") else { return }
+        didSeedHistoryFixture = true
+
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = .autoupdatingCurrent
+        guard let date = calendar.date(byAdding: .day, value: -7, to: Date()) else { return }
+
+        let main = FoodItem(
+            name: "Cơm gà lịch sử",
+            weightGrams: 260,
+            calories: 400,
+            protein: 30,
+            carbohydrates: 48,
+            fat: 12
+        )
+        let side = FoodItem(
+            name: "Rau luộc",
+            weightGrams: 140,
+            calories: 210,
+            protein: 2,
+            carbohydrates: 20,
+            fat: 7
+        )
+        try? await saveMeal.execute(Meal(date: date, type: .lunch, items: [main, side]))
+    }
 
     func makeOnboardingModel() -> OnboardingModel {
         OnboardingModel(

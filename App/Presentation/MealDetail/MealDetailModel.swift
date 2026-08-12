@@ -4,6 +4,12 @@ import Foundation
 @MainActor
 @Observable
 final class MealDetailModel {
+    enum ItemRemovalResult {
+        case itemRemoved
+        case mealDeleted
+        case unchanged
+    }
+
     private(set) var meals: [Meal]
     var errorMessage: String?
     var isConfirmingDelete = false
@@ -70,12 +76,11 @@ final class MealDetailModel {
     /// shown without knowing which food it is about.
     var itemPendingRemoval: FoodItem?
 
-    /// Removes one food. Returns `true` when the whole meal went with it — the
-    /// last food was removed — so the caller can leave a screen that no longer
-    /// has anything to show.
-    func removeItem(_ item: FoodItem) async -> Bool {
+    /// Removes one food and tells the view whether it should refresh its parent
+    /// or leave a detail screen that no longer has anything to show.
+    func removeItem(_ item: FoodItem) async -> ItemRemovalResult {
         guard let owner = meals.first(where: { meal in meal.items.contains { $0.id == item.id } })
-        else { return false }
+        else { return .unchanged }
 
         do {
             switch try await removeFoodItem.execute(itemID: item.id, from: owner) {
@@ -83,16 +88,16 @@ final class MealDetailModel {
                 if let index = meals.firstIndex(where: { $0.id == updated.id }) {
                     meals[index] = updated
                 }
-                return false
+                return .itemRemoved
             case .mealDeleted:
                 meals.removeAll { $0.id == owner.id }
-                return meals.isEmpty
+                return meals.isEmpty ? .mealDeleted : .itemRemoved
             case .notFound:
-                return false
+                return .unchanged
             }
         } catch {
             errorMessage = String(localized: "Không xoá được món. Vui lòng thử lại.")
-            return false
+            return .unchanged
         }
     }
 

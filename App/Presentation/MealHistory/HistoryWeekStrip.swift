@@ -20,10 +20,16 @@ struct HistoryWeekStrip: View {
                     .font(.custom(DSFontName.semibold, size: 12.5))
                     .foregroundStyle(DS.textMuted)
                 Spacer(minLength: DS.s2)
-                arrow(systemName: "chevron.left", identifier: "history.week.previous", action: onPrevious)
+                arrow(
+                    systemName: "chevron.left",
+                    identifier: "history.week.previous",
+                    accessibilityLabel: "Tuần trước",
+                    action: onPrevious
+                )
                 arrow(
                     systemName: "chevron.right",
                     identifier: "history.week.next",
+                    accessibilityLabel: "Tuần sau",
                     enabled: canGoForward,
                     action: onNext
                 )
@@ -45,6 +51,7 @@ struct HistoryWeekStrip: View {
     private func arrow(
         systemName: String,
         identifier: String,
+        accessibilityLabel: LocalizedStringKey,
         enabled: Bool = true,
         action: @escaping () -> Void
     ) -> some View {
@@ -57,6 +64,7 @@ struct HistoryWeekStrip: View {
         }
         .buttonStyle(.plain)
         .disabled(!enabled)
+        .accessibilityLabel(accessibilityLabel)
         .accessibilityIdentifier(identifier)
     }
 
@@ -123,7 +131,9 @@ struct HistoryWeekStrip: View {
     /// would have to be every time, being neither `Sendable` nor cacheable in a
     /// `static let` under strict concurrency.
     static func identifier(for date: Date) -> String {
-        let parts = Calendar.current.dateComponents([.year, .month, .day], from: date)
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = .autoupdatingCurrent
+        let parts = calendar.dateComponents([.year, .month, .day], from: date)
         return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
     }
 }

@@ -299,6 +299,8 @@ final class Phase1FlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["history.meal.breakfast"].exists)
 
         // There is no week ahead of the one holding today to page into.
+        XCTAssertEqual(app.buttons["history.week.previous"].label, "Tuần trước")
+        XCTAssertEqual(app.buttons["history.week.next"].label, "Tuần sau")
         XCTAssertFalse(app.buttons["history.week.next"].isEnabled)
 
         app.buttons["history.week.previous"].tap()
@@ -315,21 +317,83 @@ final class Phase1FlowTests: XCTestCase {
         XCTAssertTrue(app.buttons[dayIdentifier(for: Date())].isSelected)
     }
 
+    func testHistoryCalendarFindsAMealLoggedLastWeek() {
+        // Relaunch with an in-memory fixture that is written through the real
+        // SwiftData repository. Ordinary UI tests still start completely empty.
+        app.terminate()
+        app.launchArguments = ["-uiTesting", "-seedHistoryFixture"]
+        app.launch()
+        startOnboarding()
+        reachDashboard()
+
+        app.buttons["tab.history"].tap()
+        XCTAssertTrue(app.buttons["history.week.previous"].waitForExistence(timeout: 30))
+        app.buttons["history.week.previous"].tap()
+
+        let calendar = Calendar(identifier: .gregorian)
+        let historicalDate = calendar.date(byAdding: .day, value: -7, to: Date())!
+        let historicalDay = app.buttons[dayIdentifier(for: historicalDate)]
+        XCTAssertTrue(historicalDay.waitForExistence(timeout: 30))
+        historicalDay.tap()
+
+        let lunch = app.buttons["history.meal.lunch"]
+        XCTAssertTrue(lunch.waitForExistence(timeout: 30))
+        XCTAssertTrue(lunch.label.contains(vn(610)))
+    }
+
+    func testHistoryRefreshesAfterRemovingOneFood() {
+        app.terminate()
+        app.launchArguments = ["-uiTesting", "-seedHistoryFixture"]
+        app.launch()
+        startOnboarding()
+        reachDashboard()
+
+        app.buttons["tab.history"].tap()
+        XCTAssertTrue(app.buttons["history.week.previous"].waitForExistence(timeout: 30))
+        app.buttons["history.week.previous"].tap()
+        let calendar = Calendar(identifier: .gregorian)
+        let historicalDate = calendar.date(byAdding: .day, value: -7, to: Date())!
+        let historicalDay = app.buttons[dayIdentifier(for: historicalDate)]
+        XCTAssertTrue(historicalDay.waitForExistence(timeout: 30))
+        historicalDay.tap()
+
+        let historyMeal = app.buttons["history.meal.lunch"]
+        XCTAssertTrue(historyMeal.waitForExistence(timeout: 30))
+        XCTAssertTrue(historyMeal.label.contains(vn(610)))
+        historyMeal.tap()
+
+        let firstRemove = app.buttons["Xoá Cơm gà lịch sử"]
+        XCTAssertTrue(firstRemove.waitForExistence(timeout: 30))
+        firstRemove.tap()
+        let confirm = app.buttons["confirm.destructive"]
+        XCTAssertTrue(confirm.waitForExistence(timeout: 30))
+        confirm.tap()
+        XCTAssertEqual(app.staticTexts["mealDetail.total"].label, "Tổng bữa ăn \(vn(210)) kcal")
+
+        let detailBar = app.navigationBars["Bữa trưa"]
+        XCTAssertTrue(detailBar.waitForExistence(timeout: 30))
+        detailBar.buttons.element(boundBy: 0).tap()
+        XCTAssertTrue(historyMeal.waitForExistence(timeout: 30))
+        XCTAssertTrue(historyMeal.label.contains(vn(210)))
+    }
+
     // MARK: Helpers
 
-    /// Matches `HistoryWeekStrip`'s identifiers, which are `en_US_POSIX` on
-    /// purpose so a test can name a day whatever the device locale is.
+    /// Matches `HistoryWeekStrip`'s Gregorian identifiers so a test can name a
+    /// day whatever system calendar the simulator is configured to use.
     private func dayIdentifier(for date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd"
-        return "history.day.\(formatter.string(from: date))"
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = .autoupdatingCurrent
+        let parts = calendar.dateComponents([.year, .month, .day], from: date)
+        let value = String(format: "%04d-%02d-%02d", parts.year!, parts.month!, parts.day!)
+        return "history.day.\(value)"
     }
 
     /// Number fields start populated and tapping puts the caret at the start, so
     /// the existing value has to be selected rather than backspaced.
     private func setCalories(at index: Int, to value: Int) {
         let field = app.textFields.matching(identifier: "field.calories").element(boundBy: index)
+        field.tap()
         field.doubleTap()
         field.typeText("\(value)")
     }

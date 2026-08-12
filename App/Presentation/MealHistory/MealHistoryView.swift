@@ -15,7 +15,11 @@ struct MealHistoryView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: DS.s5) {
                 if let model {
-                    if let message = model.errorMessage {
+                    if model.isLoading {
+                        ProgressView()
+                            .frame(maxWidth: .infinity)
+                            .accessibilityLabel("Đang tải lịch sử bữa ăn")
+                    } else if let message = model.errorMessage {
                         GrayNote(text: message)
                     } else if model.selectedDay.meals.isEmpty {
                         // Empty state reuses the neutral note style, no
@@ -57,6 +61,9 @@ struct MealHistoryView: View {
                 // History is a record, not a place to keep eating from — adding
                 // more belongs to today, which the dashboard owns.
                 onAddMore: { self.route = nil },
+                onChanged: {
+                    Task { await model?.load() }
+                },
                 onDeleted: {
                     toast = "Đã xoá bữa ăn"
                     self.route = nil
@@ -98,7 +105,9 @@ struct MealHistoryView: View {
     /// A day with nothing on it. Today gets the encouraging half of §6.11's copy;
     /// a past day is simply a day nothing was logged on.
     private func emptyText(for date: Date) -> String {
-        Calendar.current.isDateInToday(date)
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = .autoupdatingCurrent
+        return calendar.isDateInToday(date)
             ? String(localized: "Hôm nay chưa ghi bữa nào. Những bữa bạn ghi sẽ xuất hiện ở đây.")
             : String(localized: "Ngày này không có bữa ăn nào được ghi.")
     }

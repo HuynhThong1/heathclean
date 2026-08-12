@@ -5,7 +5,13 @@ import Foundation
 /// starts the week on Sunday under a US locale, which would put CN first while
 /// the labels underneath still read T2…CN.
 private func weekCalendar() -> Calendar {
-    var calendar = Calendar.current
+    // The Vietnamese UI and persisted meal dates use the civil Gregorian
+    // calendar. Do not inherit an alternate system calendar from Settings: it
+    // would make the numeric month in the strip disagree with `dayText`, whose
+    // `vi_VN` formatter is Gregorian.
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.locale = Locale(identifier: "vi_VN")
+    calendar.timeZone = .autoupdatingCurrent
     calendar.firstWeekday = 2
     return calendar
 }
@@ -39,6 +45,7 @@ final class MealHistoryModel {
     private(set) var selectedDate: Date
     private(set) var weekStart: Date
     private(set) var errorMessage: String?
+    private(set) var isLoading = false
     /// Needed for the per-day progress bar (§6.11); 0 until the profile loads.
     private(set) var dailyGoalCalories: Double = 0
 
@@ -49,6 +56,8 @@ final class MealHistoryModel {
     private let calendar: Calendar
     private let mealRepository: any MealRepository
     private let userRepository: any UserRepository
+    /// Orders overlapping loads, including two requests for the same week.
+    private var loadGeneration = 0
 
     init(mealRepository: any MealRepository, userRepository: any UserRepository) {
         let calendar = weekCalendar()
@@ -117,16 +126,25 @@ final class MealHistoryModel {
         // longer on screen.
         let requested = weekStart
         let end = calendar.date(byAdding: .day, value: 7, to: requested) ?? requested
+        loadGeneration += 1
+        let generation = loadGeneration
+        isLoading = true
+        defer {
+            if generation == loadGeneration {
+                isLoading = false
+            }
+        }
+
         do {
             let goal = (try await userRepository.load())?.goal.calories ?? 0
             let meals = try await mealRepository.meals(from: requested, to: end)
-            guard requested == weekStart else { return }
+            guard generation == loadGeneration, requested == weekStart else { return }
             dailyGoalCalories = goal
             mealsByDay = Dictionary(grouping: meals) { calendar.startOfDay(for: $0.date) }
                 .mapValues { $0.sorted { $0.date < $1.date } }
             errorMessage = nil
         } catch {
-            guard requested == weekStart else { return }
+            guard generation == loadGeneration, requested == weekStart else { return }
             errorMessage = String(localized: "Không tải được lịch sử bữa ăn.")
         }
     }
