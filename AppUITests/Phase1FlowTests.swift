@@ -285,7 +285,46 @@ final class Phase1FlowTests: XCTestCase {
         XCTAssertEqual(hero.label, "\(vn(2128)) kcal còn lại", "dashboard after saving")
     }
 
+    func testHistoryCalendarSelectsADayAndPagesWeeks() {
+        reachDashboard()
+        logMeal(named: "breakfast", food: "Phở bò", calories: 420)
+
+        app.buttons["tab.history"].tap()
+        XCTAssertTrue(app.staticTexts["Bữa ăn đã ghi"].waitForExistence(timeout: 30))
+
+        // History opens on today, which is the day the meal was just logged on.
+        let today = app.buttons[dayIdentifier(for: Date())]
+        XCTAssertTrue(today.waitForExistence(timeout: 30))
+        XCTAssertTrue(today.isSelected, "today starts selected")
+        XCTAssertTrue(app.buttons["history.meal.breakfast"].exists)
+
+        // There is no week ahead of the one holding today to page into.
+        XCTAssertFalse(app.buttons["history.week.next"].isEnabled)
+
+        app.buttons["history.week.previous"].tap()
+        XCTAssertTrue(
+            app.staticTexts["Ngày này không có bữa ăn nào được ghi."]
+                .waitForExistence(timeout: 30)
+        )
+        XCTAssertFalse(app.buttons["history.meal.breakfast"].exists)
+        XCTAssertTrue(app.buttons["history.week.next"].isEnabled)
+
+        // Coming back lands on today again, not on the Monday of this week.
+        app.buttons["history.week.next"].tap()
+        XCTAssertTrue(app.buttons["history.meal.breakfast"].waitForExistence(timeout: 30))
+        XCTAssertTrue(app.buttons[dayIdentifier(for: Date())].isSelected)
+    }
+
     // MARK: Helpers
+
+    /// Matches `HistoryWeekStrip`'s identifiers, which are `en_US_POSIX` on
+    /// purpose so a test can name a day whatever the device locale is.
+    private func dayIdentifier(for date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd"
+        return "history.day.\(formatter.string(from: date))"
+    }
 
     /// Number fields start populated and tapping puts the caret at the start, so
     /// the existing value has to be selected rather than backspaced.

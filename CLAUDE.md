@@ -289,6 +289,41 @@ specifies is still absent: Welcome's "Tôi đã có tài khoản" link, because 
 no account system to sign into and a link that cannot do what it says is worse
 than none. A tab that opens nothing is worse than an absent one.
 
+### The history week strip — not in the handoff
+
+§6.11 draws History as a plain scroll of day sections. `HistoryWeekStrip` was
+added on top of that and **changes what the screen shows: one day, not a month.**
+It is the reason `MealHistoryModel` no longer has `days`.
+
+- The loaded window is **exactly the week on screen** — `meals(from: weekStart,
+  to: weekStart + 7d)`. That is what makes the dots cheap, and it is also why
+  there is only one empty-state message: with a one-week window the app cannot
+  tell "never logged anything" from "nothing this week" without a second query,
+  so today says "Hôm nay chưa ghi bữa nào…" and any other day says "Ngày này
+  không có bữa ăn nào được ghi."
+- The model builds its own **Monday-first** `Calendar` (`firstWeekday = 2`).
+  `Calendar.current` starts the week on Sunday under a US locale, which would put
+  CN in the first column while the labels still read T2…CN.
+- A dot under a day means **that day has meals**. No meals, no dot — never a
+  hollow placeholder, the same reason `WeightPoint.weekIndex` leaves gaps as gaps.
+- **Future days are dimmed and `.disabled`, and `canGoForward` is false once the
+  visible week holds today.** History is a record; a cell that can never hold a
+  meal must not be tappable, and there is no week ahead to page into.
+- `load()` pins the week it was asked for and **drops its result if the week
+  changed while it was in flight.** Tapping ‹ faster than SwiftData answers
+  starts a second load, and nothing orders two `@ModelActor` calls — the slower
+  one landing last would leave the dots describing a week no longer on screen.
+- There is deliberately **no date pill** like the reference design's "31 August
+  ›". Without a month-grid sheet it would open nothing, and the day row beneath
+  ("Thứ Tư 12/8") already carries that text.
+- `HistoryWeekStrip.identifier(for:)` builds `yyyy-MM-dd` from date components
+  rather than a `DateFormatter`: it runs once per cell per render, and the
+  formatter cannot be cached in a `static let` (not `Sendable`), so it would be
+  constructed seven times a pass.
+- `VietnameseDate.weekdayShort` duplicates three lines inside `InsightsView` on
+  purpose. The Insights copy returns "Nay" for today; the strip must not, because
+  a wider label on one of seven fixed columns shifts the whole row.
+
 ### Camera / AI (§6.6–6.9)
 
 The gateway lives in its own repo at `~/Projects/healthclean-gateway`

@@ -17,16 +17,12 @@ struct MealHistoryView: View {
                 if let model {
                     if let message = model.errorMessage {
                         GrayNote(text: message)
-                    } else if model.days.isEmpty {
+                    } else if model.selectedDay.meals.isEmpty {
                         // Empty state reuses the neutral note style, no
                         // illustration (§6.11).
-                        GrayNote(text: "Chưa có bữa ăn nào được ghi. Những bữa bạn ghi sẽ xuất hiện ở đây.")
+                        GrayNote(text: emptyText(for: model.selectedDate))
                     } else {
-                        LazyVStack(alignment: .leading, spacing: 14) {
-                            ForEach(model.days) { day in
-                                daySection(day, goal: model.dailyGoalCalories)
-                            }
-                        }
+                        daySection(model.selectedDay, goal: model.dailyGoalCalories)
                     }
                 } else {
                     ProgressView().frame(maxWidth: .infinity)
@@ -75,15 +71,36 @@ struct MealHistoryView: View {
     }
 
     private var header: some View {
-        HStack(alignment: .top, spacing: DS.s3) {
-            VStack(alignment: .leading, spacing: DS.s1) {
+        VStack(alignment: .leading, spacing: DS.s2) {
+            HStack(alignment: .top, spacing: DS.s3) {
                 Text("Bữa ăn đã ghi")
                     .font(.custom(DSFontName.extrabold, size: 29))
                     .tracking(-0.725)
                     .foregroundStyle(DS.textStrong)
+                Spacer(minLength: 0)
             }
-            Spacer(minLength: 0)
+
+            // Pinned with the title rather than scrolled with the content: it is
+            // how this screen is navigated, so it has to stay reachable.
+            if let model {
+                HistoryWeekStrip(
+                    week: model.week,
+                    selectedDate: model.selectedDate,
+                    canGoForward: model.canGoForward,
+                    onSelect: { model.select($0) },
+                    onPrevious: { Task { await model.showPreviousWeek() } },
+                    onNext: { Task { await model.showNextWeek() } }
+                )
+            }
         }
+    }
+
+    /// A day with nothing on it. Today gets the encouraging half of §6.11's copy;
+    /// a past day is simply a day nothing was logged on.
+    private func emptyText(for date: Date) -> String {
+        Calendar.current.isDateInToday(date)
+            ? String(localized: "Hôm nay chưa ghi bữa nào. Những bữa bạn ghi sẽ xuất hiện ở đây.")
+            : String(localized: "Ngày này không có bữa ăn nào được ghi.")
     }
 
     private func daySection(_ day: MealHistoryModel.Day, goal: Double) -> some View {
