@@ -36,10 +36,14 @@ final class DependencyContainer {
         weightRepository = SwiftDataWeightRepository(modelContainer: modelContainer)
         healthRepository = HealthKitHealthRepository()
 
-        // No gateway is running by default, and no model is configured, so the
-        // mock is the honest default — a scan that always fails would teach
-        // nothing. Point GATEWAY_URL at a running gateway to use the real one.
-        if let raw = ProcessInfo.processInfo.environment["GATEWAY_URL"],
+        // The environment remains the development override. Device builds can
+        // additionally inject GATEWAY_URL into Info.plist so launching later
+        // from the Home Screen does not silently fall back to the mock.
+        let gatewayURL = ProcessInfo.processInfo.environment["GATEWAY_URL"]
+            ?? Bundle.main.object(forInfoDictionaryKey: "GATEWAY_URL") as? String
+        if let raw = gatewayURL,
+           !raw.isEmpty,
+           !raw.hasPrefix("$("),
            let url = URL(string: raw) {
             recognitionRepository = GatewayFoodRecognitionRepository(
                 baseURL: url,

@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<!-- Injected at build time for device builds. The environment variable with
+	     the same name still takes precedence when launched through Xcode. -->
+	<key>GATEWAY_URL</key>
+	<string>$(GATEWAY_URL)</string>
 	<!--
 	  Both of the next two keys exist so the app can talk to the gateway running
 	  on a Mac on the same Wi-Fi (GATEWAY_URL=http://192.168.1.x:8000).
