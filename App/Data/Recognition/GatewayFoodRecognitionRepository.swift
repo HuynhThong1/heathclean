@@ -93,6 +93,10 @@ private struct AnalyzeResponse: Decodable {
         let fat: Double
         let confidence: Double
         let resolved: Bool
+        let nutritionSource: String?
+        let nutritionSourceId: String?
+        let nutritionSourceURL: String?
+        let nutritionIsReference: Bool?
     }
 
     let items: [Item]
@@ -110,7 +114,11 @@ private struct AnalyzeResponse: Decodable {
                     carbohydrates: $0.carbs,
                     fat: $0.fat,
                     confidence: $0.confidence,
-                    isResolved: $0.resolved
+                    isResolved: $0.resolved,
+                    nutritionSource: $0.nutritionSource,
+                    nutritionSourceID: $0.nutritionSourceId,
+                    nutritionSourceURL: $0.nutritionSourceURL,
+                    nutritionIsReference: $0.nutritionIsReference ?? false
                 )
             },
             provider: provider

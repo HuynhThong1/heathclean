@@ -26,6 +26,11 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
     /// would be worse than admitting the gap.
     public var isResolved: Bool
 
+    public var nutritionSource: String?
+    public var nutritionSourceID: String?
+    public var nutritionSourceURL: String?
+    public var nutritionIsReference: Bool
+
     /// What the model first estimated, kept so a correction can be measured
     /// against it (`plan.md` §22).
     public let originalWeightGrams: Double
@@ -41,7 +46,11 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
         fat: Double,
         confidence: Double,
         isResolved: Bool,
-        originalWeightGrams: Double? = nil
+        originalWeightGrams: Double? = nil,
+        nutritionSource: String? = nil,
+        nutritionSourceID: String? = nil,
+        nutritionSourceURL: String? = nil,
+        nutritionIsReference: Bool = false
     ) {
         self.id = id
         self.name = name
@@ -54,6 +63,10 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
         self.confidence = confidence
         self.isResolved = isResolved
         self.originalWeightGrams = originalWeightGrams ?? weightGrams
+        self.nutritionSource = nutritionSource
+        self.nutritionSourceID = nutritionSourceID
+        self.nutritionSourceURL = nutritionSourceURL
+        self.nutritionIsReference = nutritionIsReference
     }
 
     /// Below this the UI flags the item for checking (§4).
@@ -92,6 +105,10 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
         copy.carbohydrates = max(0, carbohydrates)
         copy.fat = max(0, fat)
         copy.isResolved = true
+        copy.nutritionSource = "user_entered"
+        copy.nutritionSourceID = nil
+        copy.nutritionSourceURL = nil
+        copy.nutritionIsReference = false
         return copy
     }
 
@@ -120,7 +137,12 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
             protein: protein,
             carbohydrates: carbohydrates,
             fat: fat,
-            aiConfidence: confidence
+            aiConfidence: confidence,
+            aiEstimatedWeightGrams: originalWeightGrams,
+            nutritionSource: nutritionSource,
+            nutritionSourceID: nutritionSourceID,
+            nutritionSourceURL: nutritionSourceURL,
+            nutritionIsReference: nutritionIsReference
         )
     }
 }

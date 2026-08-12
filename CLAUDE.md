@@ -350,22 +350,18 @@ The gateway lives in its own repo at `~/Projects/healthclean-gateway`
 model it uses. With neither set the app uses `MockFoodRecognitionRepository`,
 which is the honest default — a scan that always failed would teach nothing.
 
-Still open: which hosted provider to use (Gemini free tier per `plan.md` §31,
-or a hosted Qwen such as DashScope / OpenRouter), and the key.
-
-**What is unverified:** every real provider. The mock path is exercised end to
-end on both sides; Gemini and Qwen have never been run.
+Gemini is the verified hosted POC provider. Qwen has an OpenAI-compatible
+adapter but remains unverified until an endpoint is selected. Switching stays
+configuration-only through `MODEL_PROVIDER` / `X-Model-Provider`.
 
 `CameraCaptureView` is §6.6 in full — `AVCaptureSession`, the preview layer, the
-1:1 viewfinder — but **none of it has ever run.** The simulator reports no
-camera, so `ScanFlowView` shows the `PhotosPicker` chooser instead and the camera
-path is never entered; only the picker path is covered by tests. It needs a
-device build to be believed. Two things about it worth knowing before that:
+1:1 viewfinder. The capture → gateway → review → save path has been exercised on
+a physical iPhone; the simulator still uses `PhotosPicker` because it has no
+capture device. Two implementation details remain important:
 
-- Photo **orientation** is left to EXIF. `fileDataRepresentation()` writes the
-  orientation tag rather than rotating pixels, so a decoder that ignores EXIF
-  sees the food sideways. Nothing here rotates the buffer, because rotation
-  logic that cannot be run is more likely to make it worse than better.
+- `MealImagePreprocessor` applies EXIF orientation, downsizes to 1,600 px and
+  emits JPEG at 0.78 quality before upload. Camera and library images share this
+  path, so HEIC bytes are never mislabeled as `image/jpeg`.
 - `NSCameraUsageDescription` is in `Config/Info.plist`. Without it the app
   **crashes** the first time it touches the camera, on device, with no warning
   from the simulator.
@@ -408,8 +404,9 @@ guarantee.
 The gateway decides `isResolved`; the client never looks a name up. So
 `ScanModel.rename` changes a string and nothing else — and because `canConfirm`
 requires *every* food to be resolved, a dish outside the gateway's nutrition
-table could not be saved at all. The first live scan hit this immediately: the
-16-row table is small, so this is the common case, not the edge.
+table could not be saved at all. The first live scan hit this immediately. The
+development table now has 88 rows, but an unresolved result remains a normal
+branch rather than an exceptional one.
 
 `RecognizedFood.resolved(calories:protein:carbohydrates:fat:)` is the way out,
 reached from the portion editor. Only calories are required; the macros may be
@@ -558,14 +555,25 @@ should not be edited as a side effect of implementation work.
 **Phase 1** is complete: profile, BMI, calorie/macro targets, manual meal entry,
 meal history, dashboard, warning engine, SwiftData.
 
-**Phase 2** is partially done: HealthKit authorization and reads (weight, height,
-steps, active and basal energy, sleep) plus the dashboard Activity section. Not
-done, and listed as "later" in §26 itself: observer queries and background
-delivery.
+**Phase 2** is partially done: HealthKit authorization plus concrete reads for
+weight, steps, active energy and sleep. `HealthSnapshot` can represent height
+and basal energy, but the concrete repository does not query them yet. The
+HealthKit entitlement is temporarily empty for Personal Team device signing;
+restore it with a paid Developer Program team. Observer queries and background
+delivery are also still open.
 
-Explicitly not present and not to be added without being asked:
-camera/AVFoundation, any AI provider, nutrition APIs (USDA, Open Food Facts),
-notifications, CloudKit.
+**Phase 3** is a working gateway POC: an ordered nutrition repository has USDA
+FoodData Central and Open Food Facts adapters with source provenance. They are
+opt-in; the default 88-row Vietnamese table is explicitly marked as unsourced
+reference data and must be replaced by a licensed, cited dataset before release.
+
+**Phase 4** is implemented through capture/picker, normalized upload, gateway,
+review/correction and confirmed save, and has run on a physical iPhone. Gemini
+is verified; Qwen and a representative evaluation dataset are still open.
+
+**Phase 5** has calories plus protein/carbohydrate/fat tracking. Fiber and water
+are not present. Notifications, deterministic recommendations, personalization,
+CloudKit and on-device inference are also not present.
 
 Deviations from `plan.md` already made:
 
