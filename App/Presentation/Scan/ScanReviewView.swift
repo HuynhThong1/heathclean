@@ -253,9 +253,16 @@ private struct ScanItemCard: View {
             }
 
             if food.isResolved {
-                Text("Đ \(VNNumber.int(food.protein)) · TB \(VNNumber.int(food.carbohydrates)) · B \(VNNumber.int(food.fat))")
-                    .hfStyle(HFType.subLabel)
-                    .foregroundStyle(DS.textSubtle)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Đ \(VNNumber.int(food.protein)) · TB \(VNNumber.int(food.carbohydrates)) · B \(VNNumber.int(food.fat))")
+                        .hfStyle(HFType.subLabel)
+                        .foregroundStyle(DS.textSubtle)
+                    if let source = nutritionSourceLabel {
+                        Text(source)
+                            .hfStyle(HFType.subLabel)
+                            .foregroundStyle(food.nutritionIsReference ? DS.orange700 : DS.textSubtle)
+                    }
+                }
             } else {
                 // Points at the portion editor, where nutrition can be entered.
                 // It used to say "sửa tên", which does not resolve anything.
@@ -285,6 +292,17 @@ private struct ScanItemCard: View {
 
     private var confidenceText: String {
         food.isLowConfidence ? "Nên kiểm tra \(percent)%" : "Tin cậy \(percent)%"
+    }
+
+    private var nutritionSourceLabel: String? {
+        switch food.nutritionSource {
+        case "usda_fdc": "Nguồn: USDA FoodData Central"
+        case "open_food_facts": "Nguồn: Open Food Facts"
+        case "local_reference": "Nguồn: dữ liệu tham khảo nội bộ"
+        case "user_entered": "Nguồn: bạn nhập"
+        case let source?: "Nguồn: \(source)"
+        case nil: nil
+        }
     }
 
     private var confidenceBadge: some View {

@@ -29,6 +29,7 @@ struct RecognizedFoodTests {
 
         let fixed = unknown.resolved(calories: 300, protein: 12, carbohydrates: 40, fat: 8)
         #expect(fixed.isResolved)
+        #expect(fixed.nutritionSource == "user_entered")
         expectClose(fixed.calories, 300)
         expectClose(fixed.protein, 12)
         expectClose(fixed.weightGrams, 200, "weight is untouched")
@@ -127,8 +128,15 @@ struct RecognizedFoodTests {
 
     @Test("confirming a food carries its confidence into the saved item")
     func becomesAFoodItem() {
-        let item = makeFood(confidence: 0.86).foodItem
+        var food = makeFood(confidence: 0.86)
+        food.nutritionSource = "usda_fdc"
+        food.nutritionSourceID = "123"
+        let item = food.scaled(toWeightGrams: 160).foodItem
         #expect(item.aiConfidence == 0.86)
-        expectClose(item.calories, 234)
+        #expect(item.aiEstimatedWeightGrams == 180)
+        #expect(item.wasPortionCorrected)
+        #expect(item.nutritionSource == "usda_fdc")
+        #expect(item.nutritionSourceID == "123")
+        expectClose(item.calories, 208)
     }
 }

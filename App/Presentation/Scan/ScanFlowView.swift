@@ -23,6 +23,7 @@ struct ScanFlowView: View {
     /// quota — exhausted once already — so sending a blurry frame costs a call
     /// and returns a wrong dish. Confirming is cheap; re-earning the quota is not.
     @State private var pendingImage: Data?
+    @State private var imagePreparationFailed = false
 
     let type: MealType
     let onSaved: (Double) -> Void
@@ -46,7 +47,7 @@ struct ScanFlowView: View {
                     // chooser stands in, since it is the only path that works.
                     if CameraCaptureView.isAvailable {
                         CameraCaptureView(
-                            onImage: { data in pendingImage = data },
+                            onImage: acceptImage,
                             // §6.6's third control is manual entry, not an exit.
                             // It used to call `dismiss()`, so the button simply
                             // closed the scan and did nothing — a control that
@@ -95,9 +96,22 @@ struct ScanFlowView: View {
                 // Through the same confirmation step as a capture: a photo picked
                 // from the library can be just as wrong for the job, and one code
                 // path means one place where the quota is spent.
-                pendingImage = data
+                acceptImage(data)
             }
         }
+        .alert("Không đọc được ảnh", isPresented: $imagePreparationFailed) {
+            Button("Đóng", role: .cancel) {}
+        } message: {
+            Text("Hãy chọn ảnh JPEG, HEIC, PNG hoặc WebP khác rồi thử lại.")
+        }
+    }
+
+    private func acceptImage(_ data: Data) {
+        guard let prepared = MealImagePreprocessor.prepare(data) else {
+            imagePreparationFailed = true
+            return
+        }
+        pendingImage = prepared
     }
 
     // MARK: Idle

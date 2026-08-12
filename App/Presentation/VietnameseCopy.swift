@@ -151,6 +151,13 @@ enum BudgetCopy {
 }
 
 enum VietnameseDate {
+    private static func calendar() -> Calendar {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale(identifier: "vi_VN")
+        calendar.timeZone = .autoupdatingCurrent
+        return calendar
+    }
+
     /// "Thứ Sáu 8/8" — weekday then day/month, used by history sections.
     static func dayText(for date: Date) -> String {
         let formatter = DateFormatter()
@@ -167,6 +174,42 @@ enum VietnameseDate {
         formatter.setLocalizedDateFormatFromTemplate("EEEE d M")
         let text = formatter.string(from: date)
         return text.prefix(1).uppercased() + text.dropFirst()
+    }
+
+    /// "T2"…"CN" — the weekday label on the history week strip.
+    ///
+    /// `InsightsView` carries its own copy for the bar chart, which also says
+    /// "Nay" for today. The strip does not: its seven columns are a fixed grid
+    /// and a wider label on one of them makes the row shift as weeks change.
+    static func weekdayShort(for date: Date) -> String {
+        let weekday = calendar().component(.weekday, from: date)
+        return weekday == 1 ? "CN" : "T\(weekday)"
+    }
+
+    /// Day of month, zero-padded so the seven columns keep one width.
+    ///
+    /// Not `VNNumber`: that exists for figures a grouping separator applies to,
+    /// and a day of month is never one.
+    static func dayNumber(for date: Date) -> String {
+        String(format: "%02d", calendar().component(.day, from: date))
+    }
+
+    /// Which month the week on screen sits in — "Tháng 8, 2026", widened when
+    /// the week straddles a month or a year boundary.
+    static func monthText(from start: Date, to end: Date) -> String {
+        let calendar = calendar()
+        let startMonth = calendar.component(.month, from: start)
+        let endMonth = calendar.component(.month, from: end)
+        let startYear = calendar.component(.year, from: start)
+        let endYear = calendar.component(.year, from: end)
+
+        if startYear != endYear {
+            return "Tháng \(startMonth), \(startYear) – tháng \(endMonth), \(endYear)"
+        }
+        if startMonth != endMonth {
+            return "Tháng \(startMonth) – \(endMonth), \(startYear)"
+        }
+        return "Tháng \(startMonth), \(startYear)"
     }
 }
 

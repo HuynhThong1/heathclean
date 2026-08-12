@@ -7,6 +7,7 @@ struct MealDetailView: View {
 
     @Bindable var model: MealDetailModel
     let onAddMore: () -> Void
+    let onChanged: () -> Void
     let onDeleted: () -> Void
 
     var body: some View {
@@ -63,9 +64,14 @@ struct MealDetailView: View {
                 onConfirm: {
                     model.itemPendingRemoval = nil
                     Task {
-                        if await model.removeItem(item) {
+                        switch await model.removeItem(item) {
+                        case .itemRemoved:
+                            onChanged()
+                        case .mealDeleted:
                             onDeleted()
                             dismiss()
+                        case .unchanged:
+                            break
                         }
                     }
                 },

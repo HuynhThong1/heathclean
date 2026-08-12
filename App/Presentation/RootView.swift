@@ -25,6 +25,7 @@ struct RootView: View {
             }
         }
         .task {
+            await container.seedUITestHistoryFixtureIfNeeded()
             // `try?` here would nest the optional and make "no profile yet"
             // indistinguishable from "profile found".
             do {

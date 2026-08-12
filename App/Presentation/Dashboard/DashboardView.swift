@@ -94,6 +94,9 @@ struct DashboardView: View {
                     detailType = nil
                     entryType = type
                 },
+                onChanged: {
+                    Task { await self.model?.load() }
+                },
                 onDeleted: {
                     toast = "Đã xoá bữa ăn"
                     Task { await self.model?.load() }
