@@ -196,10 +196,26 @@ not stop the next occurrence; this is the place that might.
 
 ### Sheets need `presentationBackground`, not `.background`
 
-A fixed `presentationDetents` height with `.background(DS.surfaceCard)` on the
-content leaves any unused height showing the sheet's own backing. In light mode
-that is near-white and invisible; in dark mode it is a black band above and below
-the content. Colour the sheet — `.presentationBackground(DS.surfaceCard)`.
+A `presentationDetents` height taller than the content, with
+`.background(DS.surfaceCard)` on the content, leaves the unused height showing the
+sheet's own backing. In light mode that is near-white and invisible; in dark mode
+it is a black band above and below the content. Colour the sheet —
+`.presentationBackground(DS.surfaceCard)`.
+
+**A fixed height is the deeper problem, and `HFDestructiveConfirm` shows what it
+takes to size a sheet to its content.** Three things, all needed:
+
+- `.fixedSize(horizontal: false, vertical: true)`, or the sheet stretches the
+  stack to the detent and the measurement below reads back the height it just
+  set — the sheet then never shrinks.
+- The measurement goes in a **`.background`**, not an overlay: `Color.clear` takes
+  hits in SwiftUI, so an overlay eats the buttons' taps. `onGeometryChange` would
+  be tidier but is iOS 18 and the target is 17.
+- **The sheet does not inset its content for the home indicator.** Its own bottom
+  padding is the only clearance, so it takes `max(DS.s4, safeAreaInsets.bottom)` —
+  22pt on an iPhone 17, 0 on a phone with a home button. A flat 28pt stacked on
+  top of the indicator instead and left ~50pt of empty sheet under the last
+  button while the rest of the stack ran on a 16pt rhythm.
 
 ### SwiftUI gotcha already hit once
 

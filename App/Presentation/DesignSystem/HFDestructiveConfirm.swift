@@ -25,6 +25,24 @@ struct HFDestructiveConfirm: View {
     let onConfirm: () -> Void
     let onCancel: () -> Void
 
+    /// The sheet is sized to what is in it, measured below.
+    ///
+    /// A fixed detent cannot work here: the two call sites' messages differ in
+    /// length, and Dynamic Type or a long dish name wraps them further. The 280pt
+    /// this used to be left an empty band under "Huỷ" on the short message and
+    /// would have run out of room on the tall one.
+    @State private var contentHeight: CGFloat = 280
+
+    /// Clearance under the last button. The sheet reaches the bottom edge of the
+    /// screen and does **not** inset its content, so this is the only thing
+    /// keeping "Huỷ" clear of the home indicator — measured at 22pt here, and 0 on
+    /// a phone with a home button, which is why it takes the larger of the two.
+    ///
+    /// It used to be a flat 28pt, which stacked on top of the indicator's 22 and
+    /// left ~50pt of empty sheet under the button while the rest of the stack ran
+    /// on a 16pt rhythm.
+    @State private var bottomClearance: CGFloat = DS.s4
+
     var body: some View {
         VStack(alignment: .leading, spacing: DS.s4) {
             Capsule()
@@ -77,15 +95,34 @@ struct HFDestructiveConfirm: View {
         }
         .padding(.horizontal, 20)
         .padding(.top, 14)
-        .padding(.bottom, 28)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        // `presentationBackground`, not `.background` on the stack. The detent is
-        // a fixed height and the content is shorter than it, so a background on
-        // the content only paints the content: the leftover strip showed the
-        // sheet's own backing, which is near-black in dark mode. This colours the
-        // sheet itself, so there is nothing left to show through.
+        .padding(.bottom, bottomClearance)
+        .frame(maxWidth: .infinity)
+        // Without this the sheet stretches the stack to the detent's full height,
+        // so the measurement below reads back the height it just set and the
+        // sheet never shrinks. `vertical: true` pins the stack to its ideal
+        // height; the width stays flexible.
+        .fixedSize(horizontal: false, vertical: true)
+        // Measured in a *background*, not an overlay: `Color.clear` takes hits in
+        // SwiftUI, so an overlay would eat the two buttons' taps.
+        .background {
+            GeometryReader { proxy in
+                Color.clear
+                    .onAppear {
+                        bottomClearance = max(DS.s4, proxy.safeAreaInsets.bottom)
+                        contentHeight = proxy.size.height
+                    }
+                    .onChange(of: proxy.size.height) { _, height in
+                        contentHeight = height
+                    }
+            }
+        }
+        // `presentationBackground`, not `.background` on the stack: a background
+        // on the content paints only the content, and anything left over shows
+        // the sheet's own backing, which is near-black in dark mode. Colouring
+        // the sheet leaves nothing to show through — still worth doing now the
+        // height fits, because the corner radius rounds into it.
         .presentationBackground(DS.surfaceCard)
-        .presentationDetents([.height(280)])
+        .presentationDetents([.height(contentHeight)])
         .presentationCornerRadius(DS.rSheet)
     }
 }
