@@ -354,6 +354,27 @@ Gemini is the verified hosted POC provider. Qwen has an OpenAI-compatible
 adapter but remains unverified until an endpoint is selected. Switching stays
 configuration-only through `MODEL_PROVIDER` / `X-Model-Provider`.
 
+`GATEWAY_API_KEY` is read the same way and sent as `X-API-Key`. A gateway on
+localhost needs none; a deployed one rejects every `/v1` call without it,
+because an analysis spends a call on the operator's model quota. Both values go
+through one `setting(_:)` helper in `DependencyContainer`, which exists because
+an unset build setting still leaves the **key present** in `Info.plist` — only
+the value tells you it was never configured, so `nil` is never what you get.
+Measured on a Debug simulator build with neither defined, `$(GATEWAY_URL)`
+expands to `""`; the helper's empty check is therefore the branch that actually
+fires. It also rejects a literal `"$(NAME)"`, the other documented outcome when
+expansion does not run, which has not been re-measured on a device build.
+
+**`Config/Info.plist` carries an `NSExceptionDomains` entry with a placeholder
+address (`203.0.113.10`), and until it is replaced with the real VPS IP the
+scan fails as a network error.** `NSAllowsLocalNetworking` covers the Mac on
+the same Wi-Fi and nothing public, so a plaintext gateway on a public address
+needs its own exception, matched on the exact literal. It is scaffolding for
+testing against an IP: the key crosses the wire in clear text, so give the
+gateway a domain and a certificate and delete the whole dict.
+`NSAllowsArbitraryLoads` is the wrong tool — it disables ATS for every host the
+app will ever contact, to fix one.
+
 `CameraCaptureView` is §6.6 in full — `AVCaptureSession`, the preview layer, the
 1:1 viewfinder. The capture → gateway → review → save path has been exercised on
 a physical iPhone; the simulator still uses `PhotosPicker` because it has no

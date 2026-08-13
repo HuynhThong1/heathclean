@@ -66,6 +66,11 @@
             value = "http://HuynhThongs-MacBook-Pro.local:8000"
             isEnabled = "YES">
          </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "GATEWAY_API_KEY"
+            value = ""
+            isEnabled = "NO">
+         </EnvironmentVariable>
       </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction

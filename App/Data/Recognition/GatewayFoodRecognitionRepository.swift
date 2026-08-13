@@ -11,6 +11,9 @@ struct GatewayFoodRecognitionRepository: FoodRecognitionRepository {
     /// Overrides the gateway's default model for this client, via
     /// `X-Model-Provider`. `nil` uses whatever the gateway is configured with.
     var providerOverride: String?
+    /// Shared secret for a gateway that is not on localhost, sent as
+    /// `X-API-Key`. `nil` for a local run, which needs no key.
+    var apiKey: String?
     var session: URLSession = .shared
 
     func analyze(image: Data, mimeType: String) async throws -> FoodAnalysisResult {
@@ -25,6 +28,9 @@ struct GatewayFoodRecognitionRepository: FoodRecognitionRepository {
         )
         if let providerOverride {
             request.setValue(providerOverride, forHTTPHeaderField: "X-Model-Provider")
+        }
+        if let apiKey, !apiKey.isEmpty {
+            request.setValue(apiKey, forHTTPHeaderField: "X-API-Key")
         }
         request.httpBody = Self.multipartBody(
             image: image, mimeType: mimeType, boundary: boundary

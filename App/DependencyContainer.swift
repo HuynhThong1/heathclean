@@ -39,15 +39,26 @@ final class DependencyContainer {
         // The environment remains the development override. Device builds can
         // additionally inject GATEWAY_URL into Info.plist so launching later
         // from the Home Screen does not silently fall back to the mock.
-        let gatewayURL = ProcessInfo.processInfo.environment["GATEWAY_URL"]
-            ?? Bundle.main.object(forInfoDictionaryKey: "GATEWAY_URL") as? String
-        if let raw = gatewayURL,
-           !raw.isEmpty,
-           !raw.hasPrefix("$("),
-           let url = URL(string: raw) {
+        //
+        // Either way the key is *present* in Info.plist and only its value says
+        // whether it was configured, so absence has to be tested rather than
+        // read off a nil. Measured on a Debug simulator build with neither
+        // setting defined, `$(GATEWAY_URL)` expands to "" — so the empty check
+        // is the one that actually fires. The "$(" check stays because that is
+        // the other documented outcome when expansion does not run, and it has
+        // not been re-measured on a device build.
+        func setting(_ name: String) -> String? {
+            let raw = ProcessInfo.processInfo.environment[name]
+                ?? Bundle.main.object(forInfoDictionaryKey: name) as? String
+            guard let raw, !raw.isEmpty, !raw.hasPrefix("$(") else { return nil }
+            return raw
+        }
+
+        if let raw = setting("GATEWAY_URL"), let url = URL(string: raw) {
             recognitionRepository = GatewayFoodRecognitionRepository(
                 baseURL: url,
-                providerOverride: ProcessInfo.processInfo.environment["MODEL_PROVIDER"]
+                providerOverride: ProcessInfo.processInfo.environment["MODEL_PROVIDER"],
+                apiKey: setting("GATEWAY_API_KEY")
             )
         } else {
             recognitionRepository = MockFoodRecognitionRepository()
