@@ -1652,3 +1652,265 @@ Most important design rule:
 > The Domain layer calculates the final calorie and macro totals.
 
 This keeps the system testable, replaceable, privacy-aware, and suitable for long-term development.
+
+---
+
+## 32. Locket-style History — Kế hoạch triển khai
+
+### 32.1 Mục tiêu trải nghiệm
+
+Nâng cấp tab **Lịch sử** từ danh sách theo tuần thành một “bản đồ ký ức ăn uống”
+theo tháng, lấy cảm hứng từ cách Locket đặt ảnh lên lịch. Người dùng có thể nhìn
+lướt qua cả tháng, nhận ra ngày nào đã ghi món, chạm vào ảnh để xem lại bữa ăn và
+thêm bữa cho ngày phù hợp mà không làm mất các số liệu dinh dưỡng hiện có.
+
+Điểm học từ màn hình tham chiếu:
+
+- mỗi tháng là một card lớn, cuộn dọc liên tục; tháng hiện tại nằm trên cùng;
+- lưới 7 cột giữ đúng vị trí ngày trong tuần, nhưng ưu tiên ảnh hơn con số;
+- ngày có ảnh dùng thumbnail bo góc, ngày đã qua nhưng trống dùng chấm nhỏ, ngày
+  còn lại có thể là ô trống; ngày được chọn/add có trạng thái viền nổi bật;
+- ảnh là điểm vào chi tiết, còn tiêu đề tháng và khoảng trống giúp người dùng cảm
+  nhận “timeline” thay vì một date picker thuần túy.
+
+Không sao chép nhận diện thương hiệu, màu sắc hay gamification của Locket. Giao
+diện tiếp tục dùng font và token `DS.*` của HeathFirst, đồng thời giữ calorie,
+macro và loại bữa ăn là nội dung chính.
+
+### 32.2 Phạm vi sản phẩm
+
+#### MVP
+
+1. Tab Lịch sử mở ở tháng hiện tại và cuộn ngược về các tháng có dữ liệu.
+2. Mỗi ngày chỉ có một ô trong lưới Monday-first:
+   - có bữa kèm ảnh: hiển thị ảnh gần nhất trong ngày;
+   - có nhiều ảnh: thêm badge số lượng;
+   - có bữa nhưng không có ảnh: hiển thị tile theo loại bữa và tổng kcal;
+   - ngày đã qua không có dữ liệu: hiển thị chấm trung tính;
+   - ngày tương lai: không tương tác và không hiển thị chấm.
+3. Chạm một ngày mở **day sheet** gồm tổng kcal/macro và các bữa theo thời gian.
+   Chạm một bữa tiếp tục dùng `MealDetailView` hiện có.
+4. Nút “+” trong ngày hôm nay mở luồng ghi bữa/scan hiện có. MVP không cho ghi
+   lùi ngày để tránh thay đổi ngữ nghĩa của dashboard, notification và HealthKit.
+5. Có skeleton khi tải, empty state cho người dùng mới, retry state khi đọc dữ
+   liệu thất bại và VoiceOver label đầy đủ cho từng ngày.
+6. Lịch sử dạng tuần hiện tại được thay bằng lịch tháng; không duy trì hai cách
+   điều hướng song song trong MVP.
+
+#### Sau MVP
+
+- bộ lọc theo loại bữa, món ăn hoặc nguồn nhập (thủ công/AI);
+- tìm kiếm theo tên món;
+- chế độ chọn nhiều ảnh để chia sẻ recap tháng;
+- heatmap dinh dưỡng và streak, chỉ triển khai sau khi xác nhận chúng không tạo
+  áp lực tiêu cực về ăn uống;
+- ghi bữa cho ngày quá khứ sau khi thống nhất quy tắc đồng bộ HealthKit và báo cáo.
+
+### 32.3 Quy tắc UX chi tiết
+
+- **Lịch:** Gregorian, locale `vi_VN`, tuần bắt đầu từ Thứ Hai và dùng múi giờ tự
+  động của thiết bị, nhất quán với `MealHistoryModel` hiện tại.
+- **Tháng hiện tại:** chỉ hiển thị đến hôm nay; không tạo cảm giác ngày tương lai
+  là dữ liệu bị thiếu. Tháng cũ hiển thị đủ số ngày.
+- **Thumbnail đại diện:** lấy ảnh của meal mới nhất trong ngày; nếu meal đó có
+  nhiều ảnh thì lấy ảnh đầu tiên. Quy tắc phải deterministic để tránh ảnh đổi vị
+  trí sau mỗi lần render.
+- **Ngày được chọn:** viền `DS` accent và có nhãn ngày; không chỉ dựa vào màu để
+  truyền đạt trạng thái.
+- **Tương tác:** toàn bộ ô ngày có hit target tối thiểu 44×44 pt. Không dùng
+  horizontal swipe để đổi tháng vì xung đột với back gesture và khó khám phá.
+- **Cuộn:** tải ban đầu tháng hiện tại cộng hai tháng trước; khi gần cuối danh sách
+  tải thêm ba tháng. Giữ vị trí cuộn khi dữ liệu refresh hoặc quay lại từ detail.
+- **Ảnh lỗi/mất:** fallback sang tile dinh dưỡng, không để ô trắng và không coi là
+  lỗi tải toàn màn hình.
+- **Quyền riêng tư:** ảnh bữa ăn chỉ lưu local trong MVP, không đưa vào iCloud,
+  analytics hay backend. Xóa meal phải xóa ảnh không còn được tham chiếu.
+
+### 32.4 Thay đổi mô hình dữ liệu
+
+Domain không giữ `UIImage` hoặc đường dẫn filesystem. Thêm metadata độc lập nền
+tảng vào `Meal`, dự kiến:
+
+```swift
+public struct MealPhoto: Sendable, Equatable, Identifiable {
+    public let id: UUID
+    public var capturedAt: Date
+    public var pixelWidth: Int
+    public var pixelHeight: Int
+}
+
+public struct Meal {
+    // Existing fields...
+    public var photos: [MealPhoto]
+}
+```
+
+App layer chịu trách nhiệm ánh xạ `MealPhoto.id` sang file. Tạo
+`MealPhotoStore` actor với `save`, `thumbnail`, và `delete`; ảnh gốc dùng JPEG/HEIC
+đã sửa orientation, thumbnail dùng kích thước cố định phù hợp màn hình @3x. Ghi
+file theo chiến lược temp → atomic rename, sau đó mới lưu metadata để tránh entity
+trỏ vào file chưa hoàn tất.
+
+SwiftData thêm `MealPhotoEntity` quan hệ cascade từ `MealEntity`. Migration phải
+coi `photos` là mảng rỗng mặc định để toàn bộ meal cũ tiếp tục đọc được. Khi xóa,
+repository trả/ghi nhận photo IDs cần dọn và `MealPhotoStore` thực hiện cleanup;
+một tác vụ bảo trì nhẹ có thể xóa orphan file khi khởi động.
+
+Ảnh từ scan chỉ được gắn vào meal **sau khi người dùng xác nhận lưu**. Ảnh camera
+tạm phải bị xóa khi hủy luồng scan. Bữa nhập thủ công không bắt buộc có ảnh.
+
+### 32.5 API và phân lớp
+
+Giữ dependency direction hiện tại:
+
+```text
+MealHistoryView
+  -> MealHistoryModel
+    -> GetMealHistoryMonthsUseCase
+      -> MealRepository
+        -> SwiftDataMealRepository
+
+MealHistoryView / Scan flow
+  -> MealPhotoStore (App-only file adapter)
+```
+
+Mở rộng repository bằng truy vấn phân trang theo khoảng tháng, không gọi một
+query cho từng ngày. Use case trả về value types sẵn sàng cho presentation:
+
+```swift
+HistoryMonth(yearMonth, days: [HistoryDay])
+HistoryDay(date, meals, totalNutrition, representativePhotoID)
+```
+
+`GetMealHistoryMonthsUseCase` chịu trách nhiệm day boundary, group/sort meal,
+thumbnail representative và tổng dinh dưỡng. View model chỉ quản lý paging,
+selection, loading/error state và chống kết quả request cũ ghi đè request mới.
+
+### 32.6 Cấu trúc UI đề xuất
+
+```text
+App/Presentation/MealHistory/
+├── MealHistoryView.swift          # container, navigation, paging trigger
+├── MealHistoryModel.swift         # state của các tháng đã tải
+├── HistoryMonthCard.swift         # header + weekday row + calendar grid
+├── HistoryDayTile.swift           # photo/fallback/dot/future states
+└── HistoryDaySheet.swift          # nutrition summary + meal list
+```
+
+`HistoryMonthCard` dùng `LazyVGrid` 7 cột cố định. Placeholder đầu/cuối tháng vẫn
+chiếm cell nhưng accessibility hidden để ngày khớp đúng thứ. Dùng thumbnail cache
+theo `photoID + targetSize + displayScale`; hủy task decode khi tile rời màn hình
+và không decode ảnh gốc trên main actor.
+
+Accessibility identifiers ổn định:
+
+- `history.month.YYYY-MM`
+- `history.day.YYYY-MM-DD`
+- `history.day.photo.YYYY-MM-DD`
+- `history.day.add.YYYY-MM-DD`
+- `history.day.sheet`
+- `history.loadMore`
+
+VoiceOver label của ô ngày gồm ngày đầy đủ, số bữa, tổng kcal và trạng thái có
+ảnh. Dynamic Type không làm thay đổi 7 cột; khi chữ lớn, ẩn text phụ trong tile
+nhưng giữ toàn bộ nội dung ở accessibility label.
+
+### 32.7 Các giai đoạn triển khai
+
+#### Giai đoạn 0 — Product/visual spike
+
+- dựng wireframe cho tháng hiện tại, tháng cũ, empty/loading/error và day sheet;
+- chốt kích thước tile trên iPhone SE và màn hình Pro Max;
+- xác nhận “một ảnh đại diện/ngày” và phạm vi nút add;
+- đo prototype với 12–24 tháng dữ liệu giả trước khi chốt kiến trúc cache.
+
+**Exit:** design review duyệt interaction, token và accessibility annotations.
+
+#### Giai đoạn 1 — Domain query và lịch tháng
+
+- thêm các value type/use case tổng hợp theo tháng;
+- bổ sung truy vấn range và unit tests cho ranh giới tháng/năm, leap day, DST,
+  locale và nhiều meal trong cùng ngày;
+- dựng calendar grid bằng fallback tile, chưa cần ảnh;
+- thay week strip sau feature flag nội bộ `historyMonthGrid`.
+
+**Exit:** xem và mở được mọi meal cũ; paging không query theo từng ngày.
+
+#### Giai đoạn 2 — Photo persistence
+
+- thêm `MealPhoto`, SwiftData migration và `MealPhotoStore`;
+- nối ảnh đã capture từ scan vào meal được xác nhận;
+- tạo thumbnail background, cache có giới hạn và cleanup khi cancel/delete;
+- bổ sung privacy/storage notes trong app nếu cần.
+
+**Exit:** relaunch vẫn thấy đúng thumbnail; xóa meal không để orphan; meal cũ
+không ảnh vẫn hoạt động.
+
+#### Giai đoạn 3 — Day sheet và hoàn thiện trải nghiệm
+
+- thêm summary kcal/macro, danh sách meal và navigation tới detail;
+- loading skeleton, retry, empty state, badge nhiều ảnh, scroll restoration;
+- localization tiếng Việt/Anh và VoiceOver/Dynamic Type/Reduce Motion;
+- analytics tối thiểu, không chứa ảnh hay tên món: mở History, chọn ngày, mở meal,
+  paging month, lỗi thumbnail.
+
+**Exit:** đạt acceptance criteria và UI test chạy ổn định trên simulator mục tiêu.
+
+#### Giai đoạn 4 — Rollout
+
+- bật feature flag cho nội bộ/TestFlight trước;
+- theo dõi crash-free sessions, thời gian render tháng đầu, memory peak, tỷ lệ lỗi
+  thumbnail và dung lượng ảnh;
+- rollout tăng dần; giữ khả năng tắt remote flag trong một phiên bản phát hành;
+- xóa UI tuần cũ và flag sau khi bản lịch tháng ổn định.
+
+### 32.8 Kế hoạch kiểm thử
+
+#### Domain/Repository
+
+- nhóm đúng ngày/tháng ở ranh giới 23:59–00:00 và DST;
+- thứ tự tháng mới → cũ, meal theo thời gian và ảnh đại diện deterministic;
+- tháng 28/29/30/31 ngày, tháng bắc cầu năm;
+- tổng calorie/macro không thay đổi khi meal có/không có ảnh;
+- migration store cũ, cascade metadata và cleanup orphan file;
+- request paging trùng nhau không tạo duplicate hoặc để response cũ thắng.
+
+#### UI/XCUITest
+
+- mở History ở tháng hiện tại và không chọn được ngày tương lai;
+- seed meal có ảnh, không ảnh và nhiều meal để kiểm tra ba tile state;
+- chạm ngày → day sheet → meal detail → sửa/xóa → grid refresh đúng;
+- cuộn tải tháng cũ, quay lại vẫn giữ scroll position;
+- empty/error/retry, VoiceOver identifiers và cỡ chữ accessibility;
+- đo scroll với ít nhất 24 tháng × 10 ảnh/tháng, theo dõi hitch và memory warning.
+
+### 32.9 Acceptance criteria MVP
+
+- tháng đầu có nội dung hữu ích xuất hiện trong ≤ 500 ms với local fixture trên
+  simulator mục tiêu; không block main thread để decode ảnh;
+- scroll 24 tháng không crash, không tăng bộ nhớ không giới hạn và không thấy ảnh
+  của ngày khác do cell reuse;
+- mọi meal hiện có vẫn truy cập/sửa/xóa được từ day sheet;
+- dữ liệu calorie/macro của lịch khớp dashboard cho cùng ngày;
+- ngày tương lai không tương tác; ngày trống, ngày có meal không ảnh và ngày có
+  ảnh phân biệt được cả bằng VoiceOver;
+- ảnh không rời thiết bị trong MVP; cancel và delete dọn file đúng quy tắc;
+- `swift test` và các XCUITest History cũ được cập nhật/chạy xanh trước rollout.
+
+### 32.10 Rủi ro và quyết định cần chốt
+
+| Rủi ro/câu hỏi | Hướng xử lý đề xuất |
+|---|---|
+| Ảnh làm tăng dung lượng app | Nén khi lưu, thumbnail riêng, hiển thị dung lượng trong Settings ở phase sau |
+| SwiftData metadata và file lệch nhau | Atomic file write, cleanup orphan, test crash giữa hai bước |
+| Lưới 7 cột quá nhỏ | Photo-first, text tối thiểu, day sheet cho chi tiết, kiểm thử máy nhỏ |
+| Lịch dài gây giật | Range fetch theo batch, `LazyVStack`, thumbnail cache giới hạn |
+| Meal scan hiện chưa lưu ảnh | Giai đoạn 2 là dependency bắt buộc để đạt visual giống tham chiếu |
+| Có cho thêm/sửa ngày cũ không | MVP chỉ add hôm nay; sửa/xóa meal cũ vẫn giữ như hiện tại |
+| Một ngày nhiều meal hiển thị gì | Ảnh meal mới nhất + badge số ảnh; day sheet hiển thị đầy đủ |
+| Đồng bộ/iCloud | Ngoài MVP; local-only phải được truyền đạt rõ trước khi người dùng đổi máy |
+
+Quyết định product cần xác nhận trước Giai đoạn 1: (1) có thay hoàn toàn week strip
+hay rollout song song, (2) có cho ghi bữa quá khứ, và (3) retention/chất lượng ảnh
+gốc. Mặc định của kế hoạch này lần lượt là **thay thế sau feature flag**, **không**,
+và **giữ ảnh nén local cho đến khi meal bị xóa**.
