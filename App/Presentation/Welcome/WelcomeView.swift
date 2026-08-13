@@ -5,7 +5,34 @@ import SwiftUI
 struct WelcomeView: View {
     let onStart: () -> Void
 
+    /// The pinned layout has to be able to give up and scroll.
+    ///
+    /// Every `Font.custom(_:size:)` here scales with Dynamic Type, so at an
+    /// accessibility text size the copy grew until "Bắt đầu" sat below the screen
+    /// — on a fixed `VStack` with no way to reach it, which locks a user at that
+    /// text size out of the app entirely at the first screen. A UI test for §32
+    /// found it by failing to tap that button.
+    ///
+    /// `minHeight: proxy.size.height` keeps the `Spacer`s doing their job when the
+    /// content fits, and `.basedOnSize` means there is no bounce then either — at
+    /// ordinary sizes this is the same screen it was.
     var body: some View {
+        GeometryReader { proxy in
+            ScrollView {
+                content
+                    .padding(.horizontal, 20)
+                    .frame(
+                        maxWidth: .infinity,
+                        minHeight: proxy.size.height,
+                        alignment: .leading
+                    )
+            }
+            .scrollBounceBehavior(.basedOnSize)
+        }
+        .background(brandGradient.ignoresSafeArea())
+    }
+
+    private var content: some View {
         VStack(alignment: .leading, spacing: 0) {
             logoRow
                 .padding(.top, DS.s5)
@@ -53,9 +80,6 @@ struct WelcomeView: View {
             }
             .padding(.bottom, DS.s4)
         }
-        .padding(.horizontal, 20)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-        .background(brandGradient.ignoresSafeArea())
     }
 
     private var logoRow: some View {
