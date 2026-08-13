@@ -43,15 +43,18 @@
 	<dict>
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
-		<!-- REPLACE 203.0.113.10 WITH THE VPS ADDRESS. An IP literal is matched
-		     exactly, so the placeholder (a reserved documentation address) does
-		     nothing until it is the real one — the scan will read as a network
-		     failure until then. Remove this whole dict once the gateway is
-		     HTTPS; NSExceptionAllowsInsecureHTTPLoads is the cost of testing
-		     against a bare IP, not a setting worth keeping. -->
+		<!-- The deployed gateway, matched as an exact IP literal — this is no
+		     longer the documentation placeholder, so plaintext HTTP to this one
+		     host is now permitted and the scan can reach it. Remove this whole
+		     dict once the gateway is HTTPS; NSExceptionAllowsInsecureHTTPLoads is
+		     the cost of testing against a bare IP, not a setting worth keeping,
+		     and the API key crosses the wire in clear text until it goes.
+		     Changing the VPS address means changing it here too: nothing derives
+		     this from GATEWAY_URL, so the two can disagree silently and the only
+		     symptom is a scan that fails as a network error. -->
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>203.0.113.10</key>
+			<key>64.176.83.254</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>

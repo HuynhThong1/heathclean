@@ -9,6 +9,10 @@ Package.resolved
 DerivedData/
 *.xcuserstate
 
+# Where Scripts/run-on-device.sh puts its derived data. It holds a signed app
+# whose Info.plist carries the gateway API key, so this must stay untracked.
+build/
+
 # macOS
 .DS_Store
 
