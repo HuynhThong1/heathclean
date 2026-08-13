@@ -35,20 +35,47 @@ actor SwiftDataMealRepository: MealRepository {
             entity.items.append(FoodItemEntity(item: item))
         }
 
+        // Photos are diffed the same way and for the same reason. Nothing in the
+        // app edits them on a saved meal today — the scan attaches one at
+        // creation — but reassigning the array would leave detached rows behind,
+        // and an `update` that silently kept a removed photo would be a file the
+        // sweep could never collect.
+        let keepPhotos = Set(meal.photos.map(\.id))
+        for row in entity.photos where !keepPhotos.contains(row.id) {
+            modelContext.delete(row)
+        }
+        let existingPhotos = Set(entity.photos.map(\.id))
+        for photo in meal.photos where !existingPhotos.contains(photo.id) {
+            entity.photos.append(MealPhotoEntity(photo: photo))
+        }
+
         entity.date = meal.date
         entity.typeRawValue = meal.type.rawValue
         try modelContext.save()
     }
 
-    func delete(mealID: UUID) async throws {
+    @discardableResult
+    func delete(mealID: UUID) async throws -> [UUID] {
         let descriptor = FetchDescriptor<MealEntity>(
             predicate: #Predicate { $0.id == mealID }
         )
-        // The cascade rule on `items` removes the food rows with it.
+        // The cascade rules on `items` and `photos` remove those rows with it;
+        // the photo ids are read out first, because after the delete there is
+        // nothing left to ask.
+        var photoIDs: [UUID] = []
         for entity in try modelContext.fetch(descriptor) {
+            photoIDs.append(contentsOf: entity.photos.map(\.id))
             modelContext.delete(entity)
         }
         try modelContext.save()
+        return photoIDs
+    }
+
+    func photoIDs() async throws -> [UUID] {
+        // Every row, once, at launch. Rows are four small fields, so this is
+        // cheaper than it looks — and the alternative, trusting the filesystem,
+        // is what leaves bytes behind.
+        try modelContext.fetch(FetchDescriptor<MealPhotoEntity>()).map(\.id)
     }
 
     func meals(from start: Date, to end: Date) async throws -> [Meal] {
@@ -57,5 +84,13 @@ actor SwiftDataMealRepository: MealRepository {
             sortBy: [SortDescriptor(\.date)]
         )
         return try modelContext.fetch(descriptor).map(\.meal)
+    }
+
+    func earliestMealDate() async throws -> Date? {
+        // `fetchLimit` matters: this runs on every history page turn, and the
+        // whole point of asking is to avoid reading meals that are not on screen.
+        var descriptor = FetchDescriptor<MealEntity>(sortBy: [SortDescriptor(\.date)])
+        descriptor.fetchLimit = 1
+        return try modelContext.fetch(descriptor).first?.date
     }
 }

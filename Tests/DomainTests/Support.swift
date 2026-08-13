@@ -116,13 +116,24 @@ actor InMemoryMealRepository: MealRepository {
         stored.filter { $0.date >= start && $0.date < end }
     }
 
+    func earliestMealDate() async throws -> Date? {
+        stored.min { $0.date < $1.date }?.date
+    }
+
     func update(_ meal: Meal) async throws {
         guard let index = stored.firstIndex(where: { $0.id == meal.id }) else { return }
         stored[index] = meal
     }
 
-    func delete(mealID: UUID) async throws {
+    @discardableResult
+    func delete(mealID: UUID) async throws -> [UUID] {
+        let removed = stored.filter { $0.id == mealID }.flatMap(\.photos).map(\.id)
         stored.removeAll { $0.id == mealID }
+        return removed
+    }
+
+    func photoIDs() async throws -> [UUID] {
+        stored.flatMap(\.photos).map(\.id)
     }
 
     func all() -> [Meal] { stored }

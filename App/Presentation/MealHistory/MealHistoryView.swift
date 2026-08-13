@@ -12,6 +12,17 @@ struct MealHistoryView: View {
     @State private var toast: String?
 
     var body: some View {
+        // §32's month grid replaces this screen rather than joining it, so only
+        // one of the two is ever on screen — which is also why both can label
+        // their day cells `history.day.<yyyy-MM-dd>`.
+        if HistoryFeatureFlags.timeline {
+            HistoryMonthsView(refreshID: refreshID)
+        } else {
+            weekStripScreen
+        }
+    }
+
+    private var weekStripScreen: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: DS.s5) {
                 if let model {
@@ -52,12 +63,10 @@ struct MealHistoryView: View {
         }
         .hfToast(message: $toast)
         .navigationDestination(item: $route) { route in
-            MealDetailView(
-                model: container.makeMealDetailModel(
-                    type: route.type,
-                    meals: model?.meals(of: route.type, on: route.date) ?? [],
-                    dailyGoalCalories: model?.dailyGoalCalories ?? 0
-                ),
+            MealDetailRoute(
+                type: route.type,
+                meals: model?.meals(of: route.type, on: route.date) ?? [],
+                dailyGoalCalories: model?.dailyGoalCalories ?? 0,
                 // History is a record, not a place to keep eating from — adding
                 // more belongs to today, which the dashboard owns.
                 onAddMore: { self.route = nil },

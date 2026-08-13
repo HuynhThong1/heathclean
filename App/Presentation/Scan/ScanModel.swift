@@ -25,15 +25,27 @@ final class ScanModel {
     private(set) var type: MealType
     private let recognitionRepository: any FoodRecognitionRepository
     private let saveMeal: SaveMealUseCase
+    private let photoStore: MealPhotoStore
+
+    /// The normalized bytes that were analysed, kept so a confirmed meal can keep
+    /// its picture (§32.4).
+    ///
+    /// **In memory only, and written nowhere until the user confirms.** That is
+    /// what makes "ảnh camera tạm phải bị xóa khi hủy luồng scan" true by
+    /// construction: cancelling drops the reference, because there was never a
+    /// file to clean up.
+    private var analyzedImage: Data?
 
     init(
         type: MealType,
         recognitionRepository: any FoodRecognitionRepository,
-        saveMeal: SaveMealUseCase
+        saveMeal: SaveMealUseCase,
+        photoStore: MealPhotoStore
     ) {
         self.type = type
         self.recognitionRepository = recognitionRepository
         self.saveMeal = saveMeal
+        self.photoStore = photoStore
     }
 
     var foods: [RecognizedFood] {
@@ -70,6 +82,7 @@ final class ScanModel {
     }
 
     func analyze(image: Data, mimeType: String = "image/jpeg") async {
+        analyzedImage = image
         state = .analyzing
         do {
             let result = try await recognitionRepository.analyze(image: image, mimeType: mimeType)
@@ -150,6 +163,12 @@ final class ScanModel {
     func reset() {
         state = .idle
         editingFoodID = nil
+        analyzedImage = nil
+    }
+
+    private func storedPhoto(capturedAt: Date) async -> MealPhoto? {
+        guard let analyzedImage else { return nil }
+        return try? await photoStore.save(analyzedImage, capturedAt: capturedAt)
     }
 
     /// Returns the saved calories so the caller can raise the §6.14 toast.
@@ -158,11 +177,25 @@ final class ScanModel {
         isSaving = true
         defer { isSaving = false }
 
-        let meal = Meal(date: Date(), type: type, items: result.foods.map(\.foodItem))
+        let now = Date()
+        // Bytes first, row second (§32.4). A photo that cannot be written does
+        // not fail the meal — the meal is the thing the user came to log, the way
+        // a failed weight write does not fail a profile save.
+        let photos = await storedPhoto(capturedAt: now).map { [$0] } ?? []
+
+        let meal = Meal(
+            date: now,
+            type: type,
+            items: result.foods.map(\.foodItem),
+            photos: photos
+        )
         do {
             try await saveMeal.execute(meal)
             return result.totalCalories
         } catch {
+            // The row never landed, so the bytes must not stay: nothing would
+            // ever point at them again.
+            await photoStore.delete(ids: photos.map(\.id))
             state = .failed(String(localized: "Không lưu được bữa ăn. Vui lòng thử lại."))
             return nil
         }

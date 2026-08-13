@@ -42,8 +42,21 @@
     "%@ kcal vượt mục tiêu" : {
 
     },
+    "%@ kcal đã ghi" : {
+
+    },
     "%@ kg" : {
 
+    },
+    "%@ trên %@ kcal" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ trên %2$@ kcal"
+          }
+        }
+      }
     },
     "%@ · %@" : {
       "localizations" : {
@@ -125,13 +138,51 @@
         }
       }
     },
+    "%@, %lld bữa, %@ kcal" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$lld bữa, %3$@ kcal"
+          }
+        }
+      }
+    },
+    "%@, chưa ghi bữa nào" : {
+
+    },
+    "%@, chưa tới" : {
+
+    },
+    "%@, có bữa ăn đã ghi" : {
+
+    },
     "%lld" : {
 
     },
     "%lld g" : {
 
     },
+    "%lld ngày đã ghi · %@ kcal" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld ngày đã ghi · %2$@ kcal"
+          }
+        }
+      }
+    },
     "%lld%%" : {
+
+    },
+    ", có %lld ảnh" : {
+
+    },
+    ", có ảnh" : {
+
+    },
+    "/ %@ kcal" : {
 
     },
     "7 ngày qua" : {
@@ -222,6 +273,9 @@
     "Bạn đã đạt mục tiêu calo hôm nay." : {
 
     },
+    "Bảng màu tối được suy ra trong dự án này, không phải màu chính thức của bộ nhận diện." : {
+
+    },
     "Bắt đầu" : {
 
     },
@@ -229,6 +283,9 @@
 
     },
     "Bữa ăn đã ghi" : {
+
+    },
+    "Bữa ăn: %@. Chạm để đổi bữa." : {
 
     },
     "CALO MỖI NGÀY" : {
@@ -249,7 +306,10 @@
     "Chưa có trong cơ sở dữ liệu — mở món này để nhập dinh dưỡng." : {
 
     },
-    "Chưa có trong cơ sở dữ liệu — sửa tên hoặc bỏ món này." : {
+    "Chưa ghi bữa nào" : {
+
+    },
+    "Chưa ghi bữa nào. Những bữa bạn ghi sẽ xuất hiện trên lịch này." : {
 
     },
     "Chưa kết nối" : {
@@ -264,6 +324,9 @@
     "Chụp bữa ăn.\nBiết ngay calo." : {
 
     },
+    "Chụp lại" : {
+
+    },
     "Chụp từ trên xuống giúp ước lượng khẩu phần chính xác hơn." : {
 
     },
@@ -276,13 +339,22 @@
     "Có lỗi xảy ra" : {
 
     },
+    "Cả đĩa ăn nằm trong khung và không bị mờ thì AI nhận diện chính xác hơn." : {
+
+    },
     "DINH DƯỠNG HẰNG NGÀY" : {
 
     },
-    "Dùng số này" : {
+    "Dùng ảnh này?" : {
 
     },
     "Dịch vụ nhận diện đang bận. Thử lại sau ít phút." : {
+
+    },
+    "Giao diện" : {
+
+    },
+    "HIỂN THỊ" : {
 
     },
     "HealthClean" : {
@@ -297,16 +369,16 @@
     "Huỷ" : {
 
     },
-    "HÔM NAY · TODAY" : {
+    "Hãy chọn ảnh JPEG, HEIC, PNG hoặc WebP khác rồi thử lại." : {
+
+    },
+    "Hôm nay chưa ghi bữa nào. Những bữa bạn ghi sẽ xuất hiện ở đây." : {
 
     },
     "Hồ sơ của bạn" : {
 
     },
     "Hồ sơ của bạn, %@" : {
-
-    },
-    "Hồ sơ, Profile" : {
 
     },
     "Không khả dụng trên thiết bị này" : {
@@ -339,6 +411,15 @@
     "Không xoá được bữa ăn. Vui lòng thử lại." : {
 
     },
+    "Không xoá được món. Vui lòng thử lại." : {
+
+    },
+    "Không đọc được ảnh" : {
+
+    },
+    "Không đọc được ảnh. Chụp lại nhé." : {
+
+    },
     "Kết nối Apple Health" : {
 
     },
@@ -349,9 +430,6 @@
 
     },
     "Lưu" : {
-
-    },
-    "LỊCH SỬ · HISTORY" : {
 
     },
     "Mở Cài đặt" : {
@@ -367,6 +445,9 @@
 
     },
     "Nguồn: CSDL món Việt · %@" : {
+
+    },
+    "Ngày này không có bữa ăn nào được ghi." : {
 
     },
     "Nhập calo trước khi lưu" : {
@@ -392,16 +473,22 @@
         }
       }
     },
-    "Nhập dinh dưỡng cho %@ g đang hiển thị. Đổi khẩu phần sau đó vẫn tính lại đúng." : {
+    "Nhập kcal cho %@ g đang hiển thị rồi bấm Xong. Đổi khẩu phần sau đó vẫn tính lại đúng." : {
 
     },
     "Nhập tay" : {
+
+    },
+    "Nhập tay thay vì chụp ảnh" : {
 
     },
     "Nhập tên món trước khi lưu" : {
 
     },
     "OK" : {
+
+    },
+    "Phân tích ảnh này" : {
 
     },
     "QUYỀN RIÊNG TƯ" : {
@@ -416,16 +503,13 @@
     "Quét lại" : {
 
     },
+    "Quét ảnh thay vì nhập tay" : {
+
+    },
     "T%lld" : {
 
     },
     "THIẾT LẬP" : {
-
-    },
-    "THỐNG KÊ · INSIGHTS" : {
-
-    },
-    "Thao tác này không thể hoàn tác." : {
 
     },
     "Thêm món" : {
@@ -440,7 +524,10 @@
     "Trung bình %@ kcal mỗi ngày" : {
 
     },
-    "TÔI · PROFILE" : {
+    "Tuần sau" : {
+
+    },
+    "Tuần trước" : {
 
     },
     "Tên món" : {
@@ -461,16 +548,16 @@
     "Ví dụ: Phở bò" : {
 
     },
+    "Xem các tháng trước" : {
+
+    },
     "Xong" : {
 
     },
-    "Xoá bữa ăn" : {
+    "Xoá %@" : {
 
     },
     "Xoá bữa ăn này" : {
-
-    },
-    "Xoá bữa ăn này?" : {
 
     },
     "Xoá món" : {
@@ -480,9 +567,6 @@
 
     },
     "Xác nhận bữa ăn" : {
-
-    },
-    "bữa ăn" : {
 
     },
     "kcal" : {
@@ -525,6 +609,9 @@
     "Đang phân tích ảnh…" : {
 
     },
+    "Đang tải lịch sử bữa ăn" : {
+
+    },
     "Đã kết nối · bước chân, năng lượng, giấc ngủ" : {
 
     },
@@ -535,6 +622,15 @@
 
     },
     "Để sau" : {
+
+    },
+    "đổi bữa" : {
+
+    },
+    "Ảnh bữa ăn lúc %@" : {
+
+    },
+    "Ảnh bữa ăn vừa chụp" : {
 
     },
     "Ảnh chỉ dùng để phân tích rồi xoá." : {

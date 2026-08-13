@@ -107,7 +107,7 @@ struct HistoryWeekStrip: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityLabel(cell))
         .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
-        .accessibilityIdentifier("history.day.\(Self.identifier(for: cell.date))")
+        .accessibilityIdentifier("history.day.\(HistoryCalendar.identifier(for: cell.date))")
     }
 
     private func numberColor(_ cell: MealHistoryModel.DayCell, isSelected: Bool) -> Color {
@@ -124,16 +124,4 @@ struct HistoryWeekStrip: View {
             : String(localized: "\(day), chưa ghi bữa nào")
     }
 
-    /// A stable, locale-independent identifier so a UI test can name a day.
-    ///
-    /// Built from date components rather than a `DateFormatter`: this runs once
-    /// per cell per render, and a formatter is expensive to construct — which it
-    /// would have to be every time, being neither `Sendable` nor cacheable in a
-    /// `static let` under strict concurrency.
-    static func identifier(for date: Date) -> String {
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = .autoupdatingCurrent
-        let parts = calendar.dateComponents([.year, .month, .day], from: date)
-        return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
-    }
 }

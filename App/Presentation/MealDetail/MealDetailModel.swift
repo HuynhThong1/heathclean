@@ -18,22 +18,30 @@ final class MealDetailModel {
     private let dailyGoalCalories: Double
     private let mealRepository: any MealRepository
     private let removeFoodItem: RemoveFoodItemUseCase
+    private let photoStore: MealPhotoStore
 
     init(
         type: MealType,
         meals: [Meal],
         dailyGoalCalories: Double,
         mealRepository: any MealRepository,
-        removeFoodItem: RemoveFoodItemUseCase
+        removeFoodItem: RemoveFoodItemUseCase,
+        photoStore: MealPhotoStore
     ) {
         self.type = type
         self.meals = meals
         self.dailyGoalCalories = dailyGoalCalories
         self.mealRepository = mealRepository
         self.removeFoodItem = removeFoodItem
+        self.photoStore = photoStore
     }
 
     var items: [FoodItem] { meals.flatMap(\.items) }
+
+    /// The photos of this meal — usually none, since only a scan produces one.
+    /// A detail screen can cover several meals of the same type on one day, so
+    /// this is every photo across them, in the order they were eaten.
+    var photos: [MealPhoto] { meals.flatMap(\.photos) }
 
     var totalCalories: Double { meals.reduce(0) { $0 + $1.calories } }
     var totalProtein: Double { meals.reduce(0) { $0 + $1.protein } }
@@ -89,7 +97,11 @@ final class MealDetailModel {
                     meals[index] = updated
                 }
                 return .itemRemoved
-            case .mealDeleted:
+            case let .mealDeleted(photoIDs):
+                // The row is gone, so its bytes have to go too — nothing else
+                // will ever reference them, and until the next launch's sweep
+                // nothing else would notice.
+                await photoStore.delete(ids: photoIDs)
                 meals.removeAll { $0.id == owner.id }
                 return meals.isEmpty ? .mealDeleted : .itemRemoved
             case .notFound:
@@ -103,9 +115,11 @@ final class MealDetailModel {
 
     func delete() async -> Bool {
         do {
+            var photoIDs: [UUID] = []
             for meal in meals {
-                try await mealRepository.delete(mealID: meal.id)
+                photoIDs += try await mealRepository.delete(mealID: meal.id)
             }
+            await photoStore.delete(ids: photoIDs)
             meals = []
             return true
         } catch {

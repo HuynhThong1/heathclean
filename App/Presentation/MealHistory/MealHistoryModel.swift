@@ -1,21 +1,6 @@
 import Domain
 import Foundation
 
-/// Monday-first, so the week strip's first column is T2. `Calendar.current`
-/// starts the week on Sunday under a US locale, which would put CN first while
-/// the labels underneath still read T2…CN.
-private func weekCalendar() -> Calendar {
-    // The Vietnamese UI and persisted meal dates use the civil Gregorian
-    // calendar. Do not inherit an alternate system calendar from Settings: it
-    // would make the numeric month in the strip disagree with `dayText`, whose
-    // `vi_VN` formatter is Gregorian.
-    var calendar = Calendar(identifier: .gregorian)
-    calendar.locale = Locale(identifier: "vi_VN")
-    calendar.timeZone = .autoupdatingCurrent
-    calendar.firstWeekday = 2
-    return calendar
-}
-
 @MainActor
 @Observable
 final class MealHistoryModel {
@@ -60,7 +45,7 @@ final class MealHistoryModel {
     private var loadGeneration = 0
 
     init(mealRepository: any MealRepository, userRepository: any UserRepository) {
-        let calendar = weekCalendar()
+        let calendar = HistoryCalendar.mondayFirst()
         let today = calendar.startOfDay(for: Date())
         self.calendar = calendar
         self.selectedDate = today

@@ -18,7 +18,12 @@ public struct RemoveFoodItemUseCase: Sendable {
     /// exists and can leave the screen rather than render an empty one.
     public enum Outcome: Equatable, Sendable {
         case itemRemoved(Meal)
-        case mealDeleted
+        /// Carries the photo ids the store removed with the meal, so the caller
+        /// can delete their files — the same contract as
+        /// `MealRepository.delete(mealID:)`, and for the same reason: what the
+        /// store actually removed beats what the caller's copy of the meal knew
+        /// about (§32.4).
+        case mealDeleted(photoIDs: [UUID])
         /// The item was not in this meal. Not an error: the end state is what the
         /// caller wanted either way.
         case notFound
@@ -32,8 +37,8 @@ public struct RemoveFoodItemUseCase: Sendable {
         updated.items.removeAll { $0.id == itemID }
 
         if updated.items.isEmpty {
-            try await mealRepository.delete(mealID: meal.id)
-            return .mealDeleted
+            let photoIDs = try await mealRepository.delete(mealID: meal.id)
+            return .mealDeleted(photoIDs: photoIDs)
         }
 
         try await mealRepository.update(updated)
