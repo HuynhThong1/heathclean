@@ -1,90 +1,151 @@
 import Domain
 import SwiftUI
 
-/// One month of the history list: a header, then a row per day something was
-/// logged on (§32.2, revised — see `HistoryDayRow`).
+/// One month of history: a header, then a card per day something was logged on
+/// (HISTORY_SPEC §1, §2).
 ///
-/// A month with nothing in it is never built; `HistoryMonthsModel.visibleMonths`
-/// drops it, so scrolling back never lands on a section of empty dates.
+/// A month with nothing in it is never a section — `HistoryMonthsModel.feed` turns
+/// it into `EmptyMonthDivider`, one line rather than a card of empty dates. §0.1 is
+/// the rule behind both: a day with no data does not exist in the UI.
 struct HistoryMonthSection: View {
     let month: HistoryMonth
+    let goalCalories: Double
     let today: Date
     let onSelect: (HistoryDay) -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: DS.s2) {
-            header
-            // Not `HFCard`, and the difference is measured rather than aesthetic.
-            //
-            // A month of logged days is a card over a thousand points tall, and
-            // `HFCard` puts **two shadows** on it — §9's shadow is drawn for small
-            // blocks, and blurring this one costs a full offscreen pass of the
-            // whole card every time the list moves. A `sample` of the app during a
-            // scroll showed the main thread ~45% busy inside SwiftUI's lazy layout,
-            // which is enough that the app never goes idle and XCUITest's
-            // accessibility queries time out at 30s.
-            //
-            // Same surface, same border, same radius. No shadow.
-            VStack(spacing: 0) {
-                ForEach(Array(month.days.enumerated()), id: \.element.id) { index, day in
-                    HistoryDayRow(
+        VStack(alignment: .leading, spacing: 0) {
+            MonthHeader(month: month)
+            VStack(spacing: 10) {
+                ForEach(month.days) { day in
+                    HistoryDayCard(
                         day: day,
+                        goalCalories: goalCalories,
                         isToday: day.date == today,
                         onSelect: { onSelect(day) }
                     )
-                    if index < month.days.count - 1 {
-                        Rectangle().fill(DS.borderSubtle)
-                            .frame(height: 1)
-                            // Starts past the thumbnail, so the rows read as one
-                            // list rather than separate cards.
-                            .padding(.leading, HistoryDayRow.thumbnailSide + DS.s4 + DS.s3)
-                    }
                 }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(DS.surfaceCard)
-            .clipShape(RoundedRectangle(cornerRadius: DS.rCard, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: DS.rCard, style: .continuous)
-                    .strokeBorder(DS.borderSubtle, lineWidth: 1)
             }
         }
     }
+}
 
-    private var header: some View {
-        HStack(alignment: .firstTextBaseline, spacing: DS.s2) {
+/// "Tháng 8, 2026" with the month's shape on the right: how many days are on the
+/// record and what they averaged (§2, §8).
+struct MonthHeader: View {
+    let month: HistoryMonth
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: DS.s3) {
             Text(title)
-                .font(.custom(DSFontName.bold, size: 11.5))
-                .tracking(0.8)
-                .foregroundStyle(DS.textMuted)
+                .font(.custom(DSFontName.bold, size: 15))
+                .foregroundStyle(DS.textStrong)
             Spacer(minLength: DS.s2)
-            Text(subtitle)
+            Text(meta)
                 .font(.custom(DSFontName.regular, size: 11.5))
-                .foregroundStyle(DS.textSubtle)
+                .foregroundStyle(DS.textMuted)
+                .multilineTextAlignment(.trailing)
         }
         .padding(.horizontal, DS.s1)
+        .padding(.top, DS.s3)
+        .padding(.bottom, 10)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(title), \(subtitle)")
-        .accessibilityAddTraits(.isStaticText)
-        // On the header, **not** on the section that contains the rows: an
-        // identifier set on a container propagates down and overrides the ones the
-        // rows set for themselves, so every row came out as
-        // `history.month.<id>` and `history.day.<date>` existed nowhere. The
-        // labels were right the whole time, which is what made it puzzling.
+        .accessibilityLabel("\(title). \(meta)")
+        .accessibilityAddTraits(.isHeader)
+        // On the header, **not** on the section around the cards: an identifier on a
+        // container propagates down and overrides the ones the cards set, which once
+        // made every day come out as `history.month.<id>`.
         .accessibilityIdentifier("history.month.\(month.id)")
     }
 
-    /// "THÁNG 8, 2026" — a section label rather than a card title now, so it is
-    /// set in caps at the small step. The month is one month by construction, so
-    /// both ends of `monthText` are the same day.
     private var title: String {
-        guard let first = month.days.first?.date else { return "" }
-        return VietnameseDate.monthText(from: first, to: first).uppercased()
+        VietnameseDate.monthYearText(year: month.year, month: month.month)
     }
 
-    /// Neutral and factual: how much of the month is on the record, never a score
-    /// (§4 — this is not a streak).
-    private var subtitle: String {
-        String(localized: "\(month.days.count) ngày · \(VNNumber.int(month.calories)) kcal")
+    /// "5 ngày ghi · TB 1.780 kcal".
+    ///
+    /// The average is over **logged days only** (§8) — dividing by the length of the
+    /// month would report a number the user never ate, and would make a month with
+    /// one good day look like a starvation month.
+    private var meta: String {
+        let count = month.days.count
+        guard count > 0 else { return String(localized: "chưa ghi ngày nào") }
+        let average = month.calories / Double(count)
+        return String(localized: "\(count) ngày ghi · TB \(VNNumber.int(average)) kcal")
     }
 }
+
+/// "Tháng 7, 2026 — chưa ghi ngày nào" between two rules (§2, §6).
+///
+/// A month with nothing in it still has to appear, or scrolling back would silently
+/// skip time and the run of dates would read as continuous when it is not. One 28pt
+/// line is what that costs. §7: it reads as text, never as a button — there is
+/// nothing behind it, because MVP cannot back-date a meal.
+struct EmptyMonthDivider: View {
+    let year: Int
+    let month: Int
+
+    var body: some View {
+        HStack(spacing: 10) {
+            rule
+            Text(text)
+                .font(.custom(DSFontName.regular, size: 11.5))
+                // §2 draws this in #94A3B2, which is about 3.2:1 on the page. §7 is
+                // the rule that wins: a small grey on `pageBg` has to carry its
+                // contrast, so it takes `textMuted` (5.6:1). Between two hairlines it
+                // still reads as the quietest thing on the screen.
+                .foregroundStyle(DS.textMuted)
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
+                // Without this the two greedy rules split the width three ways and
+                // the line wraps at the em dash even though it fits. It keeps its
+                // ideal width when there is room and still wraps when there is not,
+                // which `fixedSize` would not.
+                .layoutPriority(1)
+            rule
+        }
+        .frame(minHeight: 28)
+        .padding(.horizontal, DS.s1)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(text)
+        .accessibilityAddTraits(.isStaticText)
+        .accessibilityIdentifier("history.emptyMonth.\(String(format: "%04d-%02d", year, month))")
+    }
+
+    private var rule: some View {
+        Rectangle()
+            .fill(DS.borderDefault)
+            .frame(height: 1)
+            .frame(maxWidth: .infinity)
+    }
+
+    private var text: String {
+        String(
+            localized:
+                "\(VietnameseDate.monthYearText(year: year, month: month)) — chưa ghi ngày nào"
+        )
+    }
+}
+
+#if DEBUG
+    #Preview("Month section") {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                HistoryMonthSection(
+                    month: HistoryPreviewData.month,
+                    goalCalories: HistoryPreviewData.goalCalories,
+                    today: HistoryPreviewData.today.date,
+                    onSelect: { _ in }
+                )
+                EmptyMonthDivider(
+                    year: HistoryPreviewData.emptyMonth.year,
+                    month: HistoryPreviewData.emptyMonth.month
+                )
+                .padding(.vertical, 6)
+            }
+            .padding(.horizontal, DS.s4)
+        }
+        .background(DS.surfacePage)
+        .environment(DependencyContainer(inMemory: true))
+    }
+#endif

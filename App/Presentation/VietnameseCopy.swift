@@ -194,6 +194,59 @@ enum VietnameseDate {
         String(format: "%02d", calendar().component(.day, from: date))
     }
 
+    /// "Th 5" / "CN" — the weekday under a history day card's date (HISTORY_SPEC §4).
+    ///
+    /// Longer than the week strip's "T5" because it sits in a 42pt column of its
+    /// own rather than in one of seven fixed slots, and reads less like a code.
+    static func weekdayCompact(for date: Date) -> String {
+        let weekday = calendar().component(.weekday, from: date)
+        return weekday == 1 ? "CN" : "Th \(weekday)"
+    }
+
+    /// "Thứ Năm" — spelled out, for VoiceOver and for the day panel's title.
+    static func weekdayFull(for date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "vi_VN")
+        formatter.setLocalizedDateFormatFromTemplate("EEEE")
+        let text = formatter.string(from: date)
+        return text.prefix(1).uppercased() + text.dropFirst()
+    }
+
+    /// "13/8" — the date on a search result (HISTORY_SPEC §8).
+    ///
+    /// Zero-padded day, so a column of results keeps one width. Built from
+    /// components rather than a formatter for the reason `HistoryCalendar`
+    /// records: it runs once per row per render.
+    static func dayMonth(for date: Date) -> String {
+        let parts = calendar().dateComponents([.day, .month], from: date)
+        return String(format: "%02d/%d", parts.day ?? 0, parts.month ?? 0)
+    }
+
+    /// "Thứ Năm, 13/8/2026" — the day panel's title (HISTORY_SPEC §8).
+    static func fullDayText(for date: Date) -> String {
+        let parts = calendar().dateComponents([.day, .month, .year], from: date)
+        return "\(weekdayFull(for: date)), \(parts.day ?? 0)/\(parts.month ?? 0)/\(parts.year ?? 0)"
+    }
+
+    /// "Thứ Năm 13 tháng 8" — the same day read aloud. §7's day-card label opens
+    /// with this, so "13/8" is never spoken as a fraction.
+    static func spokenDayText(for date: Date) -> String {
+        let parts = calendar().dateComponents([.day, .month], from: date)
+        return "\(weekdayFull(for: date)) \(parts.day ?? 0) tháng \(parts.month ?? 0)"
+    }
+
+    /// "06:50" — the time column of the day panel's meal list.
+    static func time(for date: Date) -> String {
+        let parts = calendar().dateComponents([.hour, .minute], from: date)
+        return String(format: "%02d:%02d", parts.hour ?? 0, parts.minute ?? 0)
+    }
+
+    /// "Tháng 8, 2026" from the numbers a `HistoryMonth` carries, with no date to
+    /// format — which is what an *empty* month has (HISTORY_SPEC §6).
+    static func monthYearText(year: Int, month: Int) -> String {
+        "Tháng \(month), \(year)"
+    }
+
     /// Which month the week on screen sits in — "Tháng 8, 2026", widened when
     /// the week straddles a month or a year boundary.
     static func monthText(from start: Date, to end: Date) -> String {

@@ -5,6 +5,9 @@ import SwiftUI
 struct MealHistoryView: View {
     /// See `DashboardView.refreshID`.
     var refreshID: Int = 0
+    /// Passed to the timeline screen, whose empty state offers the scan as its first
+    /// action (HISTORY_SPEC §6). The week strip has no such state and ignores it.
+    var onScanRequested: ((MealType) -> Void)?
 
     @Environment(DependencyContainer.self) private var container
     @State private var model: MealHistoryModel?
@@ -16,7 +19,7 @@ struct MealHistoryView: View {
         // one of the two is ever on screen — which is also why both can label
         // their day cells `history.day.<yyyy-MM-dd>`.
         if HistoryFeatureFlags.timeline {
-            HistoryMonthsView(refreshID: refreshID)
+            HistoryMonthsView(refreshID: refreshID, onScanRequested: onScanRequested)
         } else {
             weekStripScreen
         }
