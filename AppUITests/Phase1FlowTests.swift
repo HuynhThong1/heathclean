@@ -674,6 +674,50 @@ final class Phase1FlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["history.empty.scan"].waitForExistence(timeout: 30))
     }
 
+    /// §6.13's switches are drawn, but iOS has not been asked yet — so they are
+    /// inert and the screen says so instead of pretending (plan.md §19).
+    func testNotificationSwitchesStayInertUntilTheSystemHasBeenAsked() {
+        reachDashboard()
+
+        app.buttons["tab.profile"].tap()
+        let enable = app.buttons["notification.enable"]
+        scrollUntilHittable(enable)
+
+        let toggle = app.switches["notification.seventyPercent"]
+        XCTAssertTrue(toggle.exists, "the switch is drawn")
+        XCTAssertFalse(toggle.isEnabled, "but does nothing until permission is granted")
+    }
+
+    /// With permission standing in, the switches are live and remember what they
+    /// were set to. The scheduling itself stays out of reach of XCUITest — the
+    /// suite never meets a system permission dialog, the same rule that keeps it
+    /// out of the HealthKit and Photos sheets.
+    func testNotificationSwitchesAreLiveOncePermissionIsGranted() {
+        app.terminate()
+        app.launchArguments = ["-uiTesting", "-notificationsGranted"]
+        app.launch()
+        startOnboarding()
+        reachDashboard()
+
+        app.buttons["tab.profile"].tap()
+        let reminder = app.switches["notification.mealReminder"]
+        scrollUntilHittable(reminder)
+        XCTAssertTrue(reminder.isEnabled)
+        // Read before writing: `UserDefaults` outlives a launch, so a hardcoded
+        // starting value would only hold the first time the suite runs.
+        let before = reminder.value as? String
+
+        reminder.tap()
+        XCTAssertNotEqual(reminder.value as? String, before, "the switch takes the tap")
+
+        // Leaving the tab destroys the view; the preference is not view state.
+        app.buttons["tab.today"].tap()
+        XCTAssertTrue(app.buttons["mealRow.breakfast"].waitForExistence(timeout: 30))
+        app.buttons["tab.profile"].tap()
+        scrollUntilHittable(reminder)
+        XCTAssertNotEqual(reminder.value as? String, before, "and keeps it")
+    }
+
     // MARK: Helpers
 
     /// A lazy stack keeps off-screen rows in the accessibility tree, and

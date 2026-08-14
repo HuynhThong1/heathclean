@@ -18,6 +18,14 @@ final class DependencyContainer {
     /// The bytes behind `MealPhoto`. Not a repository: Domain has no notion of a
     /// file, so this is App-only by design (§32.5).
     let photoStore: MealPhotoStore
+    /// §19's local notifications. Kept rather than made on demand: it carries
+    /// the system authorization state and the day's high-water mark, which every
+    /// caller has to agree about.
+    ///
+    /// Built on first use rather than in `init`, because `@Observable` turns a
+    /// `var` into a computed property and `init` here is `nonisolated` — a
+    /// main-actor-isolated observable cannot be constructed from it.
+    @ObservationIgnored private var notificationCoordinator: NotificationCoordinator?
     private var didSeedHistoryFixture = false
     private var didSweepOrphanPhotos = false
 
@@ -110,6 +118,25 @@ final class DependencyContainer {
     }
 
     var user: any UserRepository { userRepository }
+
+    /// Built with the history calendar for the same reason
+    /// `getMealHistoryMonths` is: a notification's idea of "today" has to be the
+    /// dashboard's, or a 23:30 meal counts towards a different day than the one
+    /// it was shown on.
+    var notifications: NotificationCoordinator {
+        if let notificationCoordinator { return notificationCoordinator }
+        let calendar = HistoryCalendar.mondayFirst()
+        let created = NotificationCoordinator(
+            userRepository: userRepository,
+            getDailySummary: getDailySummary,
+            evaluateCalorieBudget: evaluateCalorieBudget,
+            plan: PlanNotificationsUseCase(calendar: calendar),
+            calendar: calendar,
+            settings: NotificationSettings()
+        )
+        notificationCoordinator = created
+        return created
+    }
 
     /// Deletes photo files no stored meal refers to any more (§32.4).
     ///
@@ -240,7 +267,8 @@ final class DependencyContainer {
             healthRepository: healthRepository,
             getDailySummary: getDailySummary,
             evaluateCalorieBudget: evaluateCalorieBudget,
-            calculateBMI: calculateBMI
+            calculateBMI: calculateBMI,
+            notifications: notifications
         )
     }
 
