@@ -221,9 +221,14 @@ struct ProfileView: View {
                         }
                     }
                 }
+                // Dimmed *inside* the card, not over it. A 0.5 on `HFCard` itself
+                // fades the white fill into the page and takes the shadow with
+                // it, so the section stopped looking like a card at all — which
+                // reads as a rendering fault rather than as a control waiting for
+                // permission. The surface stays solid; only its rows go quiet.
+                .opacity(isNotificationSwitchLive ? 1 : 0.5)
             }
-            .disabled(container.notifications.authorization != .granted)
-            .opacity(container.notifications.authorization == .granted ? 1 : 0.5)
+            .disabled(!isNotificationSwitchLive)
 
             // Says out loud what `PlanNotificationsUseCase.dailySchedule` decides,
             // because two switches that quietly exclude each other read as a bug.
@@ -231,6 +236,10 @@ struct ProfileView: View {
                 text: "Buổi tối chỉ có một thông báo: tóm tắt nếu hôm đó bạn đã ghi bữa, nhắc ghi nếu chưa."
             )
         }
+    }
+
+    private var isNotificationSwitchLive: Bool {
+        container.notifications.authorization == .granted
     }
 
     @ViewBuilder
