@@ -13,10 +13,14 @@ struct MealDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: DS.s4) {
+                // Above the numbers, as on the day sheet — the picture is what
+                // identifies the meal, and this screen is where someone came to
+                // look at it. Draws nothing for a meal typed in by hand.
+                MealPhotoGrid(photos: model.photos, identifierPrefix: "mealDetail.photo")
                 heroCard
                 itemsCard
                 if let note = summaryNote {
-                    GrayNote(text: note)
+                    GrayNote(verbatim: note)
                 }
                 deleteButton
             }

@@ -9,13 +9,32 @@ public enum MealValidationError: Error, Equatable, Sendable {
 
 public struct SaveMealUseCase: Sendable {
     private let mealRepository: any MealRepository
+    private let userRepository: any UserRepository
 
-    public init(mealRepository: any MealRepository) {
+    public init(mealRepository: any MealRepository, userRepository: any UserRepository) {
         self.mealRepository = mealRepository
+        self.userRepository = userRepository
     }
 
+    /// Validates the meal, stamps it with the day's calorie target, and stores it.
+    ///
+    /// **The stamp happens here rather than at the call sites** — manual entry and
+    /// the scan today, whatever logs a meal tomorrow — because a meal saved without
+    /// it silently loses the only record of what that day was aiming for, and there
+    /// is no repair: `UserProfile` keeps one current goal. One writer is the way to
+    /// be sure a new flow cannot forget.
+    ///
+    /// A profile that cannot be read **does not fail the meal**. The same rule as a
+    /// failed photo write or a failed weight write: the meal is what the user asked
+    /// to save, and `Meal.calorieGoalWhenLogged` is documented as optional for
+    /// exactly this. A caller that already knows the goal may pass it in, and then
+    /// this reads nothing.
     public func execute(_ meal: Meal) async throws {
         try Self.validate(meal)
+        var meal = meal
+        if meal.calorieGoalWhenLogged == nil {
+            meal.calorieGoalWhenLogged = try? await userRepository.load()?.goal.calories
+        }
         try await mealRepository.save(meal)
     }
 

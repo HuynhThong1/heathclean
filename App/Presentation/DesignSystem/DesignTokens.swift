@@ -96,6 +96,25 @@ enum DS {
     static let borderDefault = Color.dsAdaptive(light: 0xDCE2EA, dark: 0x263442)
     static let danger        = Color.dsAdaptive(light: 0xD64545, dark: 0xFF7A7A)
 
+    // History — HISTORY_SPEC.md §3 names four roles the handoff's own palette has
+    // no word for. They are here rather than beside the history views because
+    // they are semantic (a track, an axis, an over-budget fill), not one screen's
+    // private colours the way `DS.scanSurface` is.
+    //
+    /// The calorie bar of a day that went **over** its target. §0.3: over budget
+    /// is neutral grey — never red, never orange, never a warning icon.
+    static let overBudget = Color.dsAdaptive(light: 0xB4C0CB, dark: 0x566878)
+    /// The 1.5pt target mark on that bar. Spec gives no dark value; this one is
+    /// derived to stay visible on `trackBg` while losing to the fill beside it.
+    static let axis       = Color.dsAdaptive(light: 0xC0CAD4, dark: 0x6E7F90)
+    /// The unfilled part of a progress bar. Distinct from `neutral150` on
+    /// purpose: §3 gives it its own value (#E9EEF2 vs #E9EDF2), and a track is a
+    /// different job from a divider even where the two happen to look alike.
+    static let trackBg    = Color.dsAdaptive(light: 0xE9EEF2, dark: 0x223040)
+    /// The blue tint behind an active filter chip and behind the monogram of a
+    /// meal with no photo. Its dark value is `blue100`'s — same role, same tint.
+    static let chipOnBg   = Color.dsAdaptive(light: 0xE7EFF6, dark: 0x143A58)
+
     // Radii
     static let rControl: CGFloat = 10
     static let rCard: CGFloat = 16

@@ -7,12 +7,35 @@
     " / %@ g" : {
 
     },
+    " Có ảnh." : {
+
+    },
     "%@ %@" : {
       "localizations" : {
         "vi" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ %@ gam" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ gam"
+          }
+        }
+      }
+    },
+    "%@ %@ gam, %lld phần trăm mục tiêu." : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ gam, %3$lld phần trăm mục tiêu."
           }
         }
       }
@@ -45,6 +68,32 @@
     "%@ kg" : {
 
     },
+    "%@ ki-lô ca-lo trên mục tiêu %@" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ ki-lô ca-lo trên mục tiêu %2$@"
+          }
+        }
+      }
+    },
+    "%@ ki-lô ca-lo trên mục tiêu %@." : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ ki-lô ca-lo trên mục tiêu %2$@."
+          }
+        }
+      }
+    },
+    "%@ ki-lô ca-lo đã ghi" : {
+
+    },
+    "%@ ki-lô ca-lo." : {
+
+    },
     "%@ · %@" : {
       "localizations" : {
         "vi" : {
@@ -54,6 +103,9 @@
           }
         }
       }
+    },
+    "%@ — chưa ghi ngày nào" : {
+
     },
     "%@, %@" : {
       "localizations" : {
@@ -95,16 +147,6 @@
         }
       }
     },
-    "%@, %@ kcal" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@, %2$@ kcal"
-          }
-        }
-      }
-    },
     "%@, %@ kcal, %@ gam" : {
       "localizations" : {
         "vi" : {
@@ -125,13 +167,88 @@
         }
       }
     },
+    "%@, %@, %@, %@ ki-lô ca-lo." : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@, %3$@, %4$@ ki-lô ca-lo."
+          }
+        }
+      }
+    },
+    "%@. %@" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@. %2$@"
+          }
+        }
+      }
+    },
     "%lld" : {
 
+    },
+    "%lld bữa" : {
+
+    },
+    "%lld bữa có “%@” · %@" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld bữa có “%2$@” · %3$@"
+          }
+        }
+      }
+    },
+    "%lld bữa · %@" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld bữa · %2$@"
+          }
+        }
+      }
+    },
+    "%lld bữa: %@." : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld bữa: %2$@."
+          }
+        }
+      }
     },
     "%lld g" : {
 
     },
+    "%lld kết quả" : {
+
+    },
+    "%lld món" : {
+
+    },
+    "%lld ngày ghi · TB %@ kcal" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld ngày ghi · TB %2$@ kcal"
+          }
+        }
+      }
+    },
+    "%lld tháng gần nhất" : {
+
+    },
     "%lld%%" : {
+
+    },
+    "+%lld món" : {
 
     },
     "7 ngày qua" : {
@@ -147,6 +264,9 @@
 
     },
     "AI nhận diện món ăn, cơ sở dữ liệu dinh dưỡng tính calo, và bạn là người xác nhận cuối cùng." : {
+
+    },
+    "AI nhận diện món ăn, cơ sở dữ liệu tính calo, và bạn xác nhận trước khi lưu." : {
 
     },
     "AI ước lượng ban đầu: %@ g" : {
@@ -222,13 +342,16 @@
     "Bạn đã đạt mục tiêu calo hôm nay." : {
 
     },
+    "Bảng màu tối được suy ra trong dự án này, không phải màu chính thức của bộ nhận diện." : {
+
+    },
     "Bắt đầu" : {
 
     },
     "Bối cảnh sức khỏe, không dùng để tính calo" : {
 
     },
-    "Bữa ăn đã ghi" : {
+    "Bữa ăn: %@. Chạm để đổi bữa." : {
 
     },
     "CALO MỖI NGÀY" : {
@@ -240,6 +363,15 @@
     "Cho phép truy cập" : {
 
     },
+    "Chưa có bữa nào được ghi" : {
+
+    },
+    "Chưa có bữa ăn nào trong 7 ngày qua." : {
+
+    },
+    "Chưa có cân nặng nào được ghi." : {
+
+    },
     "Chưa có mục tiêu" : {
 
     },
@@ -249,10 +381,16 @@
     "Chưa có trong cơ sở dữ liệu — mở món này để nhập dinh dưỡng." : {
 
     },
-    "Chưa có trong cơ sở dữ liệu — sửa tên hoặc bỏ món này." : {
+    "Chưa kết nối" : {
 
     },
-    "Chưa kết nối" : {
+    "Chạm hai lần để xem chi tiết bữa này." : {
+
+    },
+    "Chạm hai lần để xem các bữa trong ngày." : {
+
+    },
+    "Chạm hai lần để xem ngày này." : {
 
     },
     "Chọn ảnh bữa ăn" : {
@@ -264,25 +402,65 @@
     "Chụp bữa ăn.\nBiết ngay calo." : {
 
     },
+    "Chụp lại" : {
+
+    },
     "Chụp từ trên xuống giúp ước lượng khẩu phần chính xác hơn." : {
 
     },
     "Chụp ảnh bữa ăn" : {
 
     },
+    "Couldn't load your history" : {
+
+    },
     "Cân nặng" : {
+
+    },
+    "Còn %@ kcal · %lld bữa" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Còn %1$@ kcal · %2$lld bữa"
+          }
+        }
+      }
+    },
+    "Còn %@." : {
+
+    },
+    "Có %lld ảnh." : {
 
     },
     "Có lỗi xảy ra" : {
 
     },
+    "Cả đĩa ăn nằm trong khung và không bị mờ thì AI nhận diện chính xác hơn." : {
+
+    },
     "DINH DƯỠNG HẰNG NGÀY" : {
 
     },
-    "Dùng số này" : {
+    "Dùng ảnh này?" : {
 
     },
     "Dịch vụ nhận diện đang bận. Thử lại sau ít phút." : {
+
+    },
+    "Dữ liệu Apple Health không rời khỏi thiết bị và không dùng cho quảng cáo." : {
+
+    },
+    "Dữ liệu vẫn nằm an toàn trên máy bạn. Thử lại sau vài giây." : {
+
+    },
+    "Ghi bữa đầu tiên để bắt đầu lịch sử của bạn. Lịch sử chỉ hiện những ngày bạn đã ghi." : {
+
+    },
+    "Giao diện" : {
+
+    },
+    "HIỂN THỊ" : {
 
     },
     "HealthClean" : {
@@ -291,13 +469,22 @@
     "HealthClean chỉ đọc những gì bạn cho phép. Ứng dụng vẫn hoạt động đầy đủ nếu bạn từ chối." : {
 
     },
+    "History" : {
+
+    },
     "Hiện tại %@ kg" : {
 
     },
     "Huỷ" : {
 
     },
-    "HÔM NAY · TODAY" : {
+    "Hãy chọn ảnh JPEG, HEIC, PNG hoặc WebP khác rồi thử lại." : {
+
+    },
+    "Hôm nay" : {
+
+    },
+    "Hôm nay · Today" : {
 
     },
     "Hồ sơ của bạn" : {
@@ -306,7 +493,13 @@
     "Hồ sơ của bạn, %@" : {
 
     },
-    "Hồ sơ, Profile" : {
+    "Không có bữa nào khớp bộ lọc trong các tháng đã tải. Thử bỏ bớt bộ lọc." : {
+
+    },
+    "Không có bữa nào tên “%@” trong các tháng đã tải. Thử bỏ bớt bộ lọc." : {
+
+    },
+    "Không có giới tính sinh học, mục tiêu sẽ dùng giá trị trung bình nên kém chính xác hơn." : {
 
     },
     "Không khả dụng trên thiết bị này" : {
@@ -324,19 +517,31 @@
     "Không phân tích được ảnh. Vui lòng thử lại." : {
 
     },
+    "Không tìm thấy bữa nào" : {
+
+    },
     "Không tải được bữa ăn hôm nay." : {
 
     },
     "Không tải được hôm nay" : {
 
     },
-    "Không tải được lịch sử bữa ăn." : {
-
-    },
     "Không tải được thống kê." : {
 
     },
     "Không xoá được bữa ăn. Vui lòng thử lại." : {
+
+    },
+    "Không xoá được món. Vui lòng thử lại." : {
+
+    },
+    "Không đọc được dữ liệu" : {
+
+    },
+    "Không đọc được ảnh" : {
+
+    },
+    "Không đọc được ảnh. Chụp lại nhé." : {
 
     },
     "Kết nối Apple Health" : {
@@ -351,7 +556,10 @@
     "Lưu" : {
 
     },
-    "LỊCH SỬ · HISTORY" : {
+    "Lịch sử" : {
+
+    },
+    "Lịch sử, History" : {
 
     },
     "Mở Cài đặt" : {
@@ -363,10 +571,16 @@
     "Mục tiêu tăng cân thường cao hơn cân nặng hiện tại." : {
 
     },
+    "Mức thiếu hụt không bao giờ đưa bạn xuống dưới chuyển hóa cơ bản của chính bạn." : {
+
+    },
     "Nay" : {
 
     },
     "Nguồn: CSDL món Việt · %@" : {
+
+    },
+    "Ngày này không có bữa ăn nào được ghi." : {
 
     },
     "Nhập calo trước khi lưu" : {
@@ -392,16 +606,28 @@
         }
       }
     },
-    "Nhập dinh dưỡng cho %@ g đang hiển thị. Đổi khẩu phần sau đó vẫn tính lại đúng." : {
+    "Nhập kcal cho %@ g đang hiển thị rồi bấm Xong. Đổi khẩu phần sau đó vẫn tính lại đúng." : {
 
     },
     "Nhập tay" : {
 
     },
+    "Nhập tay thay vì chụp ảnh" : {
+
+    },
     "Nhập tên món trước khi lưu" : {
 
     },
+    "No meals found" : {
+
+    },
+    "No meals logged yet" : {
+
+    },
     "OK" : {
+
+    },
+    "Phân tích ảnh này" : {
 
     },
     "QUYỀN RIÊNG TƯ" : {
@@ -416,16 +642,13 @@
     "Quét lại" : {
 
     },
+    "Quét ảnh thay vì nhập tay" : {
+
+    },
     "T%lld" : {
 
     },
     "THIẾT LẬP" : {
-
-    },
-    "THỐNG KÊ · INSIGHTS" : {
-
-    },
-    "Thao tác này không thể hoàn tác." : {
 
     },
     "Thêm món" : {
@@ -440,10 +663,19 @@
     "Trung bình %@ kcal mỗi ngày" : {
 
     },
-    "TÔI · PROFILE" : {
+    "Tên món" : {
 
     },
-    "Tên món" : {
+    "Tìm món ăn" : {
+
+    },
+    "Tìm món ăn, ví dụ: phở" : {
+
+    },
+    "Tìm trong các tháng đã tải. Kéo xuống để tải thêm." : {
+
+    },
+    "Tải các tháng trước" : {
 
     },
     "TỔNG BỮA ĂN" : {
@@ -461,16 +693,29 @@
     "Ví dụ: Phở bò" : {
 
     },
+    "Vượt %@ kcal · %lld bữa" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Vượt %1$@ kcal · %2$lld bữa"
+          }
+        }
+      }
+    },
+    "Vượt %@." : {
+
+    },
     "Xong" : {
 
     },
-    "Xoá bữa ăn" : {
+    "Xoá %@" : {
+
+    },
+    "Xoá bộ lọc" : {
 
     },
     "Xoá bữa ăn này" : {
-
-    },
-    "Xoá bữa ăn này?" : {
 
     },
     "Xoá món" : {
@@ -479,16 +724,25 @@
     "Xoá món %lld" : {
 
     },
+    "Xoá từ khoá" : {
+
+    },
     "Xác nhận bữa ăn" : {
 
     },
-    "bữa ăn" : {
+    "chưa ghi ngày nào" : {
 
     },
     "kcal" : {
 
     },
+    "kcal / mục tiêu %@" : {
+
+    },
     "kcal còn lại" : {
+
+    },
+    "kcal · mục tiêu %@" : {
 
     },
     "ngân sách ngày" : {
@@ -525,16 +779,43 @@
     "Đang phân tích ảnh…" : {
 
     },
+    "Đang tải %@…" : {
+
+    },
+    "Đang tải lịch sử" : {
+
+    },
+    "Đang tải…" : {
+
+    },
+    "Đã hiển thị toàn bộ lịch sử." : {
+
+    },
     "Đã kết nối · bước chân, năng lượng, giấc ngủ" : {
 
     },
     "Đóng" : {
 
     },
+    "Đạt mục tiêu · %lld bữa" : {
+
+    },
+    "Đạt mục tiêu." : {
+
+    },
     "Đặt cả đĩa ăn vào khung." : {
 
     },
     "Để sau" : {
+
+    },
+    "đổi bữa" : {
+
+    },
+    "Ảnh bữa ăn lúc %@" : {
+
+    },
+    "Ảnh bữa ăn vừa chụp" : {
 
     },
     "Ảnh chỉ dùng để phân tích rồi xoá." : {

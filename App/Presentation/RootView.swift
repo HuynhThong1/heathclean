@@ -25,6 +25,11 @@ struct RootView: View {
             }
         }
         .task {
+            // Before the fixture, not after: the sweep keeps only what the store
+            // refers to, and under `-uiTesting` the store is in memory — so it
+            // clears the files an earlier test run left behind, and the fixture
+            // then writes its own.
+            await container.sweepOrphanPhotosIfNeeded()
             await container.seedUITestHistoryFixtureIfNeeded()
             // `try?` here would nest the optional and make "no profile yet"
             // indistinguishable from "profile found".

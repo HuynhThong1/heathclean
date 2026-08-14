@@ -20,7 +20,7 @@ struct InsightsView: View {
             VStack(alignment: .leading, spacing: DS.s5) {
                 if let model {
                     if let message = model.errorMessage {
-                        GrayNote(text: message)
+                        GrayNote(verbatim: message)
                     } else {
                         calorieCard(model)
                         weightCard(model)

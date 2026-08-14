@@ -42,8 +42,31 @@ struct RemoveFoodItemTests {
         // SaveMealUseCase rejects a meal with no items, so deletion must not be
         // able to create one — an empty meal would appear in history as 0 kcal
         // with nothing to explain it.
-        #expect(outcome == .mealDeleted)
+        #expect(outcome == .mealDeleted(photoIDs: []))
         #expect(await repository.count == 0)
+    }
+
+    @Test("deleting the last food reports the photos that went with the meal")
+    func lastItemReportsItsPhotos() async throws {
+        let only = makeFoodItem(name: "Phở bò", calories: 585)
+        let first = MealPhoto(capturedAt: referenceDate, pixelWidth: 1_600, pixelHeight: 1_200)
+        let second = MealPhoto(capturedAt: referenceDate, pixelWidth: 1_600, pixelHeight: 900)
+        let stored = Meal(
+            date: referenceDate,
+            type: .lunch,
+            items: [only],
+            photos: [first, second]
+        )
+        let repository = InMemoryMealRepository(stored: [stored])
+        let useCase = RemoveFoodItemUseCase(mealRepository: repository)
+
+        let outcome = try await useCase.execute(itemID: only.id, from: stored)
+
+        // The ids come back so the App layer can delete the files: the store
+        // cascades rows, and nothing else would ever reference those bytes again.
+        #expect(outcome == .mealDeleted(photoIDs: [first.id, second.id]))
+        #expect(await repository.count == 0)
+        #expect(try await repository.photoIDs().isEmpty)
     }
 
     @Test("an item that is not in the meal is not an error")

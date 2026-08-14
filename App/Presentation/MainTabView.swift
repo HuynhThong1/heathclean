@@ -58,7 +58,12 @@ struct MainTabView: View {
                         )
                     }
                 case .history:
-                    NavigationStack { MealHistoryView(refreshID: dataVersion) }
+                    NavigationStack {
+                        HistoryMonthsView(
+                            refreshID: dataVersion,
+                            onScanRequested: { scanType = $0 }
+                        )
+                    }
                 case .insights:
                     NavigationStack { InsightsView(refreshID: dataVersion) }
                 case .profile:

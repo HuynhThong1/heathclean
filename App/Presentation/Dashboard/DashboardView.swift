@@ -84,12 +84,10 @@ struct DashboardView: View {
                 .background(DS.surfacePage)
         }
         .navigationDestination(item: $detailType) { type in
-            MealDetailView(
-                model: container.makeMealDetailModel(
-                    type: type,
-                    meals: summary.meals(of: type),
-                    dailyGoalCalories: summary.goal.calories
-                ),
+            MealDetailRoute(
+                type: type,
+                meals: summary.meals(of: type),
+                dailyGoalCalories: summary.goal.calories,
                 onAddMore: {
                     detailType = nil
                     entryType = type
@@ -147,7 +145,7 @@ struct DashboardView: View {
                     for: model.status,
                     remainingKcal: summary.budget.remaining
                 ) {
-                    GrayNote(text: note)
+                    GrayNote(verbatim: note)
                 }
             }
         }

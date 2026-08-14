@@ -6,14 +6,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 swift build            # compiles the Domain library
-swift test             # 30 Domain tests (swift-testing) — fast, no simulator
+swift test             # 81 Domain tests (swift-testing) — fast, no simulator
 
 xcodebuild -scheme HeathFirst \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
 
 xcodebuild -scheme HeathFirst \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test   # + 5 UI tests
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test   # + 22 UI tests
 ```
+
+```bash
+Scripts/run-on-device.sh      # build + install + launch on a paired iPhone
+```
+
+That script exists because three things have to be passed every time and none of
+them fails loudly: `GATEWAY_URL` (unset → the mock provider, so the scan "works"
+and never reaches a model), `GATEWAY_API_KEY` (unset → 401 from a deployed
+gateway) and `-allowProvisioningUpdates` (without it a free Personal Team build
+fails at signing). It takes the key from the environment or from the gateway
+checkout's `.env`, never from a tracked file, and prints back what the built
+`Info.plist` actually ended up with — a build setting that failed to substitute
+leaves the literal `$(GATEWAY_URL)` behind, which is worth seeing.
 
 Run one Domain test: `swift test --filter "macros re-sum"` (matches the `@Test`
 display name). Run one UI test:
@@ -234,6 +247,12 @@ in SwiftUI.
 (The handoff's own `CLAUDE.md` writes these paths as `DesignHandoff/…`; the
 folder is actually named `design_handoff_healthclean/`.)
 
+**The History tab follows `design_handoff_healthclean/HISTORY_SPEC.md`, which
+overrides the README's §6.11 for that screen** — the option chosen there ("1b",
+logged-day cards with search and filters) is the one to build; the same page's
+1a and 1c are alternatives that were rejected. Its own reference page is
+`design/HealthClean History.dc.html`.
+
 ### Rules
 
 - Use `DesignTokens.swift` (`DS.*`) for every colour / radius / spacing /
@@ -305,40 +324,282 @@ specifies is still absent: Welcome's "Tôi đã có tài khoản" link, because 
 no account system to sign into and a link that cannot do what it says is worse
 than none. A tab that opens nothing is worse than an absent one.
 
-### The history week strip — not in the handoff
+### The history week strip — deleted, and what it left behind
 
-§6.11 draws History as a plain scroll of day sections. `HistoryWeekStrip` was
-added on top of that and **changes what the screen shows: one day, not a month.**
-It is the reason `MealHistoryModel` no longer has `days`.
+There used to be a second History screen: `HistoryWeekStrip` /
+`MealHistoryModel` / `MealHistoryView`, seven day columns with a dot under the
+days that had meals, showing **one day at a time**. It was §6.11 plus a
+navigation device the handoff does not draw, and for one release it was what
+Release opened on while HISTORY_SPEC's list sat behind
+`HistoryFeatureFlags.timeline` — §32.7's "bật flag cho nội bộ trước".
 
-- The loaded window is **exactly the week on screen** — `meals(from: weekStart,
-  to: weekStart + 7d)`. That is what makes the dots cheap, and it is also why
-  there is only one empty-state message: with a one-week window the app cannot
-  tell "never logged anything" from "nothing this week" without a second query,
-  so today says "Hôm nay chưa ghi bữa nào…" and any other day says "Ngày này
-  không có bữa ăn nào được ghi."
-- The model builds its own **Monday-first** `Calendar` (`firstWeekday = 2`).
-  `Calendar.current` starts the week on Sunday under a US locale, which would put
-  CN in the first column while the labels still read T2…CN.
-- A dot under a day means **that day has meals**. No meals, no dot — never a
-  hollow placeholder, the same reason `WeightPoint.weekIndex` leaves gaps as gaps.
-- **Future days are dimmed and `.disabled`, and `canGoForward` is false once the
-  visible week holds today.** History is a record; a cell that can never hold a
-  meal must not be tappable, and there is no week ahead to page into.
-- `load()` pins the week it was asked for and **drops its result if the week
-  changed while it was in flight.** Tapping ‹ faster than SwiftData answers
-  starts a second load, and nothing orders two `@ModelActor` calls — the slower
-  one landing last would leave the dots describing a week no longer on screen.
-- There is deliberately **no date pill** like the reference design's "31 August
-  ›". Without a month-grid sheet it would open nothing, and the day row beneath
-  ("Thứ Tư 12/8") already carries that text.
-- `HistoryWeekStrip.identifier(for:)` builds `yyyy-MM-dd` from date components
-  rather than a `DateFormatter`: it runs once per cell per render, and the
-  formatter cannot be cached in a `static let` (not `Sendable`), so it would be
-  constructed seven times a pass.
-- `VietnameseDate.weekdayShort` duplicates three lines inside `InsightsView` on
-  purpose. The Insights copy returns "Nay" for today; the strip must not, because
-  a wider label on one of seven fixed columns shifts the whole row.
+**All three files, the flag and its `-historyTimeline` launch argument are gone.**
+§32.2's rule is that two ways to navigate one screen is not a shipping state, and
+the spec was chốt, so the flag could only ever resolve one way. Three of its rules
+outlived it and are documented where they now live:
+
+- **Monday-first, shared, in `HistoryCalendar`.** `Calendar.current` starts the
+  week on Sunday under a US locale. History's day boundaries have to be the
+  dashboard's or a 23:30 meal lands on different days in different places, which
+  is why the calendar is built once outside the view models and
+  `DependencyContainer` hands it to `GetMealHistoryMonthsUseCase`.
+- **A load pins the window it asked for and drops a result that arrives after the
+  window moved.** Nothing orders two `@ModelActor` calls, so the slower of two
+  in-flight reads landing last would leave the screen describing something it is
+  not showing. `HistoryMonthsModel.loadGeneration` is the same guard, and it is
+  now load-bearing for paging rather than for ‹ ›.
+- **`yyyy-MM-dd` identifiers are built from date components, not a
+  `DateFormatter`** (`HistoryCalendar.identifier(for:)`): it runs once per card per
+  render and the formatter cannot be cached in a `static let`, not being
+  `Sendable`, so it would be constructed every pass.
+
+`VietnameseDate.weekdayShort` and `dayText` went with the strip — nothing else
+called them. `InsightsView` still carries its own three-line weekday helper, which
+returns "Nay" for today; that is the copy the bar chart wants.
+
+Two UI tests went too (`…SelectsADayAndPagesWeeks`, `…FindsAMealLoggedLastWeek`):
+paging weeks and selecting a column are not behaviour any more.
+`testHistoryListsTheDayAMealWasLoggedOn` keeps the part that still is — a meal
+logged on the dashboard shows up as a card in History on the same launch, with no
+fixture — and `testHistoryRefreshesAfterRemovingOneFood` now walks the day panel.
+
+### The History screen — `HISTORY_SPEC.md`
+
+The spec's "logged-day cards" (its option 1b) is built, in
+`App/Presentation/MealHistory/`: `HistoryMonthsModel` / `HistoryMonthsView` /
+`HistoryMonthSection` / `HistoryDayCard` / `HistoryDeviationBar` / `MealChip` /
+`MealThumbnail` / `HistorySearch` / `HistoryStateViews` /
+`HistoryDayPanelSheet`, over `HistoryMonth` / `HistoryDay` / `MealPhoto` and
+`GetMealHistoryMonthsUseCase` in Domain and `MealPhotoEntity` + `MealPhotoStore`
+in Data. `HistoryPreviewData` is `#if DEBUG` fixtures for the previews the spec's
+§9 asks each piece for — the only previews in the codebase.
+
+**The spec ratified a decision the code had already made.** `plan.md` §32 asks for
+a Locket-style calendar; it was built, tried on device with a sparsely filled
+store — three logged days among ninety cells, whole months of grey dots — and
+replaced by a list, because MVP cannot back-date, so nine tenths of the grid
+opened a sheet that could only say "nothing here". HISTORY_SPEC §0.1 now states
+that as a rule ("ngày trống không tồn tại trong UI"), and `plan.md` is still not
+edited to match: it is the spec, not a log.
+
+What the spec added on top of the list: a deviation bar per day, a row of meal
+chips, a pinned search field with filter chips, month headers with an average, a
+one-line divider for an empty month, and a day panel with macros.
+
+- **This is the History tab outright** — `MainTabView` builds `HistoryMonthsView`
+  directly. It spent one release behind `HistoryFeatureFlags.timeline`; see the
+  section above for what the flag was for and what its deletion took with it.
+  Days are labelled `history.day.<yyyy-MM-dd>` by `HistoryCalendar`, which also
+  owns the Monday-first calendar the screen and the use case share.
+- **§8's per-day target is met, and it cost a stored field.** The bar compares a
+  day against `Meal.calorieGoalWhenLogged`, stamped at save time by
+  `SaveMealUseCase` — the one writer, so a flow added later cannot forget — and
+  read back through `HistoryDay.goalCalories`, which takes the **last meal that
+  carries one** (the target in force when the day ended, and the figure the
+  dashboard showed that day). Before this, every past day's bar moved whenever the
+  goal changed, because `UserProfile` holds one current goal that an edit
+  overwrites.
+  - The stamp is `Double?` on both `Meal` and `MealEntity`, which is what keeps
+    the migration lightweight: existing rows get `nil` and need no conversion. A
+    non-optional would need a default, and a default here **invents a target** for
+    days the app never knew one for.
+  - `nil` is not 0. A day whose meals all predate the field, or that was saved
+    while the profile could not be read, has no target of its own, and every
+    reader resolves that through one helper —
+    `HistoryDay.goalCalories(fallingBackTo:)` — so the card, the day panel and the
+    "vượt mục tiêu" filter cannot disagree. The fallback is the old behaviour, for
+    old data only.
+  - `SwiftDataMealRepository.update` deliberately does **not** write it: what a day
+    was aiming for is not something editing a portion revises, and an `update` that
+    wrote it would let a caller holding a hand-built `Meal` erase the only copy.
+  - **Still today's figures: the day panel's three macro bars.** §6 asks for them
+    and nothing records protein/carbohydrate/fat per day; stamping four numbers on
+    every meal is a bigger change than §8 asked for. So one sheet mixes the day's
+    calorie target with the current macro targets, which is worth knowing before
+    reading a macro bar on a day from before a goal change.
+  - The UI-test fixture stamps its −7d lunch with **1.900** while onboarding
+    derives 2.378, and `testHistoryTimelineOpensADay` asserts the card names 1.900
+    and not 2.378. That is the only place the field makes the round trip through
+    SwiftData, so the day has to be able to disagree with today for a test to tell
+    them apart.
+- The bar's scale is `max(kcal, goal) × 1.12`, so a day exactly on target still
+  has room to its right and the 1.5pt target mark never merges with the end cap.
+  Over target is `DS.overBudget` grey, never red (§0.3).
+- **A chip with a photo and a chip without are the same size** (§0.2). Most meals
+  are typed in, so a layout that grew a photo cell would leave the ordinary day
+  looking half-empty; the 26pt square is either the thumbnail or the dish's first
+  letter on `DS.chipOnBg`. Chips are **not** buttons — one tap target per card, so
+  a 38pt chip can never steal a tap meant for the day.
+- The chip row is a `WrapLayout` (a small `Layout`), not `ViewThatFits` between an
+  `HStack` and a `VStack`. It is how the design draws it (`flex-wrap`), and §4's
+  "HStack → VStack from `.accessibility1`" then falls out by measurement: a chip
+  wider than the card takes a line to itself. `ViewThatFits` *is* used for the
+  card's date column, which cannot be measured away.
+- **Search is scoped to the months already paged in, and says so.** Filtering runs
+  over `months` in memory rather than querying the store, because "what the screen
+  has" is exactly the scope §5 defines — a store query would silently widen it.
+  Matching folds diacritics and case with a `vi_VN` locale, so "pho" finds "phở".
+  250 ms debounce, nothing below two characters, and no spinner: the old list
+  stays at opacity 0.5.
+- A keyword or a chip **changes the unit of the list** from days to meals, because
+  "which day was that" and "when did I eat phở" are different questions. A hit
+  opens the *day panel*, not the meal detail — §4 keeps one way into a meal, and a
+  second route would need its own copy of the delete and refresh plumbing.
+- §5 says the keyword and the chips are not kept between two visits to the tab.
+  That is not code: `MainTabView` switches on its selection, so leaving History
+  destroys the view and the model with it. Moving the model up to the tab shell
+  would quietly break it.
+- **`HistoryMonth.days` holds only days with meals, newest first.** It used to hold
+  every day of the month because a grid needs a cell for each; a struct field no
+  view reads is the "broken control" mistake in data form. A month with nothing
+  logged is still *returned* — paging counts months — and `HistoryMonthsModel.feed`
+  turns it into `EmptyMonthDivider` **only when it falls inside the period the
+  user has been logging in**. Empty months older than the first meal are dropped:
+  they are not gaps in the record, they are time before there was one.
+- One repository query per page, never one per day, and paging stops because
+  `MealRepository.earliestMealDate()` says where the data ends. Without that floor
+  "load more" pages into empty months for ever, since the store can always answer
+  for one more month.
+- **`loadMore()` keeps reading until something appears.** One page of three can add
+  nothing visible, and a "load more" that visibly does nothing reads as broken. It
+  chases up to six pages, then lets the user ask again. Paging is tracked by
+  `loadedMonthCount`, not `months.count`.
+- `HistoryDayPanelSheet` hosts its own `NavigationStack` so `MealDetailView` can be
+  pushed inside the sheet, and the parent owns the delete toast — a toast cannot be
+  shown from behind a sheet, so `onDeleted` closes the sheet first.
+- **The day panel has no photo grid**, unlike the sheet it replaced. §6 enumerates
+  what the panel holds — the total, the bar, the delta, three macros, the meals by
+  time — and a picture at size is not in it. Its meal rows carry a 34pt thumbnail
+  and `MealDetailView` one step deeper shows the photos full width. The version
+  that opened with a 150pt photo pushed the calorie total below the detent on a
+  small phone, and the numbers are what the sheet is *for*. `MealPhotoGrid` still
+  owns the photos-at-size rules and is now used only by `MealDetailView`.
+- A card grows downwards at accessibility text sizes and keeps everything, which is
+  the other reason the list beat the grid: §32.6 had to drop the calorie figure
+  from a 44pt cell to keep seven columns, and here nothing has to be dropped.
+- The loading skeleton **pulses** (§6: 1.4 s, 0.45→0.95) and the pulse is gated on
+  Reduce Motion, as is the fade when a thumbnail arrives. It was deliberately still
+  before the spec asked for the pulse; a user who asked for less motion still gets
+  the still one.
+- §7 forbids a small grey on `pageBg` that cannot carry its contrast, and §2 draws
+  the empty-month divider and the search footnote in #94A3B2 (~3.2:1). **§7 wins**:
+  both take `DS.textMuted` (5.6:1). Between two hairlines the divider still reads
+  as the quietest thing on the screen.
+- Scroll position across a refresh and a trip into a day is not something the code
+  does — it is something it avoids breaking: a refresh keeps `months` (same ids, so
+  `ForEach` keeps its rows) and never blanks the screen. Because that is a claim
+  which stops being true silently,
+  `testHistoryTimelineKeepsItsScrollPositionAcrossADay` pins the card's `midY`.
+  **That test needs the fixture's fortnight of days**: only logged days are cards,
+  so without them the list is shorter than the screen and a scroll test that never
+  scrolls passes without testing anything.
+- **A pinned layout has to be able to give up and scroll.** `WelcomeView` was a
+  fixed `VStack` with `Spacer`s, and `Font.custom(_:size:)` scales with Dynamic
+  Type — so at an accessibility text size the copy grew until "Bắt đầu" sat below
+  the screen with no way to reach it, locking a large-text user out of the app at
+  its first screen. It is now a `ScrollView` whose content takes
+  `minHeight: proxy.size.height`, so the `Spacer`s still work when it fits, with
+  `.scrollBounceBehavior(.basedOnSize)` so there is no bounce then either. The
+  onboarding steps and the Apple Health screen already scrolled; only Welcome did
+  not. **A history UI test found this**, by failing to tap a button two screens
+  earlier — an accessibility-size test exercises every screen it walks through, not
+  only the one it is about.
+- **A lazy stack keeps off-screen rows in the accessibility tree, but only for a
+  little way past the viewport.** Two separate traps, both paid for: `tap()` on a
+  materialised-but-off-screen row taps a coordinate outside the scroll view and
+  hits nothing; and a row *further* down does not exist at all, where `frame`
+  throws rather than returning zero. `scrollUntilHittable` handles both — it treats
+  "absent" as "further down", the only direction it can be, and corrects for
+  overshoot. Taller cards are what turned the second trap up: the same test passed
+  on 78pt rows and failed on 125pt cards.
+- §32.7 stage 3 also asks for minimal analytics. There is **none**, on purpose: the
+  app has no analytics system at all, and the precedent is Profile omitting §6.13's
+  notification switches because a switch that schedules nothing is a broken
+  control. Events that go nowhere are the same mistake with less to show for it.
+- Localization means the **catalog**, not a language switch: every new string goes
+  through `Text` or `String(localized:)` and is synced into `Localizable.xcstrings`
+  (165 → 208 keys: +47 for HISTORY_SPEC, −10 with the week strip, +6 that had been
+  missing all along — see `GrayNote` in the Localization section). A separator or
+  other non-copy literal uses `Text(verbatim:)`, or it lands in the catalog as a key
+  to translate. §4's bilingual `LabelPair` is why there is still no `en` locale.
+
+#### Meal photos (stage 2)
+
+`MealPhoto` is **metadata only** — id, `capturedAt`, pixel size. No path, no URL,
+no image: Domain cannot hold a `UIImage`, and a file path is a fact about one
+installation rather than about the meal. `MealPhotoStore` (an actor, App-only)
+maps the id to bytes under `Application Support/MealPhotos/{full,thumb}/<id>.jpg`.
+
+- **Bytes first, row second, because nothing makes the two atomic.** A row
+  pointing at a missing file would draw a broken day; a file no row points at is
+  invisible and collectable. `Data.write(options: .atomic)` *is* the temp-then-
+  rename §32.4 asks for — Foundation writes a sibling and renames it.
+- The three cleanup paths, and all three are needed: `ScanModel.confirm` deletes
+  the photo if the meal save throws; `delete(mealID:)` **returns the photo ids it
+  removed** (as does `RemoveFoodItemUseCase.Outcome.mealDeleted(photoIDs:)`) so
+  the App layer can delete files the cascade cannot reach; and
+  `sweepOrphanPhotosIfNeeded()` collects the rest at launch. The sweep only runs
+  when `photoIDs()` **succeeded** — reading a failed query as "no meal has
+  photos" would delete the user's whole photo directory.
+- The sweep runs *before* the UI-test fixture in `RootView`, not after: under
+  `-uiTesting` the store is in memory, so every file from an earlier run is a
+  genuine orphan, and the fixture then writes its own.
+- **A cancelled scan cannot leave a temp file, because it never writes one.** The
+  analysed bytes live in `ScanModel.analyzedImage` and reach the disk only inside
+  `confirm()`. That is §32.4's "ảnh camera tạm phải bị xóa" satisfied by
+  construction rather than by a cleanup path that can be missed.
+- A photo that cannot be written **does not fail the meal** — same rule as a
+  failed weight write not failing a profile save.
+- `MealPhotoStore` returns thumbnail **`Data`**, not a `UIImage`: `Data` is
+  `Sendable`, so the 1,600px original is downsampled inside the actor (240px,
+  persisted, `NSCache` of 240 entries) and only that tiny image is decoded on the
+  main actor, which is what §32.6 actually requires. A missing thumbnail with a
+  surviving original is rebuilt rather than treated as a lost photo.
+- **A SwiftData relationship array has no order**, so `MealEntity.meal` sorts
+  photos by `(capturedAt, id)`. §32.3 forbids a picture that moves between renders,
+  and the chip a meal draws is `photos.first` — from a set, that is whichever one
+  the store felt like returning.
+- **`HistoryDay.representativePhotoID` is deleted, and there is deliberately
+  nothing in its place.** It was the newest meal that had a photo, and that meal's
+  first photo — the rule a single day *cell* needed. HISTORY_SPEC's card draws a
+  chip per meal, each with its own thumbnail, so a day no longer has one
+  representative picture, and nothing outside its own test had read it for a while.
+  Do not reintroduce a second rule for "the day's photo" beside `HistoryDay.photos`:
+  two rules for which picture stands for a day is how they start disagreeing.
+- §32.6's `history.day.photo.<date>` identifier is **deliberately absent**: a day
+  merges into one accessibility element, which is what VoiceOver needs, so an
+  identifier inside it could never be queried. The card's label carries "Có N ảnh"
+  instead, which a test and a screen reader both reach.
+- Photos are **not** excluded from device backup. §32.3 rules out iCloud, and the
+  app has no CloudKit; excluding them would mean a restored phone showing rows
+  whose pictures are gone, to satisfy a line that is about sync.
+- **`MealDetailView` is where a photo is seen at size, and now the only place** —
+  the day panel dropped its grid, see the History section. A tile keeps its own
+  aspect ratio, taken from `MealPhoto`'s pixel dimensions, so it is the right shape
+  *before* the bytes arrive and the layout does not jump when they do. That is what
+  those two fields are for.
+- `previewData(for:)` is a third size beside the 240px thumbnail and the 1,600px
+  original: ~900px, downsampled on demand inside the actor and cached in memory
+  for 8 entries rather than written to disk, because the original it comes from
+  is already there and only one meal is ever open.
+
+**The migration was verified against a store the previous build wrote**, not
+assumed: a meal was logged into the on-disk store before `MealPhotoEntity`
+existed, then read back after — dashboard total, meal detail and the history row
+all intact. It is a lightweight migration (a new model plus a
+to-many relationship that starts empty), so there is no `SchemaMigrationPlan`,
+and if one ever becomes necessary the container's `fatalError` is how it will
+announce itself. To redo that check: log a meal with no `-uiTesting`, change the
+schema, relaunch. `xcodebuild test` uninstalls the app at the end of a run, so
+seed and verify have to be in the **same** invocation (name the tests so
+alphabetical order puts the seed first).
+
+**`MealEntity.calorieGoalWhenLogged` is a second lightweight migration and has
+*not* had that check run against it** — a new optional attribute is the same shape
+as the addition above and the plainest case SwiftData handles, but "the same shape
+as something that was verified" is not the same claim as "verified". The procedure
+in the paragraph above is how to close it. What an unmigrated store would look like
+if this is wrong: the container's `fatalError` at launch, not a wrong number.
 
 ### Camera / AI (§6.6–6.9)
 
@@ -365,15 +626,21 @@ expands to `""`; the helper's empty check is therefore the branch that actually
 fires. It also rejects a literal `"$(NAME)"`, the other documented outcome when
 expansion does not run, which has not been re-measured on a device build.
 
-**`Config/Info.plist` carries an `NSExceptionDomains` entry with a placeholder
-address (`203.0.113.10`), and until it is replaced with the real VPS IP the
-scan fails as a network error.** `NSAllowsLocalNetworking` covers the Mac on
-the same Wi-Fi and nothing public, so a plaintext gateway on a public address
-needs its own exception, matched on the exact literal. It is scaffolding for
-testing against an IP: the key crosses the wire in clear text, so give the
-gateway a domain and a certificate and delete the whole dict.
-`NSAllowsArbitraryLoads` is the wrong tool — it disables ATS for every host the
-app will ever contact, to fix one.
+**`Config/Info.plist`'s `NSExceptionDomains` entry names the real deployed
+gateway — `64.176.83.254`, the same address `Scripts/run-on-device.sh` defaults
+to — so plaintext HTTP to that one host is permitted and the scan reaches it.**
+(It was a documentation placeholder, `203.0.113.10`, up to `ee916a6`; this file
+said so for a while after it stopped being true.) `NSAllowsLocalNetworking` covers
+the Mac on the same Wi-Fi and nothing public, so a plaintext gateway on a public
+address needs its own exception, matched on the exact literal.
+
+It is scaffolding, and the condition for deleting it is explicit: the API key and
+the meal photo both cross the wire in clear text, so **give the gateway a domain
+and a certificate, then delete the whole dict** — not before, or the scan fails as
+a network error on device. Changing the VPS address means changing it in both
+places; nothing derives one from the other, so they can disagree silently and the
+only symptom is that same network error. `NSAllowsArbitraryLoads` is the wrong tool
+— it disables ATS for every host the app will ever contact, to fix one.
 
 `CameraCaptureView` is §6.6 in full — `AVCaptureSession`, the preview layer, the
 1:1 viewfinder. The capture → gateway → review → save path has been exercised on
@@ -504,6 +771,24 @@ automatically. A string built as a plain `String` — an error message, a status
 line — must be wrapped in `String(localized:)` or it silently stays out of the
 catalog.
 
+**A shared view whose text parameter is a `String` takes every literal written into
+it out of the catalog, and nothing says so.** `GrayNote` was declared `let text:
+String`, so six pieces of copy passed to it as literals — the Apple Health privacy
+line, the scan explainer, two onboarding asides, two Insights empty states — were
+never extracted. It went unnoticed because the catalog *did* have the History day
+panel's empty-state sentence: the week-strip screen happened to pass the same words
+through `String(localized:)`, and deleting that screen took the key away and left
+the panel's own copy visibly unlocalizable. `GrayNote` now takes a
+`LocalizedStringKey`, with `init(verbatim:)` for a message that was already
+localized where it was built. **When a component takes text, take a
+`LocalizedStringKey`** — and if it must also accept resolved strings, give that its
+own initializer rather than one `String` doing both jobs.
+
+`xcstringstool sync` decides what is stale from the `.stringsdata` you hand it, and
+DerivedData keeps the `.stringsdata` of **deleted** source files. So a sync after
+deleting a screen quietly reports nothing stale; remove the orphaned
+`<DeletedFile>.stringsdata` (or clean-build) or the dead keys stay.
+
 **No translations have been added, deliberately.** §4 makes the UI *bilingual*:
 `LabelPair` shows Vietnamese and English at once, by design. That is not the
 same as switching language, and nothing in the handoff asks for a language
@@ -590,7 +875,9 @@ reference data and must be replaced by a licensed, cited dataset before release.
 
 **Phase 4** is implemented through capture/picker, normalized upload, gateway,
 review/correction and confirmed save, and has run on a physical iPhone. Gemini
-is verified; Qwen and a representative evaluation dataset are still open.
+is verified; Qwen and a representative evaluation dataset are still open. A
+confirmed scan now also **keeps its photo** (§32 stage 2) — nothing else in the
+app does, and no other flow can attach one.
 
 **Phase 5** has calories plus protein/carbohydrate/fat tracking. Fiber and water
 are not present. Notifications, deterministic recommendations, personalization,
@@ -605,3 +892,7 @@ Deviations from `plan.md` already made:
 - `HealthRepository` is one `snapshot(on:)` rather than §14's per-metric getters,
   so the dashboard makes a single call instead of six, and there is no
   `SyncHealthDataUseCase` — it would have been a pure passthrough.
+- `Meal` gains `calorieGoalWhenLogged`, and `SaveMealUseCase` therefore takes the
+  user repository as well as the meal one. §13's `Meal` is food and a date, which
+  cannot answer "was that day over target" once the goal has changed — HISTORY_SPEC
+  §8 needs the target of the day, so the day stores it.
