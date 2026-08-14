@@ -38,7 +38,7 @@ struct ProfileView: View {
         .safeAreaInset(edge: .top, spacing: 0) {
             header
                 .padding(.horizontal, 20)
-                .padding(.top, DS.s1)
+                .padding(.top, DS.s2)
                 .padding(.bottom, DS.s3)
                 .background(DS.surfacePage)
         }
@@ -58,9 +58,16 @@ struct ProfileView: View {
         }
     }
 
+    /// §6.13's eyebrow. It **was an empty `VStack`**, which is two bugs at once:
+    /// the screen had no title, and the `safeAreaInset` below — which exists to
+    /// stop content scrolling up into the clock — had nothing to give it height,
+    /// so the strip was 16pt of padding and the switches ran under the status bar.
     private var header: some View {
-        VStack(alignment: .leading, spacing: DS.s1) {
-        }
+        Text("TÔI · PROFILE")
+            .hfStyle(HFType.eyebrow)
+            .foregroundStyle(DS.textSubtle)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityAddTraits(.isHeader)
     }
 
     // MARK: Identity

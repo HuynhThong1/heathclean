@@ -79,7 +79,7 @@ struct DashboardView: View {
         .safeAreaInset(edge: .top, spacing: 0) {
             header
                 .padding(.horizontal, 20)
-                .padding(.top, DS.s1)
+                .padding(.top, DS.s2)
                 .padding(.bottom, DS.s3)
                 .background(DS.surfacePage)
         }
@@ -107,7 +107,14 @@ struct DashboardView: View {
 
     private var header: some View {
         HStack(alignment: .center) {
-            VStack(alignment: .leading, spacing: DS.s1) {
+            // §6.4 opens with an eyebrow above the date, and it is not
+            // decoration: without it a 29pt title sits four points under the
+            // clock with nothing between them. 2pt, because the two lines are
+            // meant to read as one block.
+            VStack(alignment: .leading, spacing: 2) {
+                Text("HÔM NAY · TODAY")
+                    .hfStyle(HFType.eyebrow)
+                    .foregroundStyle(DS.textSubtle)
                 Text(VietnameseDate.headerText(for: Date()))
                     .hfStyle(HFType.screenTitle)
                     .foregroundStyle(DS.textStrong)

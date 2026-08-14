@@ -317,6 +317,30 @@ draws its own header must supply `HFBackChip` — edge-swipe is not a visible
 affordance. This applies to pushed and sheet-presented screens; tab roots do not
 need one. Apple Health still uses it.
 
+### A tab root's eyebrow is structural, not decoration
+
+Every root opens with an 11pt tracked eyebrow above its title — "HÔM NAY ·
+TODAY", "THỐNG KÊ · INSIGHTS", "TÔI · PROFILE", all `HFType.eyebrow` on
+`DS.textSubtle`, exactly as the reference page draws them. History is the
+exception and is right to be: HISTORY_SPEC gives it a title plus an English
+subtitle instead.
+
+They were all missing, and that is what made the screens look wrong. Two
+separate consequences, both worth knowing:
+
+- **A 29pt title four points under the clock has nothing between it and the
+  status bar.** The eyebrow is the element that was meant to sit there; without
+  it the title is what butts against the time. The strips now take `DS.s2` above
+  the safe area, matching HISTORY_SPEC's "top an toàn + 8" so all four roots
+  agree.
+- **`ProfileView.header` was an empty `VStack`, which silently broke the mask.**
+  The `safeAreaInset(edge: .top)` on these screens exists to give an opaque strip
+  the job the hidden navigation bar used to do. An empty header has no height, so
+  the strip was its 16pt of padding and nothing else — and Profile's switches
+  scrolled up underneath the clock. The comment saying "same fix as the
+  dashboard" was sitting directly above it the whole time. **If a root's header
+  renders nothing, its content will scroll into the status bar.**
+
 The §5 tab bar is complete: all four roots — Hôm nay, Lịch sử, Thống kê, Tôi —
 plus the raised orange scan action between History and Insights. One thing §5
 specifies is still absent: Welcome's "Tôi đã có tài khoản" link, because there is
@@ -519,8 +543,8 @@ one-line divider for an empty month, and a day panel with macros.
 - Localization means the **catalog**, not a language switch: every new string goes
   through `Text` or `String(localized:)` and is synced into `Localizable.xcstrings`
   (165 → 208 keys: +47 for HISTORY_SPEC, −10 with the week strip, +6 that had been
-  missing all along — see `GrayNote` in the Localization section; then 222 with
-  §19's notifications). A separator or
+  missing all along — see `GrayNote` in the Localization section; then 225, with
+  §19's notifications and the three tab-root eyebrows). A separator or
   other non-copy literal uses `Text(verbatim:)`, or it lands in the catalog as a key
   to translate. §4's bilingual `LabelPair` is why there is still no `en` locale.
 

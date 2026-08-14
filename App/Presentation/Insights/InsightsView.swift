@@ -43,7 +43,7 @@ struct InsightsView: View {
         .safeAreaInset(edge: .top, spacing: 0) {
             header
                 .padding(.horizontal, 20)
-                .padding(.top, DS.s1)
+                .padding(.top, DS.s2)
                 .padding(.bottom, DS.s3)
                 .background(DS.surfacePage)
         }
@@ -54,7 +54,10 @@ struct InsightsView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: DS.s1) {
+        VStack(alignment: .leading, spacing: 2) {
+            Text("THỐNG KÊ · INSIGHTS")
+                .hfStyle(HFType.eyebrow)
+                .foregroundStyle(DS.textSubtle)
             Text("7 ngày qua")
                 .font(.custom(DSFontName.extrabold, size: 29))
                 .tracking(-0.725)
