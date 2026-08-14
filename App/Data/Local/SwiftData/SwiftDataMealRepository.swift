@@ -51,6 +51,10 @@ actor SwiftDataMealRepository: MealRepository {
 
         entity.date = meal.date
         entity.typeRawValue = meal.type.rawValue
+        // `calorieGoalWhenLogged` is deliberately not written here. It records what
+        // the day was aiming for when the meal was logged, so editing a portion
+        // cannot revise it — and an `update` that wrote it would let a caller
+        // holding a hand-built `Meal` erase the only copy there is.
         try modelContext.save()
     }
 

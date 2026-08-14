@@ -84,8 +84,73 @@ struct MealTests {
     @Test("a valid meal is persisted")
     func savesValidMeal() async throws {
         let repository = InMemoryMealRepository()
-        try await SaveMealUseCase(mealRepository: repository).execute(breakfast)
+        try await SaveMealUseCase(
+            mealRepository: repository,
+            userRepository: InMemoryUserRepository(profile: makeProfile(), goal: goal)
+        ).execute(breakfast)
         #expect(await repository.count == 1)
+    }
+
+    // MARK: The day's calorie target (HISTORY_SPEC §8)
+
+    @Test("saving a meal records the calorie target in force at the time")
+    func savedMealCarriesTheDaysGoal() async throws {
+        let repository = InMemoryMealRepository()
+        let useCase = SaveMealUseCase(
+            mealRepository: repository,
+            userRepository: InMemoryUserRepository(profile: makeProfile(), goal: goal)
+        )
+
+        try await useCase.execute(breakfast)
+
+        let stored = try #require(await repository.all().first)
+        expectClose(try #require(stored.calorieGoalWhenLogged), 2000)
+    }
+
+    @Test("a goal the caller already knows is kept rather than re-read")
+    func explicitGoalIsNotOverwritten() async throws {
+        let repository = InMemoryMealRepository()
+        // The store says 2000; the meal says 1800. Nothing may quietly correct a
+        // figure that was passed in — it is the caller's record of the day.
+        let useCase = SaveMealUseCase(
+            mealRepository: repository,
+            userRepository: InMemoryUserRepository(profile: makeProfile(), goal: goal)
+        )
+        var meal = breakfast
+        meal.calorieGoalWhenLogged = 1_800
+
+        try await useCase.execute(meal)
+
+        expectClose(try #require(await repository.all().first?.calorieGoalWhenLogged), 1_800)
+    }
+
+    @Test("a profile that cannot be read does not fail the meal")
+    func unreadableProfileStillSavesTheMeal() async throws {
+        let repository = InMemoryMealRepository()
+        let useCase = SaveMealUseCase(
+            mealRepository: repository,
+            userRepository: InMemoryUserRepository(failsToLoad: true)
+        )
+
+        try await useCase.execute(breakfast)
+
+        // Saved, and honestly unstamped: the same rule as a failed photo write or a
+        // failed weight write. History falls back to the current goal for this day.
+        let stored = try #require(await repository.all().first)
+        #expect(stored.calorieGoalWhenLogged == nil)
+    }
+
+    @Test("a meal saved before onboarding has no target to record")
+    func noProfileMeansNoStamp() async throws {
+        let repository = InMemoryMealRepository()
+        let useCase = SaveMealUseCase(
+            mealRepository: repository,
+            userRepository: InMemoryUserRepository()
+        )
+
+        try await useCase.execute(breakfast)
+
+        #expect(await repository.all().first?.calorieGoalWhenLogged == nil)
     }
 
     @Test(
@@ -116,7 +181,10 @@ struct MealTests {
     )
     func rejectsInvalidMeal(meal: Meal, expected: MealValidationError) async throws {
         let repository = InMemoryMealRepository()
-        let useCase = SaveMealUseCase(mealRepository: repository)
+        let useCase = SaveMealUseCase(
+            mealRepository: repository,
+            userRepository: InMemoryUserRepository(profile: makeProfile(), goal: goal)
+        )
 
         await #expect(throws: expected) {
             try await useCase.execute(meal)

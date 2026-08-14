@@ -79,7 +79,7 @@ final class Phase1FlowTests: XCTestCase {
         // Each root is reachable and returnable — the earlier back-chip
         // stopgap on History is gone now that it is a tab root.
         app.buttons["tab.history"].tap()
-        XCTAssertTrue(app.staticTexts["Bữa ăn đã ghi"].waitForExistence(timeout: 30))
+        XCTAssertTrue(app.staticTexts["history.title"].waitForExistence(timeout: 30))
 
         app.buttons["tab.insights"].tap()
         XCTAssertTrue(app.staticTexts["7 ngày qua"].waitForExistence(timeout: 30))
@@ -285,72 +285,52 @@ final class Phase1FlowTests: XCTestCase {
         XCTAssertEqual(hero.label, "\(vn(2128)) kcal còn lại", "dashboard after saving")
     }
 
-    func testHistoryCalendarSelectsADayAndPagesWeeks() {
+    /// A meal logged today reaches History without a fixture, on the same launch —
+    /// the dashboard-to-history path, which no test with a seeded store covers.
+    ///
+    /// This is what survives of the week strip's navigation test: the strip is gone,
+    /// so paging weeks and selecting a column are not behaviour any more, but "the
+    /// day you just logged on is a card in the list" still is.
+    func testHistoryListsTheDayAMealWasLoggedOn() {
         reachDashboard()
         logMeal(named: "breakfast", food: "Phở bò", calories: 420)
 
         app.buttons["tab.history"].tap()
-        XCTAssertTrue(app.staticTexts["Bữa ăn đã ghi"].waitForExistence(timeout: 30))
+        XCTAssertTrue(app.staticTexts["history.title"].waitForExistence(timeout: 30))
 
-        // History opens on today, which is the day the meal was just logged on.
         let today = app.buttons[dayIdentifier(for: Date())]
         XCTAssertTrue(today.waitForExistence(timeout: 30))
-        XCTAssertTrue(today.isSelected, "today starts selected")
-        XCTAssertTrue(app.buttons["history.meal.breakfast"].exists)
+        XCTAssertTrue(today.label.contains(vn(420)), "the card carries the total: \(today.label)")
 
-        // There is no week ahead of the one holding today to page into.
-        XCTAssertEqual(app.buttons["history.week.previous"].label, "Tuần trước")
-        XCTAssertEqual(app.buttons["history.week.next"].label, "Tuần sau")
-        XCTAssertFalse(app.buttons["history.week.next"].isEnabled)
-
-        app.buttons["history.week.previous"].tap()
-        XCTAssertTrue(
-            app.staticTexts["Ngày này không có bữa ăn nào được ghi."]
-                .waitForExistence(timeout: 30)
+        // Today is the only logged day, so the list is exactly one card. Matched on
+        // the date shape rather than the `history.day.` prefix, which the day panel's
+        // own controls share (`history.day.close`, `history.day.total`). `LIKE` takes
+        // `?` as one character and leaves `.` literal, so there is no regex escaping
+        // to get wrong through two layers of quoting.
+        let cards = app.buttons.matching(
+            NSPredicate(format: "identifier LIKE 'history.day.????-??-??'")
         )
-        XCTAssertFalse(app.buttons["history.meal.breakfast"].exists)
-        XCTAssertTrue(app.buttons["history.week.next"].isEnabled)
+        XCTAssertEqual(cards.count, 1, "only days with meals are cards (§0.1)")
 
-        // Coming back lands on today again, not on the Monday of this week.
-        app.buttons["history.week.next"].tap()
+        today.tap()
         XCTAssertTrue(app.buttons["history.meal.breakfast"].waitForExistence(timeout: 30))
-        XCTAssertTrue(app.buttons[dayIdentifier(for: Date())].isSelected)
     }
 
-    func testHistoryCalendarFindsAMealLoggedLastWeek() {
-        // Relaunch with an in-memory fixture that is written through the real
-        // SwiftData repository. Ordinary UI tests still start completely empty.
-        app.terminate()
-        app.launchArguments = ["-uiTesting", "-seedHistoryFixture"]
-        app.launch()
-        startOnboarding()
-        reachDashboard()
-
-        app.buttons["tab.history"].tap()
-        XCTAssertTrue(app.buttons["history.week.previous"].waitForExistence(timeout: 30))
-        app.buttons["history.week.previous"].tap()
-
-        let calendar = Calendar(identifier: .gregorian)
-        let historicalDate = calendar.date(byAdding: .day, value: -7, to: Date())!
-        let historicalDay = app.buttons[dayIdentifier(for: historicalDate)]
-        XCTAssertTrue(historicalDay.waitForExistence(timeout: 30))
-        historicalDay.tap()
-
-        let lunch = app.buttons["history.meal.lunch"]
-        XCTAssertTrue(lunch.waitForExistence(timeout: 30))
-        XCTAssertTrue(lunch.label.contains(vn(610)))
-    }
-
+    /// Removing one food from a meal opened through History has to move the figures
+    /// on the way back out: the meal total, then the day panel's row behind it.
+    ///
+    /// Two refresh paths, not one — `MealDetailModel` updates itself in place, and
+    /// the panel behind it only changes because `onChanged` re-reads the months.
     func testHistoryRefreshesAfterRemovingOneFood() {
         app.terminate()
+        // An in-memory fixture written through the real SwiftData repository.
+        // Ordinary UI tests still start completely empty.
         app.launchArguments = ["-uiTesting", "-seedHistoryFixture"]
         app.launch()
         startOnboarding()
         reachDashboard()
 
         app.buttons["tab.history"].tap()
-        XCTAssertTrue(app.buttons["history.week.previous"].waitForExistence(timeout: 30))
-        app.buttons["history.week.previous"].tap()
         let calendar = Calendar(identifier: .gregorian)
         let historicalDate = calendar.date(byAdding: .day, value: -7, to: Date())!
         let historicalDay = app.buttons[dayIdentifier(for: historicalDate)]
@@ -370,6 +350,8 @@ final class Phase1FlowTests: XCTestCase {
         confirm.tap()
         XCTAssertEqual(app.staticTexts["mealDetail.total"].label, "Tổng bữa ăn \(vn(210)) kcal")
 
+        // The detail is pushed *inside* the day panel's own stack, so this is the
+        // panel's back button rather than the tab's.
         let detailBar = app.navigationBars["Bữa trưa"]
         XCTAssertTrue(detailBar.waitForExistence(timeout: 30))
         detailBar.buttons.element(boundBy: 0).tap()
@@ -377,21 +359,16 @@ final class Phase1FlowTests: XCTestCase {
         XCTAssertTrue(historyMeal.label.contains(vn(210)))
     }
 
-    /// The history list of HISTORY_SPEC, behind `-historyTimeline` until stage 4.
-    /// `YES` is spelled out because a bare launch argument never reaches
-    /// `UserDefaults`, unlike `-uiTesting`, which is read from `ProcessInfo`.
+    /// The history list of HISTORY_SPEC, which is now the History tab outright.
     func testHistoryTimelineOpensADay() {
         app.terminate()
-        app.launchArguments = ["-uiTesting", "-seedHistoryFixture", "-historyTimeline", "YES"]
+        app.launchArguments = ["-uiTesting", "-seedHistoryFixture"]
         app.launch()
         startOnboarding()
         reachDashboard()
 
         app.buttons["tab.history"].tap()
         XCTAssertTrue(app.staticTexts["history.title"].waitForExistence(timeout: 30))
-
-        // The list replaces the week strip rather than joining it (§32.2).
-        XCTAssertFalse(app.buttons["history.week.previous"].exists)
 
         // The fixture's meal is a week back, which the opening three-month
         // window covers whichever month it landed in.
@@ -400,6 +377,14 @@ final class Phase1FlowTests: XCTestCase {
         let day = app.buttons[dayIdentifier(for: historicalDate)]
         XCTAssertTrue(day.waitForExistence(timeout: 30))
         XCTAssertTrue(day.label.contains(vn(610)), "the card carries the day's total")
+        // §8: against the target recorded *on that day*, which the fixture set to
+        // 1.900 — not the 2.378 onboarding just derived. This is the whole round
+        // trip: stamped at save, stored in a new optional column, read back, drawn.
+        XCTAssertTrue(
+            day.label.contains(vn(1900)),
+            "the card names the day's own target, not today's: \(day.label)"
+        )
+        XCTAssertFalse(day.label.contains(vn(2378)), "today's target is not on an old day")
         // HISTORY_SPEC §7: the whole card is one element, and it says how far off the
         // target the day landed rather than only what it added up to.
         XCTAssertTrue(
@@ -439,7 +424,7 @@ final class Phase1FlowTests: XCTestCase {
     /// scrolls passes without testing anything.
     func testHistoryTimelineKeepsItsScrollPositionAcrossADay() {
         app.terminate()
-        app.launchArguments = ["-uiTesting", "-seedHistoryFixture", "-historyTimeline", "YES"]
+        app.launchArguments = ["-uiTesting", "-seedHistoryFixture"]
         app.launch()
         startOnboarding()
         reachDashboard()
@@ -479,7 +464,7 @@ final class Phase1FlowTests: XCTestCase {
     /// that another page arrived.
     func testHistoryTimelinePagesToOlderMonths() {
         app.terminate()
-        app.launchArguments = ["-uiTesting", "-seedHistoryFixture", "-historyTimeline", "YES"]
+        app.launchArguments = ["-uiTesting", "-seedHistoryFixture"]
         app.launch()
         startOnboarding()
         reachDashboard()
@@ -518,7 +503,7 @@ final class Phase1FlowTests: XCTestCase {
     func testHistoryTimelineRowsSurviveAccessibilitySizes() {
         app.terminate()
         app.launchArguments = [
-            "-uiTesting", "-seedHistoryFixture", "-historyTimeline", "YES",
+            "-uiTesting", "-seedHistoryFixture",
             "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXL",
         ]
         app.launch()
@@ -556,7 +541,7 @@ final class Phase1FlowTests: XCTestCase {
     /// the delete tests went via the dashboard.
     func testDeletingAMealFromTheDaySheetKeepsItsConfirmation() {
         app.terminate()
-        app.launchArguments = ["-uiTesting", "-seedHistoryFixture", "-historyTimeline", "YES"]
+        app.launchArguments = ["-uiTesting", "-seedHistoryFixture"]
         app.launch()
         startOnboarding()
         reachDashboard()
@@ -592,7 +577,7 @@ final class Phase1FlowTests: XCTestCase {
     /// that works on a Vietnamese keyboard and one that only works with tones typed.
     func testHistorySearchFindsAMealTypedWithoutDiacritics() {
         app.terminate()
-        app.launchArguments = ["-uiTesting", "-seedHistoryFixture", "-historyTimeline", "YES"]
+        app.launchArguments = ["-uiTesting", "-seedHistoryFixture"]
         app.launch()
         startOnboarding()
         reachDashboard()
@@ -636,7 +621,7 @@ final class Phase1FlowTests: XCTestCase {
     /// Only the fixture's lunch has a photo, so "Có ảnh" has exactly one answer.
     func testHistoryFilterChipNarrowsToMealsWithAPhoto() {
         app.terminate()
-        app.launchArguments = ["-uiTesting", "-seedHistoryFixture", "-historyTimeline", "YES"]
+        app.launchArguments = ["-uiTesting", "-seedHistoryFixture"]
         app.launch()
         startOnboarding()
         reachDashboard()
@@ -668,7 +653,7 @@ final class Phase1FlowTests: XCTestCase {
     /// both ways to log something.
     func testHistoryEmptyStateOffersBothWaysToLogAMeal() {
         app.terminate()
-        app.launchArguments = ["-uiTesting", "-historyTimeline", "YES"]
+        app.launchArguments = ["-uiTesting"]
         app.launch()
         startOnboarding()
         reachDashboard()

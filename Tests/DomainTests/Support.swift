@@ -95,6 +95,32 @@ actor InMemoryWeightRepository: WeightRepository {
     var count: Int { stored.count }
 }
 
+/// A profile store that can also be made to fail, because "the profile could not
+/// be read" is a branch with its own behaviour: `SaveMealUseCase` still saves the
+/// meal, unstamped.
+actor InMemoryUserRepository: UserRepository {
+    struct ReadFailure: Error {}
+
+    private var stored: (profile: UserProfile, goal: NutritionGoal)?
+    private let failsToLoad: Bool
+
+    init(profile: UserProfile? = nil, goal: NutritionGoal? = nil, failsToLoad: Bool = false) {
+        if let profile, let goal {
+            stored = (profile, goal)
+        }
+        self.failsToLoad = failsToLoad
+    }
+
+    func load() async throws -> (profile: UserProfile, goal: NutritionGoal)? {
+        if failsToLoad { throw ReadFailure() }
+        return stored
+    }
+
+    func save(profile: UserProfile, goal: NutritionGoal) async throws {
+        stored = (profile, goal)
+    }
+}
+
 actor InMemoryMealRepository: MealRepository {
     private var stored: [Meal]
 

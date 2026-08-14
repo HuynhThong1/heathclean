@@ -20,7 +20,7 @@ struct MealDetailView: View {
                 heroCard
                 itemsCard
                 if let note = summaryNote {
-                    GrayNote(text: note)
+                    GrayNote(verbatim: note)
                 }
                 deleteButton
             }

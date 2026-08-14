@@ -158,15 +158,6 @@ enum VietnameseDate {
         return calendar
     }
 
-    /// "Thứ Sáu 8/8" — weekday then day/month, used by history sections.
-    static func dayText(for date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "vi_VN")
-        formatter.setLocalizedDateFormatFromTemplate("EEEE d M")
-        let text = formatter.string(from: date).replacingOccurrences(of: ",", with: "")
-        return text.prefix(1).uppercased() + text.dropFirst()
-    }
-
     /// "Thứ Bảy, 9/8" — weekday then day/month, per §6.4.
     static func headerText(for date: Date) -> String {
         let formatter = DateFormatter()
@@ -176,17 +167,7 @@ enum VietnameseDate {
         return text.prefix(1).uppercased() + text.dropFirst()
     }
 
-    /// "T2"…"CN" — the weekday label on the history week strip.
-    ///
-    /// `InsightsView` carries its own copy for the bar chart, which also says
-    /// "Nay" for today. The strip does not: its seven columns are a fixed grid
-    /// and a wider label on one of them makes the row shift as weeks change.
-    static func weekdayShort(for date: Date) -> String {
-        let weekday = calendar().component(.weekday, from: date)
-        return weekday == 1 ? "CN" : "T\(weekday)"
-    }
-
-    /// Day of month, zero-padded so the seven columns keep one width.
+    /// Day of month, zero-padded so a column of dates keeps one width.
     ///
     /// Not `VNNumber`: that exists for figures a grouping separator applies to,
     /// and a day of month is never one.
@@ -196,8 +177,8 @@ enum VietnameseDate {
 
     /// "Th 5" / "CN" — the weekday under a history day card's date (HISTORY_SPEC §4).
     ///
-    /// Longer than the week strip's "T5" because it sits in a 42pt column of its
-    /// own rather than in one of seven fixed slots, and reads less like a code.
+    /// Spelled out further than a bare "T5" because it sits in a 42pt column of
+    /// its own and reads less like a code there.
     static func weekdayCompact(for date: Date) -> String {
         let weekday = calendar().component(.weekday, from: date)
         return weekday == 1 ? "CN" : "Th \(weekday)"

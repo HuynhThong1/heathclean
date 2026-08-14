@@ -16,8 +16,16 @@ import SwiftUI
 /// detent on a small phone — the numbers are what this sheet is *for*.
 struct HistoryDayPanelSheet: View {
     let day: HistoryDay
-    /// Calories for the bar, macros for the three cells. `nil` before the profile
-    /// loads, which is a state the sheet can be opened in.
+    /// The **current** goal. Its macros are the three cells' targets, and its calorie
+    /// figure is only what a day with no recorded target of its own falls back to
+    /// (§8). `nil` before the profile loads, which is a state the sheet can be
+    /// opened in.
+    ///
+    /// The macros are not recorded per day the way the calorie target is: §6 asks the
+    /// panel for three macro bars, and stamping four figures on every meal to make
+    /// them historical is a bigger change than the one §8 asked for. So the calorie
+    /// line is the day's and the macro lines are today's, which is worth knowing
+    /// before reading a macro bar on a day from before a goal change.
     let goal: NutritionGoal?
     let isToday: Bool
     /// A meal was edited: the list behind has to re-read.
@@ -29,7 +37,11 @@ struct HistoryDayPanelSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var route: MealType?
 
-    private var goalCalories: Double { goal?.calories ?? 0 }
+    /// The day's own target where it has one, the current goal where it does not —
+    /// the same resolution the card behind this sheet used, so the two figures agree.
+    private var goalCalories: Double {
+        day.goalCalories(fallingBackTo: goal?.calories ?? 0)
+    }
 
     var body: some View {
         NavigationStack {

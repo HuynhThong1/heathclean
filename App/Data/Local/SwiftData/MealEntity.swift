@@ -17,12 +17,23 @@ final class MealEntity {
     @Relationship(deleteRule: .cascade, inverse: \MealPhotoEntity.meal)
     var photos: [MealPhotoEntity]
 
+    /// The day's calorie target, recorded at save time — see
+    /// `Meal.calorieGoalWhenLogged`.
+    ///
+    /// Optional, and that is what makes this a lightweight migration: every meal
+    /// already in the store gets `nil` and needs no conversion. A non-optional
+    /// `Double` would need a default, and a default here is a *made-up target* on
+    /// days the app never knew one for — which is the figure history is supposed to
+    /// stop inventing.
+    var calorieGoalWhenLogged: Double?
+
     init(meal: Meal) {
         self.id = meal.id
         self.date = meal.date
         self.typeRawValue = meal.type.rawValue
         self.items = meal.items.map(FoodItemEntity.init(item:))
         self.photos = meal.photos.map(MealPhotoEntity.init(photo:))
+        self.calorieGoalWhenLogged = meal.calorieGoalWhenLogged
     }
 }
 
@@ -39,7 +50,8 @@ extension MealEntity {
             // when two photos share a timestamp.
             photos: photos
                 .sorted { ($0.capturedAt, $0.id.uuidString) < ($1.capturedAt, $1.id.uuidString) }
-                .map(\.mealPhoto)
+                .map(\.mealPhoto),
+            calorieGoalWhenLogged: calorieGoalWhenLogged
         )
     }
 }

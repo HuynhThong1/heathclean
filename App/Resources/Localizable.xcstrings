@@ -147,16 +147,6 @@
         }
       }
     },
-    "%@, %@ kcal" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@, %2$@ kcal"
-          }
-        }
-      }
-    },
     "%@, %@ kcal, %@ gam" : {
       "localizations" : {
         "vi" : {
@@ -186,15 +176,6 @@
           }
         }
       }
-    },
-    "%@, chưa ghi bữa nào" : {
-
-    },
-    "%@, chưa tới" : {
-
-    },
-    "%@, có bữa ăn đã ghi" : {
-
     },
     "%@. %@" : {
       "localizations" : {
@@ -285,6 +266,9 @@
     "AI nhận diện món ăn, cơ sở dữ liệu dinh dưỡng tính calo, và bạn là người xác nhận cuối cùng." : {
 
     },
+    "AI nhận diện món ăn, cơ sở dữ liệu tính calo, và bạn xác nhận trước khi lưu." : {
+
+    },
     "AI ước lượng ban đầu: %@ g" : {
 
     },
@@ -367,9 +351,6 @@
     "Bối cảnh sức khỏe, không dùng để tính calo" : {
 
     },
-    "Bữa ăn đã ghi" : {
-
-    },
     "Bữa ăn: %@. Chạm để đổi bữa." : {
 
     },
@@ -383,6 +364,12 @@
 
     },
     "Chưa có bữa nào được ghi" : {
+
+    },
+    "Chưa có bữa ăn nào trong 7 ngày qua." : {
+
+    },
+    "Chưa có cân nặng nào được ghi." : {
 
     },
     "Chưa có mục tiêu" : {
@@ -461,6 +448,9 @@
     "Dịch vụ nhận diện đang bận. Thử lại sau ít phút." : {
 
     },
+    "Dữ liệu Apple Health không rời khỏi thiết bị và không dùng cho quảng cáo." : {
+
+    },
     "Dữ liệu vẫn nằm an toàn trên máy bạn. Thử lại sau vài giây." : {
 
     },
@@ -494,9 +484,6 @@
     "Hôm nay" : {
 
     },
-    "Hôm nay chưa ghi bữa nào. Những bữa bạn ghi sẽ xuất hiện ở đây." : {
-
-    },
     "Hôm nay · Today" : {
 
     },
@@ -510,6 +497,9 @@
 
     },
     "Không có bữa nào tên “%@” trong các tháng đã tải. Thử bỏ bớt bộ lọc." : {
+
+    },
+    "Không có giới tính sinh học, mục tiêu sẽ dùng giá trị trung bình nên kém chính xác hơn." : {
 
     },
     "Không khả dụng trên thiết bị này" : {
@@ -534,9 +524,6 @@
 
     },
     "Không tải được hôm nay" : {
-
-    },
-    "Không tải được lịch sử bữa ăn." : {
 
     },
     "Không tải được thống kê." : {
@@ -582,6 +569,9 @@
 
     },
     "Mục tiêu tăng cân thường cao hơn cân nặng hiện tại." : {
+
+    },
+    "Mức thiếu hụt không bao giờ đưa bạn xuống dưới chuyển hóa cơ bản của chính bạn." : {
 
     },
     "Nay" : {
@@ -671,12 +661,6 @@
 
     },
     "Trung bình %@ kcal mỗi ngày" : {
-
-    },
-    "Tuần sau" : {
-
-    },
-    "Tuần trước" : {
 
     },
     "Tên món" : {
@@ -799,9 +783,6 @@
 
     },
     "Đang tải lịch sử" : {
-
-    },
-    "Đang tải lịch sử bữa ăn" : {
 
     },
     "Đang tải…" : {

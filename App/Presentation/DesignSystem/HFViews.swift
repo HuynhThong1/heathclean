@@ -89,11 +89,33 @@ struct HFCard<Content: View>: View {
 
 /// Neutral note pill. Used for the budget status line and the explanatory
 /// asides — grey by design, never alarming (handoff §4).
+///
+/// **It takes a `LocalizedStringKey`, not a `String`, and that is the point.** It
+/// used to take a `String`, so every literal written into one was a plain Swift
+/// literal that `xcstringstool` never saw: six pieces of copy — the Apple Health
+/// privacy line, the scan explainer, two onboarding asides, two Insights empty
+/// states — sat outside `Localizable.xcstrings` with nothing to show it. The
+/// History day panel's empty state was in the catalog only by accident, because the
+/// screen this replaced happened to pass the same sentence through
+/// `String(localized:)`; deleting that screen took the key with it, which is how
+/// the whole set came to light.
+///
+/// A message that was already localized where it was built — a status line, an
+/// error — comes in through `init(verbatim:)` instead, so it is not looked up a
+/// second time with itself as the key.
 struct GrayNote: View {
-    let text: String
+    private let text: Text
+
+    init(text: LocalizedStringKey) {
+        self.text = Text(text)
+    }
+
+    init(verbatim text: String) {
+        self.text = Text(verbatim: text)
+    }
 
     var body: some View {
-        Text(text)
+        text
             .hfStyle(HFType.body)
             .foregroundStyle(DS.textMuted)
             .frame(maxWidth: .infinity, alignment: .leading)

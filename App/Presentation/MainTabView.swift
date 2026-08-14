@@ -59,7 +59,7 @@ struct MainTabView: View {
                     }
                 case .history:
                     NavigationStack {
-                        MealHistoryView(
+                        HistoryMonthsView(
                             refreshID: dataVersion,
                             onScanRequested: { scanType = $0 }
                         )

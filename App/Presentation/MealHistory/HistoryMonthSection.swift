@@ -9,7 +9,10 @@ import SwiftUI
 /// the rule behind both: a day with no data does not exist in the UI.
 struct HistoryMonthSection: View {
     let month: HistoryMonth
-    let goalCalories: Double
+    /// The current target, used only for a day that recorded none of its own — see
+    /// `HistoryDay.goalCalories(fallingBackTo:)`. Each card is drawn against *its*
+    /// day's target (§8), so this is not simply "the goal".
+    let fallbackGoalCalories: Double
     let today: Date
     let onSelect: (HistoryDay) -> Void
 
@@ -20,7 +23,7 @@ struct HistoryMonthSection: View {
                 ForEach(month.days) { day in
                     HistoryDayCard(
                         day: day,
-                        goalCalories: goalCalories,
+                        goalCalories: day.goalCalories(fallingBackTo: fallbackGoalCalories),
                         isToday: day.date == today,
                         onSelect: { onSelect(day) }
                     )
@@ -133,7 +136,7 @@ struct EmptyMonthDivider: View {
             VStack(alignment: .leading, spacing: 0) {
                 HistoryMonthSection(
                     month: HistoryPreviewData.month,
-                    goalCalories: HistoryPreviewData.goalCalories,
+                    fallbackGoalCalories: HistoryPreviewData.goalCalories,
                     today: HistoryPreviewData.today.date,
                     onSelect: { _ in }
                 )

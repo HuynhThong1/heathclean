@@ -15,9 +15,10 @@ import SwiftUI
 /// adds and what §1c of the design exploration was arguing for.
 struct HistoryDayCard: View {
     let day: HistoryDay
-    /// That day's target. See `HistoryMonthsModel.dailyGoalCalories` for why this
-    /// is today's target rather than the one in force on the day (§8's one
-    /// unmet requirement).
+    /// That day's target, resolved by the caller through
+    /// `HistoryDay.goalCalories(fallingBackTo:)` — the figure recorded on the day
+    /// itself where there is one (§8). 0 hides the comparison rather than drawing a
+    /// bar against nothing.
     let goalCalories: Double
     let isToday: Bool
     let onSelect: () -> Void

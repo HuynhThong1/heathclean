@@ -1,12 +1,11 @@
 import Foundation
 
-/// One day of a `HistoryMonth`.
+/// One day of a `HistoryMonth`, and always a day something was logged on —
+/// HISTORY_SPEC §0.1: "ngày trống không tồn tại trong UI".
 ///
-/// A day with nothing logged is present with an empty `meals`, not absent: the
-/// day happened and nothing was eaten on the record, which the month grid draws
-/// as a neutral dot. Absent means *not part of the month* — a leading blank or a
-/// day that has not arrived yet (§32.3). Keeping those two apart is the whole
-/// reason this type exists rather than a `[Date: [Meal]]`.
+/// It exists rather than a `[Date: [Meal]]` because a day is a unit with figures
+/// of its own: the totals below are what the card's deviation bar and the day
+/// panel read, and they have to be the same numbers in both places.
 public struct HistoryDay: Sendable, Equatable, Identifiable {
     /// Start of day, in the calendar the use case was built with.
     public let date: Date
@@ -32,21 +31,32 @@ public struct HistoryDay: Sendable, Equatable, Identifiable {
         meals.filter { $0.type == type }
     }
 
-    /// The photo the month grid draws for this day.
+    /// The calorie target this day is measured against — HISTORY_SPEC §8.
     ///
-    /// The most recent meal that *has* one, and that meal's first photo. §32.3
-    /// says the newest meal's photo; taking the newest meal outright would leave
-    /// a day blank whenever the last thing logged was typed in by hand, and
-    /// "ảnh gần nhất trong ngày" (§32.2) is the photo, not the meal.
+    /// The stamp on the **last meal that carries one**, which is the target in force
+    /// at the end of the day. A goal changed at lunchtime leaves two figures on one
+    /// day and the day has to pick one; the later is the one the user was aiming at
+    /// when they stopped eating, and it is also the one that agrees with the
+    /// dashboard on the day itself.
     ///
-    /// The rule has to be deterministic or the picture moves between renders,
-    /// which is why it reads an ordered array rather than picking from a set.
-    public var representativePhotoID: UUID? {
-        meals.last(where: { !$0.photos.isEmpty })?.photos.first?.id
+    /// `nil` when nothing on the day recorded a target: every meal predates the
+    /// field, or each was saved while the profile could not be read. That is the
+    /// caller's cue to fall back to the current goal — the figure is then wrong in
+    /// the old way, for old data only, and a day with no comparison at all would
+    /// leave the bar with nothing to mean.
+    public var goalCalories: Double? {
+        meals.last(where: { $0.calorieGoalWhenLogged != nil })?.calorieGoalWhenLogged
     }
 
-    /// Every photo on the day, in the order the meals were eaten — what the day
-    /// sheet shows, and the count behind §32.2's badge.
+    /// Every photo on the day, in the order the meals were eaten — the count
+    /// behind the card's "Có N ảnh" (§7).
+    ///
+    /// There is deliberately no "the day's photo" beside this. There was one:
+    /// `representativePhotoID`, the newest meal that had a picture, for a day cell
+    /// that drew a single thumbnail. HISTORY_SPEC's card draws a chip per meal,
+    /// each with its own, so a day no longer has one representative picture — and a
+    /// second rule for which photo stands for a day is exactly the kind of thing
+    /// that starts disagreeing with the first.
     public var photos: [MealPhoto] { meals.flatMap(\.photos) }
 
     public var photoCount: Int { meals.reduce(0) { $0 + $1.photos.count } }

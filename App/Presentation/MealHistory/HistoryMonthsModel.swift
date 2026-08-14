@@ -78,8 +78,7 @@ final class HistoryMonthsModel {
     private let userRepository: any UserRepository
     /// Orders overlapping loads. Two pages can be in flight at once and nothing
     /// orders two `@ModelActor` calls, so the slower one landing last would
-    /// otherwise leave the list describing a window it was not asked for — the
-    /// case the week strip already hit.
+    /// otherwise leave the list describing a window it was not asked for.
     private var loadGeneration = 0
     private var earliestMealDate: Date?
     /// How far back the reads have gone. Not `months.count`: they agree today, but
@@ -106,14 +105,14 @@ final class HistoryMonthsModel {
 
     var isEmpty: Bool { earliestMealDate == nil }
 
-    /// **Today's target, on every day's card.** §8 asks for the target that was in
-    /// force on the day itself, and nothing stores it: `Meal` carries food and a
-    /// date, and `UserProfile` carries one current goal that a profile edit
-    /// overwrites. Showing today's figure against an old day is wrong whenever the
-    /// goal has changed since — but the alternative available today is to show no
-    /// comparison at all, which is the one thing the deviation bar exists for.
-    /// Recording the goal alongside each meal is a Data-layer change, and the UI is
-    /// not the place to fake it.
+    /// The **current** target, which is only what a day falls back to.
+    ///
+    /// §8 asks for the target that was in force on the day itself, and that now
+    /// comes from the day: `Meal.calorieGoalWhenLogged` is stamped at save time and
+    /// `HistoryDay.goalCalories` reads it, so changing the goal no longer moves
+    /// every past day's bar. This figure is what a day with no stamp on it uses —
+    /// meals logged before the field existed — and it is also the day panel's source
+    /// for the macro targets, which are not recorded per day.
     var dailyGoalCalories: Double { goal?.calories ?? 0 }
 
     /// The months and dividers the scroll draws (§1).
@@ -248,14 +247,19 @@ final class HistoryMonthsModel {
             activeQuery.count >= HistorySearchText.minimumQueryLength
             ? HistorySearchText.folded(activeQuery) : nil
         let wantedTypes = Set(filters.compactMap(\.mealType))
-        let goalCalories = dailyGoalCalories
+        let fallbackGoal = dailyGoalCalories
 
         var hits: [HistoryMealHit] = []
         for month in months {
             for day in month.days {
                 // §5's groups: `overBudget` is a property of the day, the meal chips
                 // of the meal, and the two are ANDed.
+                //
+                // Against *that day's* target, the same figure its card draws — a
+                // filter that disagreed with the bar beside it would be worse than
+                // no filter.
                 if filters.contains(.overBudget) {
+                    let goalCalories = day.goalCalories(fallingBackTo: fallbackGoal)
                     guard goalCalories > 0, day.calories > goalCalories else { continue }
                 }
                 for meal in day.meals {
@@ -411,5 +415,18 @@ final class HistoryMonthsModel {
         let parts = calendar.dateComponents([.year, .month], from: earliestMealDate)
         guard let firstYear = parts.year, let firstMonth = parts.month else { return false }
         return year * 12 + month >= firstYear * 12 + firstMonth
+    }
+}
+
+extension HistoryDay {
+    /// The target this day is drawn against, in one place so the card, the day panel
+    /// and the "vượt mục tiêu" filter cannot disagree about it (§8).
+    ///
+    /// The day's own recorded target where there is one, and the current goal where
+    /// there is not — meals logged before `Meal.calorieGoalWhenLogged` existed. The
+    /// fallback is the old, wrong-when-the-goal-changed behaviour, kept for old data
+    /// only, because a day with no comparison leaves the deviation bar meaningless.
+    func goalCalories(fallingBackTo currentGoalCalories: Double) -> Double {
+        goalCalories ?? currentGoalCalories
     }
 }

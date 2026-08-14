@@ -145,7 +145,7 @@ struct DashboardView: View {
                     for: model.status,
                     remainingKcal: summary.budget.remaining
                 ) {
-                    GrayNote(text: note)
+                    GrayNote(verbatim: note)
                 }
             }
         }

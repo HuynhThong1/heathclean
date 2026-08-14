@@ -24,9 +24,12 @@ final class DependencyContainer {
     /// `nonisolated` so it can be built in a stored-property initializer, and
     /// because nothing it touches is main-actor bound.
     nonisolated init(inMemory: Bool = false) {
-        // `MealPhotoEntity` was added after the store shipped. It migrates
-        // lightly: a new model, plus a to-many relationship that is empty for
-        // every meal written before it, so nothing old needs converting.
+        // Two additions have been made after the store shipped, both lightweight:
+        // `MealPhotoEntity` (a new model plus a to-many relationship that is empty
+        // for every meal written before it) and `MealEntity.calorieGoalWhenLogged`
+        // (a new *optional* attribute, so existing rows read back as `nil`).
+        // Neither needs a `SchemaMigrationPlan`; if one ever does, the `fatalError`
+        // below is how it will announce itself.
         let schema = Schema([
             UserProfileEntity.self, MealEntity.self, FoodItemEntity.self, WeightEntryEntity.self,
             MealPhotoEntity.self,
@@ -83,12 +86,14 @@ final class DependencyContainer {
         GetDailySummaryUseCase(mealRepository: mealRepository)
     }
 
+    /// Takes the user repository as well as the meal one: every save stamps the
+    /// meal with the day's calorie target (HISTORY_SPEC §8).
     var saveMeal: SaveMealUseCase {
-        SaveMealUseCase(mealRepository: mealRepository)
+        SaveMealUseCase(mealRepository: mealRepository, userRepository: userRepository)
     }
 
-    /// Built with the history calendar rather than `.current`: the month grid's
-    /// day boundaries have to be the week strip's, and the dashboard's.
+    /// Built with the history calendar rather than `.current`: the history list's
+    /// day boundaries have to be the dashboard's.
     var getMealHistoryMonths: GetMealHistoryMonthsUseCase {
         GetMealHistoryMonthsUseCase(
             mealRepository: mealRepository,
@@ -153,7 +158,22 @@ final class DependencyContainer {
         // from a test, and a thumbnail is the one thing §32 stage 2 adds that has
         // to be seen to be believed.
         let photos = await fixturePhoto(capturedAt: date).map { [$0] } ?? []
-        try? await saveMeal.execute(Meal(date: date, type: .lunch, items: [main, side], photos: photos))
+        // Stamped with a target of its own, and deliberately not the 2.378 kcal
+        // onboarding derives: this is the one place §8's recorded goal makes the
+        // round trip through SwiftData, so the day has to be able to disagree with
+        // today for a test to tell the two apart. The fixture runs before
+        // onboarding, so every other meal here is saved with no profile to read and
+        // falls back to the current goal — which is the mixed store real data will
+        // be, one day at a time.
+        try? await saveMeal.execute(
+            Meal(
+                date: date,
+                type: .lunch,
+                items: [main, side],
+                photos: photos,
+                calorieGoalWhenLogged: 1_900
+            )
+        )
 
         // Enough logged days that the list is longer than the screen. History is a
         // list of days now, so a two-day fixture cannot scroll — and a scroll
@@ -266,10 +286,6 @@ final class DependencyContainer {
             userRepository: userRepository,
             getWeightSeries: getWeightSeries
         )
-    }
-
-    func makeMealHistoryModel() -> MealHistoryModel {
-        MealHistoryModel(mealRepository: mealRepository, userRepository: userRepository)
     }
 
     func makeHistoryMonthsModel() -> HistoryMonthsModel {

@@ -46,7 +46,8 @@ struct MealHistoryMonthsTests {
         protein: Double = 20,
         carbohydrates: Double = 50,
         fat: Double = 10,
-        photos: [MealPhoto] = []
+        photos: [MealPhoto] = [],
+        calorieGoal: Double? = nil
     ) -> Meal {
         Meal(
             date: date,
@@ -59,7 +60,8 @@ struct MealHistoryMonthsTests {
                     fat: fat
                 )
             ],
-            photos: photos
+            photos: photos,
+            calorieGoalWhenLogged: calorieGoal
         )
     }
 
@@ -322,10 +324,86 @@ struct MealHistoryMonthsTests {
         expectClose(fifth.fat, summary.consumedFat)
     }
 
+    // MARK: The day's calorie target (HISTORY_SPEC §8)
+
+    @Test("a day is measured against the target its meals recorded, not today's")
+    func dayCarriesItsOwnGoal() async throws {
+        let calendar = historyCalendar()
+        let result = try await months(
+            [
+                meal(at: date(2026, 8, 5, hour: 12, in: calendar), calorieGoal: 1_900),
+                meal(at: date(2026, 8, 5, hour: 19, in: calendar), calorieGoal: 1_900),
+            ],
+            today: date(2026, 8, 13, in: calendar),
+            monthOffset: 0,
+            count: 1,
+            calendar: calendar
+        )
+
+        let fifth = try #require(day(5, of: result[0], in: calendar))
+        expectClose(try #require(fifth.goalCalories), 1_900)
+    }
+
+    @Test("a goal changed during the day leaves the day with the later target")
+    func goalChangedMidDay() async throws {
+        let calendar = historyCalendar()
+        let result = try await months(
+            [
+                meal(at: date(2026, 8, 5, hour: 7, in: calendar), calorieGoal: 2_100),
+                // The profile was edited at lunchtime, so the afternoon's meals were
+                // logged against a lower target. The day ended aiming at 1.800.
+                meal(at: date(2026, 8, 5, hour: 19, in: calendar), calorieGoal: 1_800),
+            ],
+            today: date(2026, 8, 13, in: calendar),
+            monthOffset: 0,
+            count: 1,
+            calendar: calendar
+        )
+
+        let fifth = try #require(day(5, of: result[0], in: calendar))
+        expectClose(try #require(fifth.goalCalories), 1_800)
+    }
+
+    @Test("a target is taken from the last meal that has one, not the last meal")
+    func goalSkipsUnstampedMeals() async throws {
+        let calendar = historyCalendar()
+        let result = try await months(
+            [
+                meal(at: date(2026, 8, 5, hour: 7, in: calendar), calorieGoal: 2_100),
+                // Saved while the profile could not be read. Reading the last meal
+                // outright would report the day as having no target at all.
+                meal(at: date(2026, 8, 5, hour: 19, in: calendar)),
+            ],
+            today: date(2026, 8, 13, in: calendar),
+            monthOffset: 0,
+            count: 1,
+            calendar: calendar
+        )
+
+        let fifth = try #require(day(5, of: result[0], in: calendar))
+        expectClose(try #require(fifth.goalCalories), 2_100)
+    }
+
+    @Test("a day whose meals all predate the field has no target of its own")
+    func dayWithoutAnyGoal() async throws {
+        let calendar = historyCalendar()
+        let result = try await months(
+            [meal(at: date(2026, 8, 5, hour: 12, in: calendar))],
+            today: date(2026, 8, 13, in: calendar),
+            monthOffset: 0,
+            count: 1,
+            calendar: calendar
+        )
+
+        // `nil`, never 0: a target of no calories is a different claim from no
+        // recorded target, and the UI falls back to the current goal on this one.
+        #expect(day(5, of: result[0], in: calendar)?.goalCalories == nil)
+    }
+
     // MARK: Photos (§32 stage 2)
 
-    @Test("the day's picture is the newest meal that has one, and that meal's first photo")
-    func representativePhoto() async throws {
+    @Test("a day's photos are every meal's, in the order the meals were eaten")
+    func dayPhotos() async throws {
         let calendar = historyCalendar()
         let morning = photo(at: date(2026, 8, 5, hour: 7, minute: 30, in: calendar))
         let eveningFirst = photo(at: date(2026, 8, 5, hour: 19, minute: 0, in: calendar))
@@ -352,38 +430,14 @@ struct MealHistoryMonthsTests {
         )
 
         let fifth = try #require(day(5, of: result[0], in: calendar))
-        #expect(fifth.representativePhotoID == eveningFirst.id)
         #expect(fifth.photoCount == 3)
+        // A meal in the middle with no picture must not interrupt the order, and
+        // two photos on one meal keep the order that meal put them in.
         #expect(fifth.photos.map(\.id) == [morning.id, eveningFirst.id, eveningSecond.id])
     }
 
-    @Test("a day whose newest meal has no photo falls back to the newest one that does")
-    func representativePhotoFallsBack() async throws {
-        let calendar = historyCalendar()
-        let morning = photo(at: date(2026, 8, 5, hour: 7, minute: 30, in: calendar))
-
-        let result = try await months(
-            [
-                meal(
-                    at: date(2026, 8, 5, hour: 7, minute: 30, in: calendar),
-                    type: .breakfast,
-                    photos: [morning]
-                ),
-                // Typed in by hand later in the day, so it has no picture. Taking
-                // the newest meal outright would leave the row blank.
-                meal(at: date(2026, 8, 5, hour: 19, minute: 0, in: calendar), type: .dinner),
-            ],
-            today: date(2026, 8, 13, in: calendar),
-            monthOffset: 0,
-            count: 1,
-            calendar: calendar
-        )
-
-        #expect(day(5, of: result[0], in: calendar)?.representativePhotoID == morning.id)
-    }
-
-    @Test("a day with no photo has none, and says so rather than guessing")
-    func noRepresentativePhoto() async throws {
+    @Test("a day with no photo has an empty list rather than a placeholder")
+    func noPhotosOnADay() async throws {
         let calendar = historyCalendar()
         let result = try await months(
             [meal(at: date(2026, 8, 5, hour: 12, minute: 0, in: calendar))],
@@ -394,9 +448,35 @@ struct MealHistoryMonthsTests {
         )
 
         let fifth = try #require(day(5, of: result[0], in: calendar))
-        #expect(fifth.representativePhotoID == nil)
         #expect(fifth.photoCount == 0)
         #expect(fifth.photos.isEmpty)
+    }
+
+    @Test("photos ride along with the meal that has them, not with the day")
+    func photosBelongToTheirMeal() async throws {
+        let calendar = historyCalendar()
+        let morning = photo(at: date(2026, 8, 5, hour: 7, minute: 30, in: calendar))
+
+        let result = try await months(
+            [
+                meal(
+                    at: date(2026, 8, 5, hour: 7, minute: 30, in: calendar),
+                    type: .breakfast,
+                    photos: [morning]
+                ),
+                // Typed in by hand later in the day, so it has no picture. The card
+                // draws a chip per meal, and only one of these two has a thumbnail.
+                meal(at: date(2026, 8, 5, hour: 19, minute: 0, in: calendar), type: .dinner),
+            ],
+            today: date(2026, 8, 13, in: calendar),
+            monthOffset: 0,
+            count: 1,
+            calendar: calendar
+        )
+
+        let fifth = try #require(day(5, of: result[0], in: calendar))
+        #expect(fifth.meals.map { $0.photos.map(\.id) } == [[morning.id], []])
+        #expect(fifth.photos.map(\.id) == [morning.id])
     }
 
     @Test("photos do not change what a day totals")

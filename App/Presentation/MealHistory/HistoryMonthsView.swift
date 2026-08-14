@@ -9,8 +9,10 @@ import SwiftUI
 /// **no month grid**: §0.1 rules out drawing a cell for a day with no data, which is
 /// what the calendar this replaced spent nine tenths of its pixels on.
 ///
-/// It sits beside the week-strip screen behind `HistoryFeatureFlags.timeline` until
-/// stage 4, when this becomes `MealHistoryView` and the strip goes.
+/// This is the History tab outright. It spent one release behind a feature flag
+/// beside a week-strip screen (§32.7's "bật flag cho nội bộ trước"); both the flag
+/// and the strip are gone, because two ways to navigate one screen is not a
+/// shipping state (§32.2) and HISTORY_SPEC is chốt.
 ///
 /// **The keyword and the chips are not kept between two visits to the tab** (§5).
 /// That falls out of where they live: `MainTabView` switches on its selection, so
@@ -177,7 +179,7 @@ struct HistoryMonthsView: View {
                 case .month(let month):
                     HistoryMonthSection(
                         month: month,
-                        goalCalories: model.dailyGoalCalories,
+                        fallbackGoalCalories: model.dailyGoalCalories,
                         today: model.today,
                         onSelect: { model.select($0) }
                     )
