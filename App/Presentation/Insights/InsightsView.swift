@@ -3,11 +3,13 @@ import SwiftUI
 
 /// Insights — handoff §6.12.
 ///
-/// Two of §6.12's four stat cells are absent: "% bữa ăn được ghi" has no
-/// denominator (the app never learns how many meals a user meant to eat), and
-/// "% AI cần sửa khẩu phần" is not recorded — `FoodItem` keeps the model's
-/// confidence but not whether the user corrected the portion. Inventing either
-/// number would be worse than leaving it out.
+/// One of §6.12's four stat cells is absent for good: "% bữa ăn được ghi" has no
+/// denominator, because the app never learns how many meals a user *meant* to
+/// eat, and inventing one would be worse than leaving it out.
+///
+/// Its "% AI cần sửa khẩu phần" is built, over §22's record — `FoodItem` keeps
+/// the weight *and* the name the model proposed — but only appears once
+/// something has been scanned.
 struct InsightsView: View {
     /// See `DashboardView.refreshID`.
     var refreshID: Int = 0
@@ -269,22 +271,54 @@ struct InsightsView: View {
 
     // MARK: Stats
 
+    /// §6.12's 2×2. Three of its four cells exist: "% bữa ăn được ghi" has no
+    /// denominator the app could ever know, and the third only appears once
+    /// something has been scanned — see `InsightsModel.hasScanData`.
     private func statGrid(_ model: InsightsModel) -> some View {
-        HStack(spacing: DS.s3) {
-            statCell(
-                value: "\(model.daysWithinGoal)/\(InsightsModel.dayCount)",
-                vi: "ngày trong mục tiêu",
-                en: "days within goal",
-                tint: DS.blue,
-                identifier: "insights.daysWithinGoal"
-            )
-            statCell(
-                value: weightChangeText(model.weightSeries),
-                vi: "trong \(model.weightSeries.weekCount) tuần",
-                en: "over \(model.weightSeries.weekCount) weeks",
-                tint: DS.green,
-                identifier: "insights.weightChange"
-            )
+        // `Grid`, not `LazyVGrid`: three cells buy nothing from laziness, and a
+        // lazy second row is not built until it is scrolled to — so the cell was
+        // absent from the accessibility tree entirely, which a UI test found by
+        // failing to see it at all rather than by seeing it off screen.
+        Grid(horizontalSpacing: DS.s3, verticalSpacing: DS.s3) {
+            GridRow {
+                statCell(
+                    value: "\(model.daysWithinGoal)/\(InsightsModel.dayCount)",
+                    vi: "ngày trong mục tiêu",
+                    en: "days within goal",
+                    tint: DS.blue,
+                    identifier: "insights.daysWithinGoal"
+                )
+                statCell(
+                    value: weightChangeText(model.weightSeries),
+                    vi: "trong \(model.weightSeries.weekCount) tuần",
+                    en: "over \(model.weightSeries.weekCount) weeks",
+                    tint: DS.green,
+                    identifier: "insights.weightChange"
+                )
+            }
+            if model.hasScanData {
+                // One cell in a two-column row, so it keeps the width of the two
+                // above it. The empty half is where §6.12's fourth cell would be.
+                GridRow {
+                    statCell(
+                        value: VNNumber.percent(model.correctionRate),
+                        // §6.12 labels this "AI cần sửa khẩu phần", and it was
+                        // right when the portion was the only correction
+                        // recorded. The app now also keeps the name the model
+                        // proposed, and a rate that ignored renames would miss
+                        // precisely the errors that matter most — a dish read as
+                        // the wrong dish at high confidence, where the portion
+                        // was never wrong at all.
+                        vi: "kết quả AI phải sửa",
+                        en: "AI results corrected",
+                        // The one orange thing on this screen, and it is about
+                        // the scan — which is what §3's accent rule reserves
+                        // orange for.
+                        tint: DS.orange,
+                        identifier: "insights.aiCorrectionRate"
+                    )
+                }
+            }
         }
     }
 

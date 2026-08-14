@@ -674,6 +674,35 @@ final class Phase1FlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["history.empty.scan"].waitForExistence(timeout: 30))
     }
 
+    /// §6.12's third stat cell, over §22's record. The fixture scans two foods
+    /// and corrects one, so the figure is 50% — which is distinguishable from
+    /// both "nothing scanned" and "everything wrong".
+    func testInsightsReportHowOftenTheScanNeededCorrecting() {
+        app.terminate()
+        app.launchArguments = ["-uiTesting", "-seedHistoryFixture"]
+        app.launch()
+        startOnboarding()
+        reachDashboard()
+
+        app.buttons["tab.insights"].tap()
+        let cell = app.staticTexts["insights.aiCorrectionRate"]
+        XCTAssertTrue(cell.waitForExistence(timeout: 30))
+        XCTAssertTrue(cell.label.contains("50%"), cell.label)
+    }
+
+    /// And it is absent rather than showing 0% when nothing has been scanned: a
+    /// zero would read as "the model got everything right" instead of "it was
+    /// never asked".
+    func testInsightsOmitTheCorrectionCellWithNothingScanned() {
+        reachDashboard()
+
+        logMeal(named: "breakfast", food: "Chao yen mach", calories: 500)
+        app.buttons["tab.insights"].tap()
+
+        XCTAssertTrue(app.staticTexts["insights.daysWithinGoal"].waitForExistence(timeout: 30))
+        XCTAssertFalse(app.staticTexts["insights.aiCorrectionRate"].exists)
+    }
+
     /// §6.13's switches are drawn, but iOS has not been asked yet — so they are
     /// inert and the screen says so instead of pretending (plan.md §19).
     func testNotificationSwitchesStayInertUntilTheSystemHasBeenAsked() {

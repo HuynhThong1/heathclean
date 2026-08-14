@@ -35,6 +35,17 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
     /// against it (`plan.md` §22).
     public let originalWeightGrams: Double
 
+    /// What the model first called it, for the same reason and with the same
+    /// rule: **nothing may write to it after init.**
+    ///
+    /// §22 stores the predicted food *and* the predicted weight against what the
+    /// user confirmed, and this is the food half. It matters more than the weight
+    /// half does: three photos through `gemini-3.1-flash-lite` returned bún bò
+    /// Huế as "Phở bò" at 0.98, which no confidence threshold will ever catch —
+    /// the only record that it happened is the user changing the name, and that
+    /// record does not exist unless the original is kept.
+    public let originalName: String
+
     public init(
         id: UUID = UUID(),
         name: String,
@@ -47,6 +58,7 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
         confidence: Double,
         isResolved: Bool,
         originalWeightGrams: Double? = nil,
+        originalName: String? = nil,
         nutritionSource: String? = nil,
         nutritionSourceID: String? = nil,
         nutritionSourceURL: String? = nil,
@@ -63,6 +75,7 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
         self.confidence = confidence
         self.isResolved = isResolved
         self.originalWeightGrams = originalWeightGrams ?? weightGrams
+        self.originalName = originalName ?? name
         self.nutritionSource = nutritionSource
         self.nutritionSourceID = nutritionSourceID
         self.nutritionSourceURL = nutritionSourceURL
@@ -76,6 +89,11 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
 
     public var wasCorrected: Bool {
         abs(weightGrams - originalWeightGrams) > 0.5
+    }
+
+    /// The user gave the dish a different name than the model did.
+    public var wasRenamed: Bool {
+        !VietnameseTextComparison.areSameName(name, originalName)
     }
 
     /// Nutrition the database did not have, supplied by the user for the weight
@@ -139,6 +157,7 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
             fat: fat,
             aiConfidence: confidence,
             aiEstimatedWeightGrams: originalWeightGrams,
+            aiEstimatedName: originalName,
             nutritionSource: nutritionSource,
             nutritionSourceID: nutritionSourceID,
             nutritionSourceURL: nutritionSourceURL,

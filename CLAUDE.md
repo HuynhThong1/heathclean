@@ -308,13 +308,15 @@ profile is current state, the log is a record.
   `WeightPoint.weekIndex`, which is how the chart places what it has and leaves
   gaps as gaps rather than carrying a stale value forward.
 
-Two of §6.12's four stat cells are deliberately absent:
+One of §6.12's four stat cells is deliberately absent, and one is conditional:
 
 - "% bữa ăn được ghi" has no denominator — the app never learns how many meals
   the user meant to eat, and any figure would be invented.
-- "% AI cần sửa khẩu phần" is not recorded. `FoodItem` keeps `aiConfidence`, so
-  the app knows which items came from a scan, but not whether the user corrected
-  the portion. Recording that means adding a field at the point of confirmation.
+- "% AI cần sửa khẩu phần" **is built**, over §22's record — see the AI
+  correction record section — but is drawn only when something has been scanned
+  in the window. A "0%" with nothing scanned reads as "the model got everything
+  right" rather than as "it was never asked", which is the same mistake as a
+  switch that schedules nothing.
 
 The closing gray note of §6.12 is also absent; it needs an analysis of
 afternoon protein that nothing specifies.
@@ -852,6 +854,56 @@ state machine and the review/portion-editor screens (§6.6–6.9) can be built a
 verified here without the gateway or a key. Only the real recognition path
 waits.
 
+### The AI correction record (§22, and what §29 can measure from it)
+
+§22 wants the model's prediction stored beside what the user confirmed. Three of
+§29's four measures now come out of the store for free; the fourth needed a
+field.
+
+| §29 measures | Where it comes from |
+| --- | --- |
+| Portion estimation error | `FoodItem.aiEstimatedWeightGrams` vs `weightGrams` |
+| Nutrition resolution rate | `nutritionSource == "user_entered"` — the gateway could not resolve it and the user typed the figures |
+| Food identification accuracy | `FoodItem.aiEstimatedName` vs `name` |
+| User correction rate | `wasCorrected` = either of the two above |
+
+- **`RecognizedFood.originalName` and `originalWeightGrams` are both `let`, and
+  that is the whole safety mechanism.** `rename` assigns `.name`; `scaled` and
+  `resolved` both go through `var copy = self`. A `let` survives all three by
+  construction rather than by anyone remembering — which matters, because
+  resetting the original is the obvious-looking implementation and it silently
+  destroys the measurement. Two tests in `AICorrectionTests` pin each path.
+- **`aiEstimatedName` exists because a rename is the only trace a
+  misidentification leaves.** `gemini-3.1-flash-lite` returned bún bò Huế as
+  "Phở bò" at 0.98; `lowConfidenceThreshold` will never flag that, and before this
+  field the user correcting the name overwrote the only copy of what the model
+  said. Data not recorded at the moment of confirmation cannot be recovered later.
+- Names are compared through `VietnameseTextComparison`, which trims and folds
+  diacritics and case under `vi_VN` — so "Pho bo" typed over "Phở bò" is a
+  *confirmation*, not a correction. Counting keyboard habits as
+  misidentifications would inflate every accuracy figure. It is deliberately not
+  `HistorySearchText`: same technique, different question, and that one lives in
+  Presentation and does not trim.
+- **`nil` is not "the model was right."** Rows written before the field read back
+  `nil`, and `wasRenamed` reads that as "nothing to report". A `nil` treated as a
+  match would quietly count every pre-existing meal as a success.
+- Rates are counted **per food, not per meal**: a plate read as three dishes with
+  one wrong is one correction in three, and rolling it up to the meal would
+  report a total failure.
+- `FoodItemEntity.aiEstimatedName` is the third lightweight migration in this
+  store, the same shape as `MealEntity.calorieGoalWhenLogged` — a new optional
+  attribute — and has **not** had the on-disk migration check run against it
+  either. The procedure is in the meal-photos section.
+- The UI-test fixture scans two foods and corrects one, so Insights reads 50% —
+  a figure distinguishable from both "nothing scanned" and "everything wrong".
+  Their names, weights and calories are untouched, so no other fixture assertion
+  moves.
+
+**What is still missing is the dataset, not the instrumentation.** §29 asks for a
+labelled set across eight categories — Vietnamese, Western, multi-dish plates,
+soups, drinks, packaged food, unclear images, partial dishes — and the harness
+that scores it belongs in the gateway repo. Nothing here can produce either.
+
 ### Localization
 
 `App/Resources/Localizable.xcstrings` holds every user-facing string; the
@@ -989,6 +1041,11 @@ on-device inference are also not present.
 reminder and a daily summary, behind §6.13's five switches. See the Notifications
 section for the two rules that are this repo's rather than the spec's.
 
+**§22's correction record is complete** — the model's proposed weight *and* name
+are stored beside what the user confirmed, so three of §29's four measures can be
+read straight out of the store. §29's labelled evaluation set is still open, and
+is a data-collection job rather than a coding one.
+
 Deviations from `plan.md` already made:
 
 - `UserProfile` gains `biologicalSex` and `activityLevel` (§13 omitted them but
@@ -998,6 +1055,10 @@ Deviations from `plan.md` already made:
 - `HealthRepository` is one `snapshot(on:)` rather than §14's per-metric getters,
   so the dashboard makes a single call instead of six, and there is no
   `SyncHealthDataUseCase` — it would have been a pure passthrough.
+- §6.12's "% AI cần sửa khẩu phần" counts renames as well as portion edits, and
+  is labelled "kết quả AI phải sửa" to match. A rate that ignored renames would
+  miss exactly the errors that matter most — a dish read as the wrong dish at
+  high confidence, where the portion was never wrong.
 - §19's four budget triggers become three switches: "target reached" governs
   `exceeded` as well, because §6.13 draws three and passing the target is not a
   second event. §19's times are unspecified and are 20:00 / 21:00 here.

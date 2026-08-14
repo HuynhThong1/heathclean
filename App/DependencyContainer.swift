@@ -210,13 +210,27 @@ final class DependencyContainer {
             guard let day = calendar.date(byAdding: .day, value: -offset, to: Date()) else {
                 continue
             }
+            // Two of these carry §22's scan record, so Insights has a correction
+            // rate to draw: yesterday's was corrected, the day before's was
+            // accepted as the model proposed it — 1 of 2, which is a figure a test
+            // can tell apart from both 0% and 100%. Their name, weight and
+            // calories are untouched, so nothing else in the fixture moves.
+            let scanRecord: (name: String, weight: Double)? =
+                switch offset {
+                case 1: ("Phở bò", 120)  // renamed *and* re-weighed
+                case 2: ("Bữa nền 2", 150)  // taken as offered
+                default: nil
+                }
             let snack = FoodItem(
                 name: "Bữa nền \(offset)",
                 weightGrams: 150,
                 calories: 300,
                 protein: 10,
                 carbohydrates: 35,
-                fat: 9
+                fat: 9,
+                aiConfidence: scanRecord == nil ? nil : 0.92,
+                aiEstimatedWeightGrams: scanRecord?.weight,
+                aiEstimatedName: scanRecord?.name
             )
             try? await saveMeal.execute(Meal(date: day, type: .snack, items: [snack]))
         }

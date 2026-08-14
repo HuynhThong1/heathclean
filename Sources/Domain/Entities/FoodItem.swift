@@ -20,6 +20,11 @@ public struct FoodItem: Sendable, Equatable, Identifiable {
     /// Keeping this beside the final `weightGrams` makes §22's correction rate
     /// measurable after the scan screen has gone away.
     public var aiEstimatedWeightGrams: Double?
+    /// Dish name proposed by the model, likewise. §22 stores the predicted food
+    /// *and* the predicted weight against what was confirmed; without this half
+    /// a misidentification leaves no trace at all, because renaming overwrites
+    /// the only copy.
+    public var aiEstimatedName: String?
 
     /// Provenance returned by the nutrition resolver. Older/manual rows keep
     /// these nil; `nutritionIsReference` distinguishes the development table
@@ -39,6 +44,7 @@ public struct FoodItem: Sendable, Equatable, Identifiable {
         fat: Double,
         aiConfidence: Double? = nil,
         aiEstimatedWeightGrams: Double? = nil,
+        aiEstimatedName: String? = nil,
         nutritionSource: String? = nil,
         nutritionSourceID: String? = nil,
         nutritionSourceURL: String? = nil,
@@ -53,14 +59,29 @@ public struct FoodItem: Sendable, Equatable, Identifiable {
         self.fat = fat
         self.aiConfidence = aiConfidence
         self.aiEstimatedWeightGrams = aiEstimatedWeightGrams
+        self.aiEstimatedName = aiEstimatedName
         self.nutritionSource = nutritionSource
         self.nutritionSourceID = nutritionSourceID
         self.nutritionSourceURL = nutritionSourceURL
         self.nutritionIsReference = nutritionIsReference
     }
 
+    /// This item came from a scan rather than being typed in — the denominator
+    /// for every §22 rate. `aiConfidence` is the marker because it is the one
+    /// field only the recognition path can supply.
+    public var cameFromScan: Bool { aiConfidence != nil }
+
     public var wasPortionCorrected: Bool {
         guard let aiEstimatedWeightGrams else { return false }
         return abs(weightGrams - aiEstimatedWeightGrams) > 0.5
     }
+
+    /// The user gave the dish a different name than the model did.
+    public var wasRenamed: Bool {
+        guard let aiEstimatedName else { return false }
+        return !VietnameseTextComparison.areSameName(name, aiEstimatedName)
+    }
+
+    /// Either half of §22's correction, which is what "% AI cần sửa" counts.
+    public var wasCorrected: Bool { wasPortionCorrected || wasRenamed }
 }
