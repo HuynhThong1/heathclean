@@ -113,7 +113,12 @@ struct HistoryMonthsView: View {
             .padding(.top, DS.s3)
         }
         .padding(.horizontal, DS.s4)
-        .padding(.top, DS.s2)
+        // HISTORY_SPEC's table says "top an toàn + 8", and 8 is what the other
+        // three roots take — but they open with an 11pt eyebrow and this opens
+        // with a 26pt title, so the same number puts a much heavier line the same
+        // distance under the clock. 16, so the four roots *look* alike rather
+        // than measure alike.
+        .padding(.top, DS.s4)
         .padding(.bottom, DS.s3)
         .background(alignment: .bottom) {
             ZStack(alignment: .bottom) {

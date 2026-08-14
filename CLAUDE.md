@@ -215,6 +215,13 @@ sheet's own backing. In light mode that is near-white and invisible; in dark mod
 it is a black band above and below the content. Colour the sheet —
 `.presentationBackground(DS.surfaceCard)`.
 
+**`presentationDragIndicator(.visible)` takes no space in the layout.** It is
+drawn by the presentation controller inside the sheet's own top ~10pt, over
+whatever the content puts there — so the day panel's 8pt of top padding printed
+the date across the grabber. A sheet that shows the indicator needs about 24pt
+above its first line. `HistoryDayPanelSheet` is the only one in the app that
+shows it.
+
 **A fixed height is the deeper problem, and `HFDestructiveConfirm` shows what it
 takes to size a sheet to its content.** Three things, all needed:
 
@@ -333,6 +340,11 @@ separate consequences, both worth knowing:
   it the title is what butts against the time. The strips now take `DS.s2` above
   the safe area, matching HISTORY_SPEC's "top an toàn + 8" so all four roots
   agree.
+- **History's is 16, not the 8 its own spec names.** HISTORY_SPEC's table says
+  "top an toàn + 8" and that is what the other three take — but they open with an
+  11pt eyebrow and History opens with a 26pt title, so the same number puts a much
+  heavier line the same distance under the clock. The four roots are meant to look
+  alike, not measure alike.
 - **`ProfileView.header` was an empty `VStack`, which silently broke the mask.**
   The `safeAreaInset(edge: .top)` on these screens exists to give an opaque strip
   the job the hidden navigation bar used to do. An empty header has no height, so

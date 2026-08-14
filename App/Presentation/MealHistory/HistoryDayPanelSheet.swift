@@ -65,7 +65,12 @@ struct HistoryDayPanelSheet: View {
                     }
                 }
                 .padding(.horizontal, DS.s4)
-                .padding(.top, DS.s2)
+                // Clears the drag indicator. `presentationDragIndicator` draws
+                // inside the sheet's own top ~10pt and takes no space in the
+                // layout, so at 8pt the day's date was printed on top of the
+                // grabber. The sheet is the one place in the app where something
+                // is drawn above the content without being part of it.
+                .padding(.top, DS.s6)
                 .padding(.bottom, 34)
             }
             .scrollIndicators(.hidden)
