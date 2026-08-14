@@ -128,6 +128,29 @@ extension BMICategory {
     }
 }
 
+extension NotificationPreference {
+    /// §6.13's table, in its order.
+    var vi: String {
+        switch self {
+        case .seventyPercent: "Khi dùng 70% ngân sách"
+        case .nearTarget: "Khi gần mục tiêu (90%)"
+        case .targetReached: "Khi đạt mục tiêu"
+        case .mealReminder: "Nhắc ghi bữa ăn"
+        case .dailySummary: "Tóm tắt hằng ngày"
+        }
+    }
+
+    var en: String {
+        switch self {
+        case .seventyPercent: "At 70% of budget"
+        case .nearTarget: "Near target"
+        case .targetReached: "Target reached"
+        case .mealReminder: "Meal logging reminder"
+        case .dailySummary: "Daily summary"
+        }
+    }
+}
+
 enum BudgetCopy {
     /// The status note from §6.4. `nil` below 70% — nothing worth saying yet.
     ///

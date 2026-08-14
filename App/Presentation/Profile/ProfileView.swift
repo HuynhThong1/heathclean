@@ -1,9 +1,11 @@
 import Domain
 import SwiftUI
+import UIKit
 
 /// Profile — handoff §6.13.
 struct ProfileView: View {
     @Environment(DependencyContainer.self) private var container
+    @Environment(\.openURL) private var openURL
     @State private var model: ProfileModel?
     @State private var isEditingProfile = false
     @State private var isShowingHealth = false
@@ -16,6 +18,7 @@ struct ProfileView: View {
                     identityRow(model: model)
                     statCards(model: model, profile: profile, goal: goal)
                     settingsSection(model: model)
+                    notificationsSection
                     appearanceSection
                     privacySection
                 } else {
@@ -180,6 +183,112 @@ struct ProfileView: View {
                 }
             }
         }
+    }
+
+    // MARK: Notifications
+
+    /// §6.13's five switches (plan.md §19).
+    ///
+    /// **The switches are inert until iOS has granted the app permission**, and
+    /// they say so rather than pretending. This is the same rule that kept this
+    /// section out of the app until now: a switch that schedules nothing is a
+    /// broken control, and one drawn live over a denied permission is a broken
+    /// control that also lies about it.
+    private var notificationsSection: some View {
+        VStack(alignment: .leading, spacing: DS.s3) {
+            Text("THÔNG BÁO")
+                .hfStyle(HFType.eyebrow)
+                .foregroundStyle(DS.textSubtle)
+
+            authorizationBanner
+
+            HFCard(padding: 0) {
+                VStack(spacing: 0) {
+                    ForEach(Array(NotificationPreference.allCases.enumerated()), id: \.element) {
+                        index, preference in
+                        notificationRow(preference)
+
+                        if index < NotificationPreference.allCases.count - 1 {
+                            Rectangle().fill(DS.borderSubtle).frame(height: 1)
+                                .padding(.leading, DS.s4)
+                        }
+                    }
+                }
+            }
+            .disabled(container.notifications.authorization != .granted)
+            .opacity(container.notifications.authorization == .granted ? 1 : 0.5)
+
+            // Says out loud what `PlanNotificationsUseCase.dailySchedule` decides,
+            // because two switches that quietly exclude each other read as a bug.
+            GrayNote(
+                text: "Buổi tối chỉ có một thông báo: tóm tắt nếu hôm đó bạn đã ghi bữa, nhắc ghi nếu chưa."
+            )
+        }
+    }
+
+    @ViewBuilder
+    private var authorizationBanner: some View {
+        switch container.notifications.authorization {
+        case .granted:
+            EmptyView()
+        case .notDetermined:
+            VStack(alignment: .leading, spacing: DS.s3) {
+                GrayNote(text: "Cần quyền thông báo của hệ thống trước khi bật các tuỳ chọn dưới đây.")
+                Button {
+                    Task { await container.notifications.requestAuthorization() }
+                } label: {
+                    Text("Bật thông báo")
+                }
+                .buttonStyle(.ds(.primary))
+                .accessibilityIdentifier("notification.enable")
+            }
+        case .denied:
+            VStack(alignment: .leading, spacing: DS.s3) {
+                GrayNote(text: "Thông báo đang tắt trong Cài đặt của iPhone. Chỉ Cài đặt mới bật lại được.")
+                Button {
+                    guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                    openURL(url)
+                } label: {
+                    Text("Mở Cài đặt")
+                }
+                .buttonStyle(.ds(.ghost))
+                .accessibilityIdentifier("notification.openSettings")
+            }
+        }
+    }
+
+    /// The bilingual label is written out rather than reusing `LabelPair`: that
+    /// declares itself an accessibility element with `.isStaticText`, and a
+    /// control has to own the element so VoiceOver announces the switch.
+    private func notificationRow(_ preference: NotificationPreference) -> some View {
+        Toggle(isOn: binding(for: preference)) {
+            VStack(alignment: .leading, spacing: 1) {
+                Text(preference.vi)
+                    .hfStyle(HFType.rowLabel)
+                    .foregroundStyle(DS.textStrong)
+                Text(preference.en)
+                    .hfStyle(HFType.subLabel)
+                    .foregroundStyle(DS.textSubtle)
+            }
+        }
+        .tint(DS.blue)
+        .padding(.horizontal, DS.s4)
+        .frame(minHeight: 62)
+        .accessibilityIdentifier("notification.\(preference.rawValue)")
+    }
+
+    private func binding(for preference: NotificationPreference) -> Binding<Bool> {
+        let notifications = container.notifications
+        return Binding(
+            get: { notifications.settings.isOn(preference) },
+            set: { isOn in
+                notifications.settings.set(preference, on: isOn)
+                // Turning the reminder on has to put one in the queue now, not at
+                // the next launch — this screen is the only place it can be
+                // switched, so it is also the only place that can act on it.
+                Task { await notifications.refresh() }
+            }
+        )
     }
 
     /// Appearance is its own section rather than a row with a chevron: there is

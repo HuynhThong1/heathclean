@@ -6,13 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 swift build            # compiles the Domain library
-swift test             # 81 Domain tests (swift-testing) — fast, no simulator
+swift test             # 93 Domain tests (swift-testing) — fast, no simulator
 
 xcodebuild -scheme HeathFirst \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
 
 xcodebuild -scheme HeathFirst \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test   # + 22 UI tests
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test   # + 27 UI tests
 ```
 
 ```bash
@@ -277,10 +277,9 @@ Insights/Profile → localization. Items 1–5 are done, plus Welcome (§6.1),
 Profile (§6.13), Insights (§6.12) and the tab bar. What remains is real camera
 capture and a real recognition provider (§6.6–6.9), and translating the catalog.
 
-Profile omits §6.13's five notification switches: there is no notification
-system, and a switch that schedules nothing is a broken control. Add them with
-UserNotifications, not before. It also shows a generic avatar rather than
-initials, because nothing in the app ever asks for a name.
+Profile shows a generic avatar rather than §6.13's initials, because nothing in
+the app ever asks for a name. Its five notification switches are now live — see
+the Notifications section.
 
 ### Weight history and Insights (§6.12)
 
@@ -513,13 +512,15 @@ one-line divider for an empty month, and a day panel with macros.
   overshoot. Taller cards are what turned the second trap up: the same test passed
   on 78pt rows and failed on 125pt cards.
 - §32.7 stage 3 also asks for minimal analytics. There is **none**, on purpose: the
-  app has no analytics system at all, and the precedent is Profile omitting §6.13's
-  notification switches because a switch that schedules nothing is a broken
-  control. Events that go nowhere are the same mistake with less to show for it.
+  app has no analytics system at all. Events that go nowhere are the "switch that
+  schedules nothing" mistake with less to show for it — and the notification
+  switches, which used to be this rule's other example, were only added once
+  something was behind them.
 - Localization means the **catalog**, not a language switch: every new string goes
   through `Text` or `String(localized:)` and is synced into `Localizable.xcstrings`
   (165 → 208 keys: +47 for HISTORY_SPEC, −10 with the week strip, +6 that had been
-  missing all along — see `GrayNote` in the Localization section). A separator or
+  missing all along — see `GrayNote` in the Localization section; then 222 with
+  §19's notifications). A separator or
   other non-copy literal uses `Text(verbatim:)`, or it lands in the catalog as a key
   to translate. §4's bilingual `LabelPair` is why there is still no `en` locale.
 
@@ -600,6 +601,71 @@ as the addition above and the plainest case SwiftData handles, but "the same sha
 as something that was verified" is not the same claim as "verified". The procedure
 in the paragraph above is how to close it. What an unmigrated store would look like
 if this is wrong: the container's `fatalError` at launch, not a wrong number.
+
+### Notifications (§19, §6.13)
+
+`PlanNotificationsUseCase` (Domain) decides *what* and *when*;
+`NotificationCoordinator` (`App/Notifications/`) does the
+`UNUserNotificationCenter` work; `NotificationCopy` writes the Vietnamese.
+`NotificationSettings` holds §6.13's five switches in `UserDefaults`, for the
+reason `AppAppearance` does — except it cannot be an `@AppStorage`, because the
+coordinator is not a view.
+
+The split is the same one `VietnameseCopy.swift` records: `PlannedNotification`
+carries a `Kind`, never a sentence, so the Vietnamese-primary copy stays in the
+App layer and Domain is not changed to fit the UI.
+
+- **§19 has four budget triggers and §6.13 draws three switches.** `reached` and
+  `exceeded` share one: passing the target and hitting it are one event to the
+  user, and a separate switch could only ever fire after the other already had.
+  `CalorieBudgetStatus.notificationPreference` is that mapping.
+- `CalorieBudgetStatus` is `Comparable` now, and that is what the whole rule set
+  rests on: an alert fires only when the day climbs *above* the highest rung
+  already announced today. The mark is stored beside the `yyyy-MM-dd` it belongs
+  to, so it expires at midnight, and it is written whether or not anything was
+  delivered — otherwise turning a switch on at 11pm would fire the morning's
+  threshold retroactively.
+- **A budget alert fires 20 seconds after the meal that caused it**, and there is
+  deliberately no `UNUserNotificationCenterDelegate`. Without a delegate iOS shows
+  no banner while the app is in the foreground, which is right — the dashboard is
+  already drawing the same figure in a ring. The delay is what gives a user who
+  logged and put the phone down a chance to see it on the lock screen. If the day
+  falls back below the mark inside those 20 seconds (a food was removed) the
+  pending request is taken back.
+- **The reminder and the summary are mutually exclusive**, decided by whether
+  anything has been logged: an empty day has nothing to summarise, a logged day
+  needs no reminding, and a user with both switches on gets exactly one evening
+  notification. Profile says so in a `GrayNote`, because two switches that quietly
+  exclude each other read as a bug.
+- **Only today is ever scheduled.** The summary carries the day's real figures,
+  which are not knowable in advance, and a reminder for tomorrow would fire on a
+  day the app never saw. So both are re-planned every time the app learns
+  something, and a day the app is never opened on produces nothing. A notification
+  that had to invent its own contents is the "switch that schedules nothing"
+  mistake with a payload.
+- **20:00 and 21:00 are this repo's choice, not the spec's** — §19 names no time.
+  An hour apart so the two can never collide.
+- The re-plan hooks are `DashboardModel.load()` (which every manual entry, every
+  deletion and every profile edit already ends in), plus `MainTabView` on launch,
+  on `scenePhase == .active`, and after a scan saves — the scan can be started
+  from any tab, so the dashboard's hook is not guaranteed to run.
+- **The switches are inert until iOS has granted permission, and say so.** Nothing
+  is requested at launch: Profile draws a banner and a button, and after a denial
+  a link to Settings, because a live-looking switch over a denied permission is a
+  broken control that also lies about it. Only `.alert` and `.sound` are asked
+  for; nothing sets a badge.
+- Under `-uiTesting` the coordinator never touches the system — the suite cannot
+  answer a permission dialog, the same rule that keeps it out of the HealthKit and
+  Photos sheets. `-notificationsGranted` then stands in for a granted permission
+  so the switches can be walked; the scheduling stays inert either way.
+- **Both halves were verified for real on a simulator**, with a throwaway test that
+  granted the permission through SpringBoard: logging 1.700 kcal against a 2.378
+  target backgrounded the app and produced a "Đã dùng 70% ngân sách calo" banner,
+  and an empty day produced "Chưa có bữa nào hôm nay". To redo it, force
+  `NotificationCoordinator`'s `isEnabled` to `true` and, for the scheduled half,
+  make `dailySchedule` fire a minute out instead of at 20:00.
+- The evening notifications use a `UNCalendarNotificationTrigger`, not the
+  equivalent interval: 20:00 has to stay 20:00 if the user changes time zone.
 
 ### Camera / AI (§6.6–6.9)
 
@@ -880,8 +946,12 @@ confirmed scan now also **keeps its photo** (§32 stage 2) — nothing else in t
 app does, and no other flow can attach one.
 
 **Phase 5** has calories plus protein/carbohydrate/fat tracking. Fiber and water
-are not present. Notifications, deterministic recommendations, personalization,
-CloudKit and on-device inference are also not present.
+are not present. Deterministic recommendations, personalization, CloudKit and
+on-device inference are also not present.
+
+**§19's notifications are implemented** — the four budget thresholds, a meal
+reminder and a daily summary, behind §6.13's five switches. See the Notifications
+section for the two rules that are this repo's rather than the spec's.
 
 Deviations from `plan.md` already made:
 
@@ -892,6 +962,9 @@ Deviations from `plan.md` already made:
 - `HealthRepository` is one `snapshot(on:)` rather than §14's per-metric getters,
   so the dashboard makes a single call instead of six, and there is no
   `SyncHealthDataUseCase` — it would have been a pure passthrough.
+- §19's four budget triggers become three switches: "target reached" governs
+  `exceeded` as well, because §6.13 draws three and passing the target is not a
+  second event. §19's times are unspecified and are 20:00 / 21:00 here.
 - `Meal` gains `calorieGoalWhenLogged`, and `SaveMealUseCase` therefore takes the
   user repository as well as the meal one. §13's `Meal` is food and a date, which
   cannot answer "was that day over target" once the goal has changed — HISTORY_SPEC

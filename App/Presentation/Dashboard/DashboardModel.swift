@@ -15,19 +15,22 @@ final class DashboardModel {
     private let getDailySummary: GetDailySummaryUseCase
     private let evaluateCalorieBudget: EvaluateCalorieBudgetUseCase
     private let calculateBMI: CalculateBMIUseCase
+    private let notifications: NotificationCoordinator
 
     init(
         userRepository: any UserRepository,
         healthRepository: any HealthRepository,
         getDailySummary: GetDailySummaryUseCase,
         evaluateCalorieBudget: EvaluateCalorieBudgetUseCase,
-        calculateBMI: CalculateBMIUseCase
+        calculateBMI: CalculateBMIUseCase,
+        notifications: NotificationCoordinator
     ) {
         self.userRepository = userRepository
         self.healthRepository = healthRepository
         self.getDailySummary = getDailySummary
         self.evaluateCalorieBudget = evaluateCalorieBudget
         self.calculateBMI = calculateBMI
+        self.notifications = notifications
     }
 
     var status: CalorieBudgetStatus {
@@ -53,6 +56,12 @@ final class DashboardModel {
         } catch {
             errorMessage = String(localized: "Không tải được bữa ăn hôm nay.")
         }
+
+        // Every way of changing today's figures from this screen — manual entry,
+        // deleting a food, editing the goal — ends here, so this is the one hook
+        // §19 needs rather than four at the call sites. The scan is the exception,
+        // because the tab shell owns it; `MainTabView` re-plans for that.
+        if let summary { await notifications.apply(summary: summary) }
 
         await loadHealth()
     }

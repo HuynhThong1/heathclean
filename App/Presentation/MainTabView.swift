@@ -30,6 +30,8 @@ enum MainTab: String, CaseIterable, Identifiable {
 }
 
 struct MainTabView: View {
+    @Environment(DependencyContainer.self) private var container
+    @Environment(\.scenePhase) private var scenePhase
     @State private var selection: MainTab = .today
     @State private var scanType: MealType?
     @State private var toast: String?
@@ -87,7 +89,22 @@ struct MainTabView: View {
                 // insights are as stale as the dashboard after a scan.
                 dataVersion += 1
                 selection = .today
+                // The scan can be started from any tab, so the dashboard's own
+                // hook is not guaranteed to run. §19's thresholds have to be
+                // re-checked here or a scan from History announces nothing.
+                Task { await container.notifications.refresh() }
             }
+        }
+        // `onChange` does not fire for the phase the app launches in, and the
+        // dashboard's own hook cannot help until the system authorization has
+        // been read back at least once.
+        .task { await container.notifications.refresh() }
+        // Notifications are re-planned on the way in, not only after a change:
+        // the system authorization can be switched off in Settings while the app
+        // is away, and the evening's plan is only ever made for today.
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active else { return }
+            Task { await container.notifications.refresh() }
         }
     }
 }

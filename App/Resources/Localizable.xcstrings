@@ -327,6 +327,9 @@
         }
       }
     },
+    "Buổi tối chỉ có một thông báo: tóm tắt nếu hôm đó bạn đã ghi bữa, nhắc ghi nếu chưa." : {
+
+    },
     "Bạn còn %@ kcal cho hôm nay." : {
 
     },
@@ -345,6 +348,9 @@
     "Bảng màu tối được suy ra trong dự án này, không phải màu chính thức của bộ nhận diện." : {
 
     },
+    "Bật thông báo" : {
+
+    },
     "Bắt đầu" : {
 
     },
@@ -361,6 +367,9 @@
 
     },
     "Cho phép truy cập" : {
+
+    },
+    "Chưa có bữa nào hôm nay" : {
 
     },
     "Chưa có bữa nào được ghi" : {
@@ -439,6 +448,9 @@
     "Cả đĩa ăn nằm trong khung và không bị mờ thì AI nhận diện chính xác hơn." : {
 
     },
+    "Cần quyền thông báo của hệ thống trước khi bật các tuỳ chọn dưới đây." : {
+
+    },
     "DINH DƯỠNG HẰNG NGÀY" : {
 
     },
@@ -457,7 +469,13 @@
     "Ghi bữa đầu tiên để bắt đầu lịch sử của bạn. Lịch sử chỉ hiện những ngày bạn đã ghi." : {
 
     },
+    "Ghi lại bữa ăn để theo dõi calo trong ngày." : {
+
+    },
     "Giao diện" : {
+
+    },
+    "Gần mục tiêu calo hôm nay" : {
 
     },
     "HIỂN THỊ" : {
@@ -651,10 +669,16 @@
     "THIẾT LẬP" : {
 
     },
+    "THÔNG BÁO" : {
+
+    },
     "Thêm món" : {
 
     },
     "Thêm món khác" : {
+
+    },
+    "Thông báo đang tắt trong Cài đặt của iPhone. Chỉ Cài đặt mới bật lại được." : {
 
     },
     "Thử lại" : {
@@ -673,6 +697,9 @@
 
     },
     "Tìm trong các tháng đã tải. Kéo xuống để tải thêm." : {
+
+    },
+    "Tóm tắt hôm nay" : {
 
     },
     "Tải các tháng trước" : {
@@ -788,10 +815,39 @@
     "Đang tải…" : {
 
     },
+    "Đã dùng 70% ngân sách calo" : {
+
+    },
     "Đã hiển thị toàn bộ lịch sử." : {
 
     },
     "Đã kết nối · bước chân, năng lượng, giấc ngủ" : {
+
+    },
+    "Đã vượt mục tiêu calo hôm nay" : {
+
+    },
+    "Đã ăn %@ / %@ kcal · %@ g đạm." : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Đã ăn %1$@ / %2$@ kcal · %3$@ g đạm."
+          }
+        }
+      }
+    },
+    "Đã ăn %@ / %@ kcal." : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Đã ăn %1$@ / %2$@ kcal."
+          }
+        }
+      }
+    },
+    "Đã đạt mục tiêu calo hôm nay" : {
 
     },
     "Đóng" : {
