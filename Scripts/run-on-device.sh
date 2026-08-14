@@ -77,9 +77,30 @@ xcodebuild \
 APP="$DERIVED/Build/Products/Debug-iphoneos/HeathFirst.app"
 xcrun devicectl device install app --device "$DEVICE" "$APP"
 
+# A failed launch must not take the script with it. Under `set -e` it did, and it
+# skipped the plist check below — the one step that exists to show whether the
+# build settings substituted. Losing that to a transient tunnel error is backwards
+# when the app is already installed. It still *reports* the failure, at the end and
+# in the exit status: an app that did not start is worth knowing about, it is just
+# not worth throwing the rest of the output away for.
+#
+# Observed once, and the reason for the retry: devicectl installed the app, then
+# failed the launch with CoreDeviceError 10004 ("the process identifier of the
+# launched application could not be determined"). Launching again a second later
+# worked. It usually means the phone was locked or the developer tunnel had only
+# just come up — not that the app died, which is why the message is worded to
+# send you to the phone rather than to a crash log.
+LAUNCH_STATUS=0
 if [[ $LAUNCH == 1 ]]; then
-  xcrun devicectl device process launch \
-    --device "$DEVICE" --terminate-existing com.thonghm2.heathfirst
+  launch() {
+    xcrun devicectl device process launch \
+      --device "$DEVICE" --terminate-existing com.thonghm2.heathfirst
+  }
+  if ! launch; then
+    echo "launch failed — retrying once (unlock the phone if it is locked)" >&2
+    sleep 2
+    launch || LAUNCH_STATUS=$?
+  fi
 fi
 
 # What actually ended up in the bundle. Reads the built plist rather than echoing
@@ -95,3 +116,13 @@ print("  GATEWAY_URL     ", p.get("GATEWAY_URL") or "(empty → mock provider)")
 print("  GATEWAY_API_KEY ", f"{len(key)} chars" if key else "(empty)")
 print("  ATS exceptions  ", ", ".join(ats) or "(none — plaintext HTTP will be blocked)")
 PY
+
+# Last, so it is the line left on screen, and non-zero so a caller that chains off
+# this script does not carry on as though the app were running.
+if [[ $LAUNCH_STATUS != 0 ]]; then
+  echo >&2
+  echo "warning: installed, but not launched (devicectl exit $LAUNCH_STATUS)." >&2
+  echo "         Tap the app on the phone, or re-run:" >&2
+  echo "         xcrun devicectl device process launch --device $DEVICE --terminate-existing com.thonghm2.heathfirst" >&2
+  exit "$LAUNCH_STATUS"
+fi
