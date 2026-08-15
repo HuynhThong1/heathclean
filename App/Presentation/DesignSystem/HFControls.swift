@@ -224,6 +224,16 @@ struct HFBackChip: View {
     var isEnabled = true
     let action: () -> Void
 
+    /// The 44pt target and the shape are **inside** the label, which is the rule
+    /// this codebase keeps relearning: outside the `Button` they dress a box the
+    /// button does not own, so the chip answered only on the 32pt tile it draws
+    /// and the 6pt margin around it was dead.
+    ///
+    /// It looked fine under test — an automated tap lands dead centre and always
+    /// hits — and wrong under a thumb. Worst on §6.8, whose header sits *inside* a
+    /// `ScrollView`: a touch that drifts a point or two on a target that small is
+    /// read as a scroll and the tap never arrives, which is indistinguishable from
+    /// a back button that does nothing.
     var body: some View {
         Button(action: action) {
             Image(systemName: "chevron.left")
@@ -234,11 +244,11 @@ struct HFBackChip: View {
                     DS.surfaceSunken,
                     in: RoundedRectangle(cornerRadius: 8, style: .continuous)
                 )
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .disabled(!isEnabled)
-        .frame(width: 44, height: 44)
-        .contentShape(Rectangle())
         .accessibilityLabel("Quay lại")
     }
 }
