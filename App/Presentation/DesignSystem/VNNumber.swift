@@ -43,4 +43,13 @@ enum VNNumber {
     static func oneDecimal(_ value: Double) -> String {
         oneDecimal.string(from: NSNumber(value: value)) ?? "0,0"
     }
+
+    /// A 0…1 fraction as a whole percentage — "31%", the way §6.12 prints it.
+    ///
+    /// Built from the integer formatter with the sign glued on rather than from
+    /// `numberStyle = .percent`, which in `vi_VN` puts a space before the symbol
+    /// ("31 %"); the design draws it closed up.
+    static func percent(_ fraction: Double) -> String {
+        int((fraction * 100).rounded()) + "%"
+    }
 }

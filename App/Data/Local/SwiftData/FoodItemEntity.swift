@@ -13,9 +13,17 @@ final class FoodItemEntity {
     var carbohydrates: Double
     var fat: Double
 
-    /// Always `nil` for manual entry; populated once meal photo analysis lands.
+    /// Always `nil` for manual entry; populated by the scan.
+    ///
+    /// `aiEstimatedName` is the third lightweight migration in this store (after
+    /// `MealPhotoEntity` and `MealEntity.calorieGoalWhenLogged`) and the same
+    /// shape as the second: a new optional attribute, so rows written before it
+    /// read back as `nil` and need no conversion. `nil` here means "not recorded",
+    /// which `FoodItem.wasRenamed` reads as "no correction to report" rather than
+    /// as "the model was right".
     var aiConfidence: Double?
     var aiEstimatedWeightGrams: Double?
+    var aiEstimatedName: String?
 
     var nutritionSource: String?
     var nutritionSourceID: String?
@@ -34,6 +42,7 @@ final class FoodItemEntity {
         self.fat = item.fat
         self.aiConfidence = item.aiConfidence
         self.aiEstimatedWeightGrams = item.aiEstimatedWeightGrams
+        self.aiEstimatedName = item.aiEstimatedName
         self.nutritionSource = item.nutritionSource
         self.nutritionSourceID = item.nutritionSourceID
         self.nutritionSourceURL = item.nutritionSourceURL
@@ -53,6 +62,7 @@ extension FoodItemEntity {
             fat: fat,
             aiConfidence: aiConfidence,
             aiEstimatedWeightGrams: aiEstimatedWeightGrams,
+            aiEstimatedName: aiEstimatedName,
             nutritionSource: nutritionSource,
             nutritionSourceID: nutritionSourceID,
             nutritionSourceURL: nutritionSourceURL,

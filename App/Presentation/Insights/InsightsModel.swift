@@ -24,6 +24,15 @@ final class InsightsModel {
     private(set) var targetWeightKg: Double?
     private(set) var errorMessage: String?
 
+    /// §22's denominator and numerator over the same seven days: foods that came
+    /// from a scan, and how many of those the user changed.
+    ///
+    /// Counted per *food*, not per meal — a plate the model read as three dishes
+    /// and got one wrong is one correction out of three, and rolling it up to the
+    /// meal would report it as a total failure.
+    private(set) var scannedFoodCount = 0
+    private(set) var correctedFoodCount = 0
+
     static let dayCount = 7
     static let weightWeeks = 6
 
@@ -62,6 +71,10 @@ final class InsightsModel {
                 return Day(date: date, calories: calories)
             }
 
+            let scanned = meals.flatMap(\.items).filter(\.cameFromScan)
+            scannedFoodCount = scanned.count
+            correctedFoodCount = scanned.count(where: \.wasCorrected)
+
             weightSeries = try await getWeightSeries.execute(
                 endingOn: now, weeks: Self.weightWeeks
             )
@@ -89,6 +102,17 @@ final class InsightsModel {
     var daysWithinGoal: Int {
         guard dailyGoalCalories > 0 else { return 0 }
         return loggedDays.count { $0.calories <= dailyGoalCalories }
+    }
+
+    /// Nothing was scanned this week, so there is no rate — and a "0%" would read
+    /// as "the model got everything right" rather than as "it was never asked".
+    /// The cell is not drawn at all in that case.
+    var hasScanData: Bool { scannedFoodCount > 0 }
+
+    /// 0…1. §6.12 prints it as a whole percentage.
+    var correctionRate: Double {
+        guard scannedFoodCount > 0 else { return 0 }
+        return Double(correctedFoodCount) / Double(scannedFoodCount)
     }
 
     /// The chart's top. The goal line has to fit inside it, or a week spent

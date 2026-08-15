@@ -66,7 +66,7 @@ struct RecognizedFoodTests {
 
         // §22 measures a correction against the model's first estimate; entering
         // nutrition is not a claim that the model estimated 150 g.
-        #expect(corrected.wasCorrected)
+        #expect(corrected.wasPortionCorrected)
         expectClose(corrected.originalWeightGrams, 200)
     }
 
@@ -87,13 +87,13 @@ struct RecognizedFoodTests {
     @Test("a correction is measured against the model's first estimate")
     func correctionIsTrackedAgainstTheOriginal() {
         let original = makeFood(weight: 180)
-        #expect(!original.wasCorrected)
+        #expect(!original.wasPortionCorrected)
 
         // Two successive edits must not compound — the second rescales from
         // 180 g, not from the already-halved 90 g.
         let once = original.scaled(toWeightGrams: 90)
         let twice = once.scaled(toWeightGrams: 180)
-        #expect(once.wasCorrected)
+        #expect(once.wasPortionCorrected)
         expectClose(twice.calories, 234, "back to the original")
         expectClose(twice.originalWeightGrams, 180, "original is preserved")
     }
