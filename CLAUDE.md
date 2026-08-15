@@ -859,9 +859,14 @@ The UI copy is load-bearing here and was wrong at first. It said "sửa tên ho�
 bỏ món này", inviting the one action that cannot work. Anything written next to
 an unresolved item has to point at the nutrition entry or at removing the item.
 
-None of this path has a UI test: reaching §6.8 means driving the system Photos
-sheet, which the suite avoids for the same reason it avoids the HealthKit sheet.
-`MockFoodRecognitionRepository` does return one unresolved food, so the path is
+Reaching §6.8 means driving the system Photos sheet, which the suite avoids for
+the same reason it avoids the HealthKit sheet — so the path had no UI test at
+all. **`-scanFixtureImage` is the seam**: under the same double launch-argument
+guard as the history fixture, `ScanFlowView` generates a frame and hands it to
+`acceptImage`, so only the picker is skipped and the preprocessor, the
+recognition repository and the review screen are the real ones. The portion
+editor and the nutrition entry are still hand-only.
+`MockFoodRecognitionRepository` does return one unresolved food, so that half is
 exercisable by hand on a simulator.
 
 Sending meal photos to a hosted service is what `plan.md` §20 and §21 already

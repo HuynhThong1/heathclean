@@ -354,7 +354,16 @@
     "Bắt đầu" : {
 
     },
+    "Bỏ kết quả" : {
+
+    },
+    "Bỏ kết quả quét?" : {
+
+    },
     "Bối cảnh sức khỏe, không dùng để tính calo" : {
+
+    },
+    "Bữa ăn chưa được lưu. %lld món AI nhận diện và mọi chỉnh sửa của bạn sẽ mất." : {
 
     },
     "Bữa ăn: %@. Chạm để đổi bữa." : {
@@ -391,6 +400,9 @@
 
     },
     "Chưa kết nối" : {
+
+    },
+    "Chưa món nào tra được dinh dưỡng · %@" : {
 
     },
     "Chạm hai lần để xem chi tiết bữa này." : {
@@ -577,6 +589,9 @@
     "Lưu" : {
 
     },
+    "Lần quét mới dùng thêm một lượt phân tích." : {
+
+    },
     "Lịch sử" : {
 
     },
@@ -598,7 +613,23 @@
     "Nay" : {
 
     },
+    "Nguồn: %@" : {
+
+    },
+    "Nguồn: %@ · %@" : {
+      "localizations" : {
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Nguồn: %1$@ · %2$@"
+          }
+        }
+      }
+    },
     "Nguồn: CSDL món Việt · %@" : {
+
+    },
+    "Nguồn: không rõ · %@" : {
 
     },
     "Ngày này không có bữa ăn nào được ghi." : {
@@ -648,6 +679,9 @@
     "OK" : {
 
     },
+    "Open Food Facts" : {
+
+    },
     "Phân tích ảnh này" : {
 
     },
@@ -661,6 +695,9 @@
 
     },
     "Quét lại" : {
+
+    },
+    "Quét lại?" : {
 
     },
     "Quét ảnh thay vì nhập tay" : {
@@ -726,6 +763,9 @@
     "Tổng bữa ăn %@ kcal" : {
 
     },
+    "USDA FoodData Central" : {
+
+    },
     "Ví dụ: Phở bò" : {
 
     },
@@ -766,7 +806,16 @@
     "Xác nhận bữa ăn" : {
 
     },
+    "bạn nhập" : {
+
+    },
     "chưa ghi ngày nào" : {
+
+    },
+    "công thức từ USDA" : {
+
+    },
+    "dữ liệu tham khảo nội bộ" : {
 
     },
     "kcal" : {
@@ -881,6 +930,9 @@
 
     },
     "Ảnh bữa ăn vừa chụp" : {
+
+    },
+    "Ảnh bữa ăn vừa quét" : {
 
     },
     "Ảnh chỉ dùng để phân tích rồi xoá." : {

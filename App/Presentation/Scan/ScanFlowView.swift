@@ -80,6 +80,9 @@ struct ScanFlowView: View {
         .background(DS.surfacePage)
         .onAppear {
             if model == nil { model = container.makeScanModel(type: type) }
+            if pendingImage == nil, let fixture = Self.uiTestFixtureImage {
+                acceptImage(fixture)
+            }
         }
         .sheet(item: $manualEntry) { type in
             MealEntryView(type: type) { calories in
@@ -104,6 +107,31 @@ struct ScanFlowView: View {
         } message: {
             Text("Hãy chọn ảnh JPEG, HEIC, PNG hoặc WebP khác rồi thử lại.")
         }
+    }
+
+    /// A generated frame that stands in for the photo a test cannot take.
+    ///
+    /// §6.6–6.9 had no UI test at all: the simulator has no capture device and
+    /// the suite avoids the Photos sheet for the same reason it avoids
+    /// HealthKit's. This enters through `acceptImage`, so the fixture still goes
+    /// through the real preprocessor and the real recognition repository — only
+    /// the picker is skipped.
+    ///
+    /// Behind the same double launch-argument guard as the history fixture, so it
+    /// is unreachable in a normal build.
+    private static var uiTestFixtureImage: Data? {
+        let arguments = ProcessInfo.processInfo.arguments
+        guard arguments.contains("-uiTesting"),
+              arguments.contains("-scanFixtureImage") else { return nil }
+
+        // Deliberately not square: a 120pt strip has to crop something, and an
+        // image that already fits proves nothing about the frame that holds it.
+        let size = CGSize(width: 800, height: 600)
+        let image = UIGraphicsImageRenderer(size: size).image { context in
+            UIColor(red: 0.95, green: 0.44, blue: 0.13, alpha: 1).setFill()
+            context.fill(CGRect(origin: .zero, size: size))
+        }
+        return image.jpegData(compressionQuality: 0.8)
     }
 
     private func acceptImage(_ data: Data) {

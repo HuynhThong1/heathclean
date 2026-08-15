@@ -28,13 +28,13 @@ final class ScanModel {
     private let photoStore: MealPhotoStore
 
     /// The normalized bytes that were analysed, kept so a confirmed meal can keep
-    /// its picture (§32.4).
+    /// its picture (§32.4) and so §6.8 can show what was scanned.
     ///
     /// **In memory only, and written nowhere until the user confirms.** That is
     /// what makes "ảnh camera tạm phải bị xóa khi hủy luồng scan" true by
     /// construction: cancelling drops the reference, because there was never a
     /// file to clean up.
-    private var analyzedImage: Data?
+    private(set) var analyzedImage: Data?
 
     init(
         type: MealType,

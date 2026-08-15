@@ -9,12 +9,31 @@ struct ScanReviewView: View {
     let onConfirmed: (Double) -> Void
     let onCancel: () -> Void
 
+    /// Decoded once rather than in `body`: the 1,600px frame would otherwise be
+    /// decoded again on every weight edit, every rename and every sheet dismissal.
+    @State private var photo: UIImage?
+
+    /// Leaving this screen throws the analysis away, so it is asked about first.
+    ///
+    /// Both ways out cost the same two things — the model's proposal and every
+    /// correction made to it since — and neither can be undone: nothing is saved
+    /// until "Xác nhận bữa ăn", so there is no meal to go back to. Rescanning also
+    /// spends a second call against the daily quota, which is the reason
+    /// `CapturedPhotoView` exists one screen earlier.
+    private enum ExitIntent: String, Identifiable {
+        case back, rescan
+        var id: String { rawValue }
+    }
+
+    @State private var pendingExit: ExitIntent?
+
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(alignment: .leading, spacing: DS.s4) {
                     headerRow
                     explainerPill
+                    photoPreview
                     itemList
                     totalCard
                     if let reason = model.blockedReason {
@@ -30,6 +49,7 @@ struct ScanReviewView: View {
             bottomBar
         }
         .background(DS.surfacePage)
+        .task { photo = model.analyzedImage.flatMap(UIImage.init(data:)) }
         .sheet(item: portionBinding) { food in
             PortionEditorSheet(
                 food: food,
@@ -55,6 +75,40 @@ struct ScanReviewView: View {
             .presentationDetents([.height(food.isResolved ? 460 : 620)])
             .presentationCornerRadius(DS.rSheet)
         }
+        .sheet(item: $pendingExit) { intent in
+            // Wrapped rather than written as literals: `HFDestructiveConfirm`
+            // takes `String`, so a literal here never reaches the catalog — the
+            // trap `GrayNote` recorded. The component itself should take a
+            // `LocalizedStringKey`; that is a wider change than this screen.
+            HFDestructiveConfirm(
+                title: intent == .back
+                    ? String(localized: "Bỏ kết quả quét?")
+                    : String(localized: "Quét lại?"),
+                message: message(for: intent),
+                confirmLabel: intent == .back
+                    ? String(localized: "Bỏ kết quả")
+                    : String(localized: "Quét lại"),
+                onConfirm: {
+                    pendingExit = nil
+                    switch intent {
+                    case .back: onCancel()
+                    case .rescan: onRescan()
+                    }
+                },
+                onCancel: { pendingExit = nil }
+            )
+        }
+    }
+
+    /// Names what is lost, and counts it. "Mọi thay đổi" is true of a plate the
+    /// user has not touched as well, where the warning is only in the way.
+    private func message(for intent: ExitIntent) -> String {
+        let count = model.foods.count
+        let base = String(
+            localized: "Bữa ăn chưa được lưu. \(count) món AI nhận diện và mọi chỉnh sửa của bạn sẽ mất."
+        )
+        guard intent == .rescan else { return base }
+        return base + " " + String(localized: "Lần quét mới dùng thêm một lượt phân tích.")
     }
 
     private var portionBinding: Binding<RecognizedFood?> {
@@ -68,7 +122,7 @@ struct ScanReviewView: View {
 
     private var headerRow: some View {
         HStack(alignment: .top, spacing: DS.s3) {
-            HFBackChip { onCancel() }
+            HFBackChip { pendingExit = .back }
                 .accessibilityIdentifier("scan.back")
 
             VStack(alignment: .leading, spacing: 1) {
@@ -85,7 +139,7 @@ struct ScanReviewView: View {
             // Styled inside the label and `.plain`, or the default style tints it
             // system blue instead of `DS.blue`; 44pt tall because §4 sets that
             // floor and this was an 18pt strip in the hardest corner to hit.
-            Button { onRescan() } label: {
+            Button { pendingExit = .rescan } label: {
                 Text("Quét lại")
                     .font(.custom(DSFontName.semibold, size: 13))
                     .foregroundStyle(DS.blue)
@@ -110,6 +164,45 @@ struct ScanReviewView: View {
         .padding(DS.s3)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(DS.blue50, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+
+    // MARK: Photo
+
+    /// The picture the numbers below are about.
+    ///
+    /// §6.8 draws this as a 120pt strip and it is **square instead**, on purpose:
+    /// every other place the app shows a meal photo is 1:1 — the §6.6 viewfinder,
+    /// `CapturedPhotoView` one screen earlier, and History's `MealThumbnail`
+    /// everywhere it appears. A strip here would crop the dish differently from
+    /// the frame the user aimed and differently again from the thumbnail they see
+    /// afterwards, so the same photo would read as three different pictures.
+    ///
+    /// The box is sized first and the image fills it from an overlay, for the
+    /// reason `CapturedPhotoView` records: `.scaledToFill()` on the image itself
+    /// leaves the height unconstrained and it grows until it owns the screen.
+    ///
+    /// Absent rather than a placeholder when there is nothing to show — a scan
+    /// always has bytes, so an empty frame would only ever be a decode failure,
+    /// and the items are what this screen is for.
+    @ViewBuilder
+    private var photoPreview: some View {
+        if let photo {
+            Color.clear
+                .aspectRatio(1, contentMode: .fit)
+                .overlay {
+                    Image(uiImage: photo)
+                        .resizable()
+                        .scaledToFill()
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .accessibilityElement()
+                .accessibilityLabel("Ảnh bữa ăn vừa quét")
+                // Without the trait a hand-declared element is exposed as an
+                // `otherElement`, and `app.images[…]` will not find it — the same
+                // trap `DSValueRow` records for `.isStaticText`.
+                .accessibilityAddTraits(.isImage)
+                .accessibilityIdentifier("scan.photo")
+        }
     }
 
     // MARK: Items

@@ -73,6 +73,83 @@ final class Phase1FlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["scan.pickPhoto"].waitForExistence(timeout: 30))
     }
 
+    /// §6.8's photo strip — the picture the numbers on that screen are about.
+    ///
+    /// The scan path had no test at all: it starts at the Photos sheet, which the
+    /// suite avoids, on a simulator with no camera. `-scanFixtureImage` injects a
+    /// frame at exactly that seam, so everything after it is the real thing — the
+    /// preprocessor, the mock recognition repository, the review screen.
+    func testScanReviewShowsThePhotoThatWasAnalysed() {
+        app.terminate()
+        app.launchArguments = ["-uiTesting", "-scanFixtureImage"]
+        app.launch()
+        startOnboarding()
+        reachDashboard()
+
+        app.buttons["tab.scan"].tap()
+
+        // The fixture arrives as if it had just been captured, so the flow opens
+        // on the confirmation step rather than the picker.
+        let use = app.buttons["captured.use"]
+        XCTAssertTrue(use.waitForExistence(timeout: 30))
+        use.tap()
+
+        let photo = app.images["scan.photo"]
+        XCTAssertTrue(photo.waitForExistence(timeout: 30))
+
+        // Square and full width, like the viewfinder that took it and like every
+        // thumbnail History draws of it afterwards. This is also what catches the
+        // trap `CapturedPhotoView` hit — a `.scaledToFill()` image with no
+        // definite frame grows until it owns the screen — and that failure still
+        // leaves an element here for `waitForExistence` to find.
+        //
+        // Height against the column width rather than against `photo.frame.width`:
+        // the element is a `Color.clear` box with the image in an *overlay*, and
+        // the accessibility frame reports that overlay's uncropped 4:3 width even
+        // though `clipShape` draws the square. The height is the honest side.
+        let column = app.windows.firstMatch.frame.width - 40  // 20pt padding each side
+        XCTAssertEqual(photo.frame.height, column, accuracy: 1)
+        XCTAssertTrue(app.staticTexts["scan.total"].exists)
+    }
+
+    /// Both ways out of §6.8 throw the analysis away, and nothing has been saved
+    /// at that point, so both ask first.
+    func testLeavingTheScanReviewAsksBeforeDiscarding() {
+        app.terminate()
+        app.launchArguments = ["-uiTesting", "-scanFixtureImage"]
+        app.launch()
+        startOnboarding()
+        reachDashboard()
+
+        app.buttons["tab.scan"].tap()
+        let use = app.buttons["captured.use"]
+        XCTAssertTrue(use.waitForExistence(timeout: 30))
+        use.tap()
+        XCTAssertTrue(app.staticTexts["scan.total"].waitForExistence(timeout: 30))
+
+        // Rescan asks too — it costs a second call against the daily quota on top
+        // of losing the corrections.
+        app.buttons["scan.rescan"].tap()
+        XCTAssertTrue(app.buttons["confirm.destructive"].waitForExistence(timeout: 10))
+        app.buttons["confirm.cancel"].tap()
+
+        app.buttons["scan.back"].tap()
+        XCTAssertTrue(app.buttons["confirm.destructive"].waitForExistence(timeout: 10))
+
+        // Backing out of the warning keeps the result on screen — a confirmation
+        // that loses the thing it was protecting is worse than none.
+        app.buttons["confirm.cancel"].tap()
+        XCTAssertTrue(app.staticTexts["scan.total"].waitForExistence(timeout: 10))
+
+        app.buttons["scan.back"].tap()
+        XCTAssertTrue(app.buttons["confirm.destructive"].waitForExistence(timeout: 10))
+        app.buttons["confirm.destructive"].tap()
+        XCTAssertTrue(
+            app.buttons["mealRow.breakfast"].waitForExistence(timeout: 10),
+            "confirming the warning did not close the scan flow"
+        )
+    }
+
     func testTabBarReachesEveryRootAndBack() {
         reachDashboard()
 
