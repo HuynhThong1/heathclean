@@ -6,13 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 swift build            # compiles the Domain library
-swift test             # 93 Domain tests (swift-testing) — fast, no simulator
+swift test             # 102 Domain tests (swift-testing) — fast, no simulator
 
 xcodebuild -scheme HeathFirst \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
 
 xcodebuild -scheme HeathFirst \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test   # + 27 UI tests
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test   # + 29 UI tests
 ```
 
 ```bash
@@ -347,6 +347,14 @@ separate consequences, both worth knowing:
   11pt eyebrow and History opens with a 26pt title, so the same number puts a much
   heavier line the same distance under the clock. The four roots are meant to look
   alike, not measure alike.
+- **`.background { … }` stops at the safe area; `.background(aColour)` does not.**
+  Three roots pass a `ShapeStyle` and bleed into the top inset for free. History
+  draws a hairline under its header, so it needs the *ViewBuilder* overload — and
+  that one respects the safe area, so its strip ended at the inset edge and day
+  cards scrolled up through the status bar and the island. It takes
+  `.ignoresSafeArea(edges: .top)` on the background's own stack. `HFTabBar`
+  records this exact trap at the *bottom* of the screen; the same overload, the
+  same fix, and it simply had not been applied at the top.
 - **`ProfileView.header` was an empty `VStack`, which silently broke the mask.**
   The `safeAreaInset(edge: .top)` on these screens exists to give an opaque strip
   the job the hidden navigation bar used to do. An empty header has no height, so
@@ -633,12 +641,29 @@ schema, relaunch. `xcodebuild test` uninstalls the app at the end of a run, so
 seed and verify have to be in the **same** invocation (name the tests so
 alphabetical order puts the seed first).
 
-**`MealEntity.calorieGoalWhenLogged` is a second lightweight migration and has
-*not* had that check run against it** — a new optional attribute is the same shape
-as the addition above and the plainest case SwiftData handles, but "the same shape
-as something that was verified" is not the same claim as "verified". The procedure
-in the paragraph above is how to close it. What an unmigrated store would look like
-if this is wrong: the container's `fatalError` at launch, not a wrong number.
+**`MealEntity.calorieGoalWhenLogged` and `FoodItemEntity.aiEstimatedName` have now
+had that check run against them too**, together — both were added after `83cc285^`,
+so one store written by a build at that commit is missing both and a single round
+trip closes the pair. 14 meals and 15 food items were seeded there, then the
+current build was installed **over** it without an uninstall: the container opened,
+`ZCALORIEGOALWHENLOGGED` and `ZAIESTIMATEDNAME` were added with `NULL` in every
+pre-existing row, and the days rendered with their calories and meal names intact.
+
+The day cards read "trên mục tiêu 2.378" — no recorded target, resolved through
+`HistoryDay.goalCalories(fallingBackTo:)` to today's. That is the interesting half
+of the result: a wrong migration's likelier symptom here is a **0** target on every
+old day, which draws a full over-budget bar rather than crashing.
+
+Seeding needs a launch argument the app does not have. `seedUITestHistoryFixtureIfNeeded`
+is gated on `-uiTesting`, which forces the *in-memory* store — precisely the store
+that cannot be migrated — so the check relaxes that guard in a throwaway worktree
+and launches with an on-disk store instead. Do not commit that relaxation; the
+double guard is what keeps the fixture unreachable in a real build.
+
+The verifying test cannot live in the suite either, and was deleted rather than
+kept: it only passes against a store some earlier build seeded, so in CI it would
+fail for a reason having nothing to do with the code. A 30th UI test that needs
+manual setup to go green is worse than a documented procedure.
 
 ### Notifications (§19, §6.13)
 
@@ -730,21 +755,37 @@ expands to `""`; the helper's empty check is therefore the branch that actually
 fires. It also rejects a literal `"$(NAME)"`, the other documented outcome when
 expansion does not run, which has not been re-measured on a device build.
 
-**`Config/Info.plist`'s `NSExceptionDomains` entry names the real deployed
-gateway — `64.176.83.254`, the same address `Scripts/run-on-device.sh` defaults
-to — so plaintext HTTP to that one host is permitted and the scan reaches it.**
-(It was a documentation placeholder, `203.0.113.10`, up to `ee916a6`; this file
-said so for a while after it stopped being true.) `NSAllowsLocalNetworking` covers
-the Mac on the same Wi-Fi and nothing public, so a plaintext gateway on a public
-address needs its own exception, matched on the exact literal.
+**The gateway is HTTPS on `heathclean-gateway.chillcat.dev`, and
+`NSExceptionDomains` is gone.** It used to name the deployed gateway's bare IP so
+that plaintext HTTP to that one host was permitted — a bare IP cannot hold a
+certificate — and the stated condition for deleting it was "give the gateway a
+domain and a certificate, then delete the whole dict". That condition was met, so
+it went, and with it the API key and every meal photo crossing the wire in clear
+text.
 
-It is scaffolding, and the condition for deleting it is explicit: the API key and
-the meal photo both cross the wire in clear text, so **give the gateway a domain
-and a certificate, then delete the whole dict** — not before, or the scan fails as
-a network error on device. Changing the VPS address means changing it in both
-places; nothing derives one from the other, so they can disagree silently and the
-only symptom is that same network error. `NSAllowsArbitraryLoads` is the wrong tool
-— it disables ATS for every host the app will ever contact, to fix one.
+Two things this simplifies, and one trap it removes:
+
+- **`GATEWAY_URL` and the plist no longer have to be kept in step.** Pointing the
+  script at any other `https://` host now needs no plist edit. That coupling was
+  the sharp edge: an exception is matched on an exact literal, nothing derived it
+  from `GATEWAY_URL`, and the two could disagree silently with a network error as
+  the only symptom.
+- **`NSAllowsLocalNetworking` stays**, and is far narrower than what was removed:
+  it relaxes ATS for the local network only — `192.168.x`, `.local`, link-local —
+  and never for a public address. It is what makes
+  `GATEWAY_URL=http://192.168.1.20:8000` work against a gateway on the Mac.
+- `NSAllowsArbitraryLoads` was never the tool for any of this: it disables ATS for
+  every host the app will ever contact, to fix one.
+
+Do not add an exception back for a new deployment. The answer to a plaintext host
+is a certificate; on the local network it is already covered.
+
+**The HTTPS path has been run on a physical iPhone**, not only curled: a scan
+reached the deployed gateway and came back naming the dish that was actually
+photographed. That last clause is the whole of the check — `MockFoodRecognitionRepository`
+returns the same four items (Cơm trắng, Sườn nướng, Chả giò, Món chưa rõ) for
+every image, so a scan that "works" proves nothing on its own, and a result that
+matches the photo is the only cheap evidence the request left the phone.
 
 `CameraCaptureView` is §6.6 in full — `AVCaptureSession`, the preview layer, the
 1:1 viewfinder. The capture → gateway → review → save path has been exercised on
@@ -899,8 +940,10 @@ same three answers.
   report a total failure.
 - `FoodItemEntity.aiEstimatedName` is the third lightweight migration in this
   store, the same shape as `MealEntity.calorieGoalWhenLogged` — a new optional
-  attribute — and has **not** had the on-disk migration check run against it
-  either. The procedure is in the meal-photos section.
+  attribute — and the on-disk check **has** been run against both, in one pass,
+  since a build from before either existed is missing both. See the meal-photos
+  section. Old rows read back `NULL`, which `wasRenamed` already treats as
+  "nothing to report" rather than as a match.
 - The UI-test fixture scans two foods and corrects one, so Insights reads 50% —
   a figure distinguishable from both "nothing scanned" and "everything wrong".
   Their names, weights and calories are untouched, so no other fixture assertion

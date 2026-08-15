@@ -32,12 +32,16 @@ final class DependencyContainer {
     /// `nonisolated` so it can be built in a stored-property initializer, and
     /// because nothing it touches is main-actor bound.
     nonisolated init(inMemory: Bool = false) {
-        // Two additions have been made after the store shipped, both lightweight:
+        // Three additions have been made after the store shipped, all lightweight:
         // `MealPhotoEntity` (a new model plus a to-many relationship that is empty
-        // for every meal written before it) and `MealEntity.calorieGoalWhenLogged`
-        // (a new *optional* attribute, so existing rows read back as `nil`).
-        // Neither needs a `SchemaMigrationPlan`; if one ever does, the `fatalError`
-        // below is how it will announce itself.
+        // for every meal written before it), `MealEntity.calorieGoalWhenLogged` and
+        // `FoodItemEntity.aiEstimatedName` (new *optional* attributes, so existing
+        // rows read back as `nil`). None needs a `SchemaMigrationPlan`; if one ever
+        // does, the `fatalError` below is how it will announce itself.
+        //
+        // All three have been opened against a store an earlier build wrote, rather
+        // than assumed to be fine for being the plainest case SwiftData handles.
+        // CLAUDE.md's meal-photos section has the procedure.
         let schema = Schema([
             UserProfileEntity.self, MealEntity.self, FoodItemEntity.self, WeightEntryEntity.self,
             MealPhotoEntity.self,

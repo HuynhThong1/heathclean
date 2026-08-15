@@ -39,27 +39,24 @@
 	  `preferredColorScheme` at the app root. This key would override that and
 	  silently make the "Tối" setting do nothing.
 	-->
+	<!-- There was an NSExceptionDomains entry here permitting plaintext HTTP to
+	     the deployed gateway's bare IP, because a bare IP cannot hold a
+	     certificate. The gateway has a domain and a real certificate now, so it
+	     is gone, and with it the API key and every meal photo crossing the wire
+	     in clear text. Do not add another: an exception is matched on an exact
+	     literal and nothing derives it from GATEWAY_URL, so the two drift apart
+	     silently and the only symptom is a scan that fails as a network error.
+
+	     NSAllowsLocalNetworking stays, and is a much narrower thing than what
+	     was removed. It relaxes ATS only for the local network — 192.168.x,
+	     .local, link-local — and never for a public address, which is what makes
+	     `GATEWAY_URL=http://192.168.1.20:8000` work when the gateway is running
+	     on the Mac. NSAllowsArbitraryLoads remains the wrong tool for any of
+	     this: it would disable ATS for every host the app will ever contact. -->
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
-		<!-- The deployed gateway, matched as an exact IP literal — this is no
-		     longer the documentation placeholder, so plaintext HTTP to this one
-		     host is now permitted and the scan can reach it. Remove this whole
-		     dict once the gateway is HTTPS; NSExceptionAllowsInsecureHTTPLoads is
-		     the cost of testing against a bare IP, not a setting worth keeping,
-		     and the API key crosses the wire in clear text until it goes.
-		     Changing the VPS address means changing it here too: nothing derives
-		     this from GATEWAY_URL, so the two can disagree silently and the only
-		     symptom is a scan that fails as a network error. -->
-		<key>NSExceptionDomains</key>
-		<dict>
-			<key>64.176.83.254</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-			</dict>
-		</dict>
 	</dict>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>HeathFirst connects to the meal-recognition gateway running on your computer over the local network. This is used for development builds only.</string>

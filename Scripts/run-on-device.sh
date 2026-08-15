@@ -16,12 +16,14 @@
 # which already carries $(GATEWAY_URL)/$(GATEWAY_API_KEY) placeholders for exactly
 # this.
 #
-# NOTE: the ATS exception in Config/Info.plist is matched as an exact IP literal
-# and is NOT derived from GATEWAY_URL. Point this at a different host and you must
-# edit that plist too, or the scan fails as a network error with nothing to say why.
+# The gateway is HTTPS on its own domain now, so there is no longer an ATS
+# exception in Config/Info.plist to keep in step with this — pointing GATEWAY_URL
+# at another https:// host needs no plist edit at all. A plain-http:// host still
+# does, and the answer is a certificate rather than an exception, except on the
+# local network, which NSAllowsLocalNetworking already covers.
 #
 # Usage:
-#   Scripts/run-on-device.sh                       # VPS gateway, key from .env
+#   Scripts/run-on-device.sh                       # deployed gateway, key from .env
 #   GATEWAY_URL=http://192.168.1.20:8000 Scripts/run-on-device.sh
 #   GATEWAY_API_KEY=… Scripts/run-on-device.sh
 #   Scripts/run-on-device.sh --no-launch           # install only
@@ -29,7 +31,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-GATEWAY_URL="${GATEWAY_URL:-http://64.176.83.254:8000}"
+GATEWAY_URL="${GATEWAY_URL:-https://heathclean-gateway.chillcat.dev}"
 GATEWAY_ENV="${GATEWAY_ENV:-$HOME/Projects/healthclean-gateway/.env}"
 DERIVED="${DERIVED:-build/device}"
 LAUNCH=1
