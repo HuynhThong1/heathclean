@@ -763,6 +763,13 @@ Two things this simplifies, and one trap it removes:
 Do not add an exception back for a new deployment. The answer to a plaintext host
 is a certificate; on the local network it is already covered.
 
+**The HTTPS path has been run on a physical iPhone**, not only curled: a scan
+reached the deployed gateway and came back naming the dish that was actually
+photographed. That last clause is the whole of the check — `MockFoodRecognitionRepository`
+returns the same four items (Cơm trắng, Sườn nướng, Chả giò, Món chưa rõ) for
+every image, so a scan that "works" proves nothing on its own, and a result that
+matches the photo is the only cheap evidence the request left the phone.
+
 `CameraCaptureView` is §6.6 in full — `AVCaptureSession`, the preview layer, the
 1:1 viewfinder. The capture → gateway → review → save path has been exercised on
 a physical iPhone; the simulator still uses `PhotosPicker` because it has no
