@@ -6,13 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 swift build            # compiles the Domain library
-swift test             # 93 Domain tests (swift-testing) — fast, no simulator
+swift test             # 102 Domain tests (swift-testing) — fast, no simulator
 
 xcodebuild -scheme HeathFirst \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
 
 xcodebuild -scheme HeathFirst \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test   # + 27 UI tests
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test   # + 29 UI tests
 ```
 
 ```bash
@@ -738,21 +738,30 @@ expands to `""`; the helper's empty check is therefore the branch that actually
 fires. It also rejects a literal `"$(NAME)"`, the other documented outcome when
 expansion does not run, which has not been re-measured on a device build.
 
-**`Config/Info.plist`'s `NSExceptionDomains` entry names the real deployed
-gateway — `64.176.83.254`, the same address `Scripts/run-on-device.sh` defaults
-to — so plaintext HTTP to that one host is permitted and the scan reaches it.**
-(It was a documentation placeholder, `203.0.113.10`, up to `ee916a6`; this file
-said so for a while after it stopped being true.) `NSAllowsLocalNetworking` covers
-the Mac on the same Wi-Fi and nothing public, so a plaintext gateway on a public
-address needs its own exception, matched on the exact literal.
+**The gateway is HTTPS on `heathclean-gateway.chillcat.dev`, and
+`NSExceptionDomains` is gone.** It used to name the deployed gateway's bare IP so
+that plaintext HTTP to that one host was permitted — a bare IP cannot hold a
+certificate — and the stated condition for deleting it was "give the gateway a
+domain and a certificate, then delete the whole dict". That condition was met, so
+it went, and with it the API key and every meal photo crossing the wire in clear
+text.
 
-It is scaffolding, and the condition for deleting it is explicit: the API key and
-the meal photo both cross the wire in clear text, so **give the gateway a domain
-and a certificate, then delete the whole dict** — not before, or the scan fails as
-a network error on device. Changing the VPS address means changing it in both
-places; nothing derives one from the other, so they can disagree silently and the
-only symptom is that same network error. `NSAllowsArbitraryLoads` is the wrong tool
-— it disables ATS for every host the app will ever contact, to fix one.
+Two things this simplifies, and one trap it removes:
+
+- **`GATEWAY_URL` and the plist no longer have to be kept in step.** Pointing the
+  script at any other `https://` host now needs no plist edit. That coupling was
+  the sharp edge: an exception is matched on an exact literal, nothing derived it
+  from `GATEWAY_URL`, and the two could disagree silently with a network error as
+  the only symptom.
+- **`NSAllowsLocalNetworking` stays**, and is far narrower than what was removed:
+  it relaxes ATS for the local network only — `192.168.x`, `.local`, link-local —
+  and never for a public address. It is what makes
+  `GATEWAY_URL=http://192.168.1.20:8000` work against a gateway on the Mac.
+- `NSAllowsArbitraryLoads` was never the tool for any of this: it disables ATS for
+  every host the app will ever contact, to fix one.
+
+Do not add an exception back for a new deployment. The answer to a plaintext host
+is a certificate; on the local network it is already covered.
 
 `CameraCaptureView` is §6.6 in full — `AVCaptureSession`, the preview layer, the
 1:1 viewfinder. The capture → gateway → review → save path has been exercised on
