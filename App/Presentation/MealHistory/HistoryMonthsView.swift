@@ -120,11 +120,22 @@ struct HistoryMonthsView: View {
         // than measure alike.
         .padding(.top, DS.s4)
         .padding(.bottom, DS.s3)
+        // `.ignoresSafeArea(edges: .top)` because this is the **ViewBuilder**
+        // overload of `background`, which — unlike the `ShapeStyle` one — stops
+        // at the safe area. The other three roots pass a colour and so bleed
+        // into the top inset for free; this one draws a hairline and therefore
+        // needs a `ZStack`, and without this the strip ended at the safe-area
+        // edge and day cards scrolled up through the status bar and the island.
+        //
+        // `HFTabBar` records exactly this trap at the bottom of the screen. It
+        // is the same overload and the same fix; the lesson simply had not been
+        // applied at the top.
         .background(alignment: .bottom) {
             ZStack(alignment: .bottom) {
                 DS.surfaceCard
                 Rectangle().fill(DS.borderSubtle).frame(height: 1)
             }
+            .ignoresSafeArea(edges: .top)
         }
     }
 

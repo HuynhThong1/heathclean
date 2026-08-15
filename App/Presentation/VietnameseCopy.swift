@@ -151,6 +151,32 @@ extension NotificationPreference {
     }
 }
 
+/// Display names for the gateway's `nutritionSource` strings.
+///
+/// One place, because the review screen names the source twice — once per item
+/// and once for the plate — and a new source that only got taught to one of
+/// them would be shown raw in the other.
+///
+/// The wording distinguishes **how a figure was arrived at**, which is the only
+/// thing a reader can act on: a recipe over public-domain rows and an asserted
+/// row look identical on screen otherwise.
+enum NutritionSourceCopy {
+    @MainActor
+    static func name(for source: String?) -> String? {
+        switch source {
+        case "usda_sr_legacy_recipe": String(localized: "công thức từ USDA")
+        case "usda_fdc": String(localized: "USDA FoodData Central")
+        case "open_food_facts": String(localized: "Open Food Facts")
+        case "local_reference": String(localized: "dữ liệu tham khảo nội bộ")
+        case "user_entered": String(localized: "bạn nhập")
+        // A source this build has not been taught. Shown raw rather than
+        // hidden: an unfamiliar name is a smaller lie than none.
+        case let other?: other
+        case nil: nil
+        }
+    }
+}
+
 enum BudgetCopy {
     /// The status note from §6.4. `nil` below 70% — nothing worth saying yet.
     ///

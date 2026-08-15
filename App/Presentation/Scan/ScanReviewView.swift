@@ -156,13 +156,45 @@ struct ScanReviewView: View {
                     )
                 }
 
-                // §6.8 names USDA and the Vietnamese DB. Only the latter is
-                // real today, so claiming USDA would be false.
-                Text("Nguồn: CSDL món Việt · \(model.result?.provider ?? "—")")
+                Text(sourceFootnote)
                     .hfStyle(HFType.subLabel)
                     .foregroundStyle(DS.textSubtle)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("scan.sources")
             }
         }
+    }
+
+    /// §6.8 asks the total card to name where the numbers came from, and this
+    /// **said "CSDL món Việt" whatever happened** — including on a plate where
+    /// nothing resolved at all and the table contributed nothing. It is now read
+    /// off the items.
+    ///
+    /// Worth naming per source rather than in general: one meal can now mix a
+    /// dish computed from a USDA recipe with a row that is still asserted, and
+    /// those are not equally trustworthy. The per-item lines say which is which;
+    /// this says what the plate as a whole rests on.
+    private var sourceFootnote: String {
+        let provider = model.result?.provider ?? "—"
+        let resolved = model.foods.filter(\.isResolved)
+
+        guard !resolved.isEmpty else {
+            return String(localized: "Chưa món nào tra được dinh dưỡng · \(provider)")
+        }
+
+        var seen = Set<String>()
+        let names = resolved
+            .compactMap { NutritionSourceCopy.name(for: $0.nutritionSource) }
+            .filter { seen.insert($0).inserted }
+
+        // Resolved but unattributed is its own case, not the empty one: the
+        // development provider returns nutrition without naming a source, and
+        // reporting that as "nothing resolved" would be false about a plate
+        // that is showing real figures.
+        guard !names.isEmpty else {
+            return String(localized: "Nguồn: không rõ · \(provider)")
+        }
+        return String(localized: "Nguồn: \(names.joined(separator: ", ")) · \(provider)")
     }
 
     private var bottomBar: some View {
@@ -295,13 +327,8 @@ private struct ScanItemCard: View {
     }
 
     private var nutritionSourceLabel: String? {
-        switch food.nutritionSource {
-        case "usda_fdc": "Nguồn: USDA FoodData Central"
-        case "open_food_facts": "Nguồn: Open Food Facts"
-        case "local_reference": "Nguồn: dữ liệu tham khảo nội bộ"
-        case "user_entered": "Nguồn: bạn nhập"
-        case let source?: "Nguồn: \(source)"
-        case nil: nil
+        NutritionSourceCopy.name(for: food.nutritionSource).map {
+            String(localized: "Nguồn: \($0)")
         }
     }
 

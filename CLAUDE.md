@@ -347,6 +347,14 @@ separate consequences, both worth knowing:
   11pt eyebrow and History opens with a 26pt title, so the same number puts a much
   heavier line the same distance under the clock. The four roots are meant to look
   alike, not measure alike.
+- **`.background { … }` stops at the safe area; `.background(aColour)` does not.**
+  Three roots pass a `ShapeStyle` and bleed into the top inset for free. History
+  draws a hairline under its header, so it needs the *ViewBuilder* overload — and
+  that one respects the safe area, so its strip ended at the inset edge and day
+  cards scrolled up through the status bar and the island. It takes
+  `.ignoresSafeArea(edges: .top)` on the background's own stack. `HFTabBar`
+  records this exact trap at the *bottom* of the screen; the same overload, the
+  same fix, and it simply had not been applied at the top.
 - **`ProfileView.header` was an empty `VStack`, which silently broke the mask.**
   The `safeAreaInset(edge: .top)` on these screens exists to give an opaque strip
   the job the hidden navigation bar used to do. An empty header has no height, so
