@@ -641,12 +641,29 @@ schema, relaunch. `xcodebuild test` uninstalls the app at the end of a run, so
 seed and verify have to be in the **same** invocation (name the tests so
 alphabetical order puts the seed first).
 
-**`MealEntity.calorieGoalWhenLogged` is a second lightweight migration and has
-*not* had that check run against it** — a new optional attribute is the same shape
-as the addition above and the plainest case SwiftData handles, but "the same shape
-as something that was verified" is not the same claim as "verified". The procedure
-in the paragraph above is how to close it. What an unmigrated store would look like
-if this is wrong: the container's `fatalError` at launch, not a wrong number.
+**`MealEntity.calorieGoalWhenLogged` and `FoodItemEntity.aiEstimatedName` have now
+had that check run against them too**, together — both were added after `83cc285^`,
+so one store written by a build at that commit is missing both and a single round
+trip closes the pair. 14 meals and 15 food items were seeded there, then the
+current build was installed **over** it without an uninstall: the container opened,
+`ZCALORIEGOALWHENLOGGED` and `ZAIESTIMATEDNAME` were added with `NULL` in every
+pre-existing row, and the days rendered with their calories and meal names intact.
+
+The day cards read "trên mục tiêu 2.378" — no recorded target, resolved through
+`HistoryDay.goalCalories(fallingBackTo:)` to today's. That is the interesting half
+of the result: a wrong migration's likelier symptom here is a **0** target on every
+old day, which draws a full over-budget bar rather than crashing.
+
+Seeding needs a launch argument the app does not have. `seedUITestHistoryFixtureIfNeeded`
+is gated on `-uiTesting`, which forces the *in-memory* store — precisely the store
+that cannot be migrated — so the check relaxes that guard in a throwaway worktree
+and launches with an on-disk store instead. Do not commit that relaxation; the
+double guard is what keeps the fixture unreachable in a real build.
+
+The verifying test cannot live in the suite either, and was deleted rather than
+kept: it only passes against a store some earlier build seeded, so in CI it would
+fail for a reason having nothing to do with the code. A 30th UI test that needs
+manual setup to go green is worse than a documented procedure.
 
 ### Notifications (§19, §6.13)
 
@@ -923,8 +940,10 @@ same three answers.
   report a total failure.
 - `FoodItemEntity.aiEstimatedName` is the third lightweight migration in this
   store, the same shape as `MealEntity.calorieGoalWhenLogged` — a new optional
-  attribute — and has **not** had the on-disk migration check run against it
-  either. The procedure is in the meal-photos section.
+  attribute — and the on-disk check **has** been run against both, in one pass,
+  since a build from before either existed is missing both. See the meal-photos
+  section. Old rows read back `NULL`, which `wasRenamed` already treats as
+  "nothing to report" rather than as a match.
 - The UI-test fixture scans two foods and corrects one, so Insights reads 50% —
   a figure distinguishable from both "nothing scanned" and "everything wrong".
   Their names, weights and calories are untouched, so no other fixture assertion
