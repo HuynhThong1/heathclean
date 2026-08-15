@@ -87,7 +87,11 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
 
     public var isLowConfidence: Bool { confidence < Self.lowConfidenceThreshold }
 
-    public var wasCorrected: Bool {
+    /// **Named to match `FoodItem`'s**, and it was not: this used to be
+    /// `wasCorrected`, which on `FoodItem` means *either* correction. Two
+    /// closely related types answering the same question differently under the
+    /// same name is how a §22 rate quietly starts counting the wrong thing.
+    public var wasPortionCorrected: Bool {
         abs(weightGrams - originalWeightGrams) > 0.5
     }
 
@@ -95,6 +99,9 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
     public var wasRenamed: Bool {
         !VietnameseTextComparison.areSameName(name, originalName)
     }
+
+    /// Either half, the same as `FoodItem.wasCorrected`.
+    public var wasCorrected: Bool { wasPortionCorrected || wasRenamed }
 
     /// Nutrition the database did not have, supplied by the user for the weight
     /// currently shown.

@@ -867,6 +867,13 @@ field.
 | Food identification accuracy | `FoodItem.aiEstimatedName` vs `name` |
 | User correction rate | `wasCorrected` = either of the two above |
 
+**`RecognizedFood` and `FoodItem` answer these under the same names**, and for a
+while they did not: `wasCorrected` meant the portion alone on the proposal and
+either half on the saved item. Two closely related types disagreeing under one
+name is how a rate quietly starts counting the wrong thing —
+`AICorrectionTests` now pins that the proposal and the item it becomes give the
+same three answers.
+
 - **`RecognizedFood.originalName` and `originalWeightGrams` are both `let`, and
   that is the whole safety mechanism.** `rename` assigns `.name`; `scaled` and
   `resolved` both go through `var copy = self`. A `let` survives all three by

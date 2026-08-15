@@ -93,6 +93,22 @@ struct AICorrectionTests {
         #expect(item.wasCorrected)
     }
 
+    /// The two types have to answer the same question the same way, or a rate
+    /// computed on one side stops meaning what the other reports. They did not:
+    /// `wasCorrected` on the proposal meant the portion alone while on the saved
+    /// item it meant either half.
+    @Test("a recognized food and the item it becomes agree on what a correction is")
+    func bothTypesAgree() {
+        var food = makeRecognized()
+        food.name = "Bún bò Huế"
+        let scaled = food.scaled(toWeightGrams: 420)
+        let item = scaled.foodItem
+
+        #expect(scaled.wasPortionCorrected == item.wasPortionCorrected)
+        #expect(scaled.wasRenamed == item.wasRenamed)
+        #expect(scaled.wasCorrected == item.wasCorrected)
+    }
+
     @Test("a scan the user accepted as-is counts as no correction")
     func acceptedScanIsNotACorrection() {
         let item = makeRecognized().foodItem
