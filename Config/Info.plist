@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<!-- The name under the icon. BRAND_SPEC settles a split the repo carried for
+	     a while: the scheme and the bundle id say HeathFirst, the design handoff
+	     says HealthClean. The bundle id stays com.thonghm2.heathfirst — changing
+	     it would orphan every installed copy and its store. -->
+	<key>CFBundleDisplayName</key>
+	<string>HealthClean</string>
 	<!-- Injected at build time for device builds. The environment variable with
 	     the same name still takes precedence when launched through Xcode. -->
 	<key>GATEWAY_URL</key>

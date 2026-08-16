@@ -24,19 +24,40 @@ struct HeathFirstApp: App {
     /// above every sheet for the strings inside one to follow the choice.
     @AppStorage(AppLanguage.storageKey) private var language: AppLanguage = .system
 
+    /// BRAND_SPEC §3's splash, and the flag is what makes it **once per cold
+    /// launch**. `App` is not rebuilt when the process is merely suspended and
+    /// resumed, so this stays `false` for the rest of the session and a warm
+    /// launch shows nothing — there is no `scenePhase` hook here on purpose.
+    ///
+    /// Off under `-uiTesting`, the same rule that keeps the notification
+    /// coordinator out of the suite: 860ms of full-screen overlay in front of
+    /// every one of 31 tests is time spent, and a test that has to wait out an
+    /// animation to reach a button is a test about the animation.
+    @State private var isShowingSplash =
+        !ProcessInfo.processInfo.arguments.contains("-uiTesting")
+
     var body: some Scene {
         WindowGroup {
-            RootView()
-                .environment(container)
-                .environment(\.locale, language.resolved.locale)
-                .preferredColorScheme(appearance.colorScheme)
-                // The environment locale reaches `Text`, but not a string a
-                // model already built and stored — those resolve once, at load.
-                // Rebuilding the tree re-runs every `.task`, which is the only
-                // thing that makes them agree. Changing language is deliberate
-                // and rare; losing the navigation stack is the right price for a
-                // screen that is wholly in one language.
-                .id(language.resolved)
+            ZStack {
+                RootView()
+                    .environment(container)
+                    .environment(\.locale, language.resolved.locale)
+                    .preferredColorScheme(appearance.colorScheme)
+                    // The environment locale reaches `Text`, but not a string a
+                    // model already built and stored — those resolve once, at
+                    // load. Rebuilding the tree re-runs every `.task`, which is
+                    // the only thing that makes them agree. Changing language is
+                    // deliberate and rare; losing the navigation stack is the
+                    // right price for a screen that is wholly in one language.
+                    .id(language.resolved)
+
+                if isShowingSplash {
+                    // Over a root that is already mounted and already loading, so
+                    // the overlay gates nothing.
+                    SplashOverlay { isShowingSplash = false }
+                        .zIndex(1)
+                }
+            }
         }
     }
 }

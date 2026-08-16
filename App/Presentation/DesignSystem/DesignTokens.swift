@@ -50,6 +50,19 @@ enum DS {
     static let orange = Color(hex: 0xF37021)   // single accent: scan
     static let green  = Color(hex: 0x12B24C)   // growth / success
 
+    // Logo — absolute, for the same reason the three brand colours are (§4 of
+    // BRAND_SPEC, "ba màu thương hiệu không đổi giữa light/dark"). `BrandTone`
+    // already says which surface the mark is on, so these must not adapt a second
+    // time; they are the *light* values of the semantic tokens they mirror,
+    // pinned. They live here so no hex is written in a view.
+    //
+    // `logoMono` is `textMuted`'s light value. BRAND_SPEC annotates mono as
+    // #6E7F90, which is not this repo's `textMuted` — the instruction to take
+    // colour from `DesignTokens.swift` decided it.
+    static let logoInk   = Color(hex: 0x0F1B27)   // = textStrong, light
+    static let logoPaper = Color(hex: 0xF4F7FA)   // = surfacePage, light
+    static let logoMono  = Color(hex: 0x5B6878)   // = textMuted, light
+
     /// Brand blue where it is drawn as **text or an icon** rather than a fill.
     /// #0062B0 on a #131E29 card is roughly 2.6:1, so the dark side lifts it;
     /// as a fill the brand value still applies.
