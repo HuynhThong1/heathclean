@@ -16,8 +16,8 @@ enum NotificationCopy {
         for kind: PlannedNotification.Kind,
         summary: DailyNutritionSummary
     ) -> (title: String, body: String) {
-        let eaten = VNNumber.int(summary.consumedCalories)
-        let target = VNNumber.int(summary.goal.calories)
+        let eaten = AppNumber.int(summary.consumedCalories)
+        let target = AppNumber.int(summary.goal.calories)
 
         switch kind {
         case .budget(let status):
@@ -26,18 +26,18 @@ enum NotificationCopy {
                 // The same sentence at every rung: the title says which
                 // threshold, the body says where the day actually stands, and
                 // neither repeats the other.
-                body: String(localized: "Đã ăn \(eaten) / \(target) kcal.")
+                body: L("Đã ăn \(eaten) / \(target) kcal.")
             )
         case .mealReminder:
             return (
-                title: String(localized: "Chưa có bữa nào hôm nay"),
-                body: String(localized: "Ghi lại bữa ăn để theo dõi calo trong ngày.")
+                title: L("Chưa có bữa nào hôm nay"),
+                body: L("Ghi lại bữa ăn để theo dõi calo trong ngày.")
             )
         case .dailySummary:
-            let protein = VNNumber.int(summary.consumedProtein)
+            let protein = AppNumber.int(summary.consumedProtein)
             return (
-                title: String(localized: "Tóm tắt hôm nay"),
-                body: String(localized: "Đã ăn \(eaten) / \(target) kcal · \(protein) g đạm.")
+                title: L("Tóm tắt hôm nay"),
+                body: L("Đã ăn \(eaten) / \(target) kcal · \(protein) g đạm.")
             )
         }
     }
@@ -47,15 +47,15 @@ enum NotificationCopy {
         switch status {
         case .normal:
             // Unreachable: `budgetAlert` is silent below the first threshold.
-            return String(localized: "Hôm nay")
+            return L("Hôm nay")
         case .informUser:
-            return String(localized: "Đã dùng 70% ngân sách calo")
+            return L("Đã dùng 70% ngân sách calo")
         case .nearTarget:
-            return String(localized: "Gần mục tiêu calo hôm nay")
+            return L("Gần mục tiêu calo hôm nay")
         case .reached:
-            return String(localized: "Đã đạt mục tiêu calo hôm nay")
+            return L("Đã đạt mục tiêu calo hôm nay")
         case .exceeded:
-            return String(localized: "Đã vượt mục tiêu calo hôm nay")
+            return L("Đã vượt mục tiêu calo hôm nay")
         }
     }
 }

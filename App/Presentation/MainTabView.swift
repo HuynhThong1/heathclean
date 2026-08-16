@@ -8,12 +8,12 @@ enum MainTab: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    var vi: String {
+    var label: String {
         switch self {
-        case .today: "Hôm nay"
-        case .history: "Lịch sử"
-        case .insights: "Thống kê"
-        case .profile: "Tôi"
+        case .today: L("Hôm nay")
+        case .history: L("Lịch sử")
+        case .insights: L("Thống kê")
+        case .profile: L("Tôi")
         }
     }
 
@@ -84,7 +84,7 @@ struct MainTabView: View {
         .hfToast(message: $toast)
         .fullScreenCover(item: $scanType) { type in
             ScanFlowView(type: type) { calories in
-                toast = "Đã lưu bữa ăn · \(VNNumber.int(calories)) kcal"
+                toast = L("Đã lưu bữa ăn · \(AppNumber.int(calories)) kcal")
                 // Every root re-reads, not just the one in front: history and
                 // insights are as stale as the dashboard after a scan.
                 dataVersion += 1
@@ -124,7 +124,7 @@ struct HFTabBar: View {
                     VStack(spacing: DS.s1) {
                         Image(systemName: tab.symbol)
                             .font(.system(size: 21, weight: .semibold))
-                        Text(tab.vi)
+                        Text(tab.label)
                             .font(.custom(DSFontName.semibold, size: 10.5))
                     }
                     .foregroundStyle(selection == tab ? DS.blue : DS.neutral400)

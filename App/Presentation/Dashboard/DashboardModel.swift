@@ -54,7 +54,7 @@ final class DashboardModel {
             summary = try await getDailySummary.execute(date: Date(), goal: stored.goal)
             errorMessage = nil
         } catch {
-            errorMessage = String(localized: "Không tải được bữa ăn hôm nay.")
+            errorMessage = L("Không tải được bữa ăn hôm nay.")
         }
 
         // Every way of changing today's figures from this screen — manual entry,

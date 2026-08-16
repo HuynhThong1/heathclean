@@ -57,7 +57,7 @@ struct InsightsView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text("THỐNG KÊ · INSIGHTS")
+            Text("THỐNG KÊ")
                 .hfStyle(HFType.eyebrow)
                 .foregroundStyle(DS.textSubtle)
             Text("7 ngày qua")
@@ -80,7 +80,7 @@ struct InsightsView: View {
                             .foregroundStyle(DS.textStrong)
                         Text(
                             model.dailyGoalCalories > 0
-                                ? "vs mục tiêu \(VNNumber.int(model.dailyGoalCalories)) kcal"
+                                ? "vs mục tiêu \(AppNumber.int(model.dailyGoalCalories)) kcal"
                                 : "Chưa có mục tiêu"
                         )
                         .hfStyle(HFType.subLabel)
@@ -89,7 +89,7 @@ struct InsightsView: View {
                     Spacer(minLength: 0)
                     if model.hasCalorieData {
                         VStack(alignment: .trailing, spacing: 0) {
-                            Text(VNNumber.int(model.averageCalories))
+                            Text(AppNumber.int(model.averageCalories))
                                 .font(.custom(DSFontName.extrabold, size: 20))
                                 .tracking(-0.4)
                                 .foregroundStyle(DS.textStrong)
@@ -99,7 +99,7 @@ struct InsightsView: View {
                         }
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel(
-                            "Trung bình \(VNNumber.int(model.averageCalories)) kcal mỗi ngày"
+                            "Trung bình \(AppNumber.int(model.averageCalories)) kcal mỗi ngày"
                         )
                         .accessibilityAddTraits(.isStaticText)
                         .accessibilityIdentifier("insights.average")
@@ -165,7 +165,7 @@ struct InsightsView: View {
 
         return VStack(spacing: 3) {
             if isToday && day.isLogged {
-                Text(VNNumber.int(day.calories))
+                Text(AppNumber.int(day.calories))
                     .font(.custom(DSFontName.bold, size: 11))
                     .foregroundStyle(DS.textStrong)
             }
@@ -197,16 +197,23 @@ struct InsightsView: View {
 
     private func calorieChartSummary(_ model: InsightsModel) -> String {
         let days = model.days.filter(\.isLogged).map {
-            "\(dayLabel($0.date)) \(VNNumber.int($0.calories)) kcal"
+            "\(dayLabel($0.date)) \(AppNumber.int($0.calories)) kcal"
         }
-        return "Calo mỗi ngày: " + days.joined(separator: ", ")
+        return L("Calo mỗi ngày: \(days.joined(separator: ", "))")
     }
 
     /// "T2"…"CN", and "Nay" for today (§6.12).
+    /// "T2"…"CN" / "Mon"…"Sun", and "Nay" / "Now" for today (§6.12).
+    ///
+    /// **It stayed three raw literals through the language work**, and the check
+    /// script could not see it: "Nay" and "T%lld" are both catalog keys — the
+    /// *weight* chart's axis puts them there — so the script recognised the text
+    /// and said nothing, while this axis was never looking anything up. Two call
+    /// sites for one string, one localized and one not, is the shape it is blind
+    /// to. Looking at the screen found it.
     private func dayLabel(_ date: Date) -> String {
-        if Calendar.current.isDateInToday(date) { return "Nay" }
-        let weekday = Calendar.current.component(.weekday, from: date)
-        return weekday == 1 ? "CN" : "T\(weekday)"
+        if Calendar.current.isDateInToday(date) { return L("Nay") }
+        return AppDate.weekdayNarrow(for: date)
     }
 
     // MARK: Weight
@@ -227,11 +234,11 @@ struct InsightsView: View {
                     }
                     Spacer(minLength: 0)
                     if let current = series.current {
-                        Text("\(VNNumber.oneDecimal(current)) kg")
+                        Text("\(AppNumber.oneDecimal(current)) kg")
                             .font(.custom(DSFontName.extrabold, size: 20))
                             .tracking(-0.4)
                             .foregroundStyle(DS.textStrong)
-                            .accessibilityLabel("Hiện tại \(VNNumber.oneDecimal(current)) kg")
+                            .accessibilityLabel("Hiện tại \(AppNumber.oneDecimal(current)) kg")
                             .accessibilityIdentifier("insights.currentWeight")
                     }
                 }
@@ -259,14 +266,14 @@ struct InsightsView: View {
     }
 
     private func weightSubtitle(_ model: InsightsModel) -> String {
-        let weeks = "\(model.weightSeries.weekCount) tuần"
+        let weeks = L("\(model.weightSeries.weekCount) tuần")
         guard let target = model.targetWeightKg else { return weeks }
-        return "\(weeks) · mục tiêu \(VNNumber.oneDecimal(target)) kg"
+        return L("\(weeks) · mục tiêu \(AppNumber.oneDecimal(target)) kg")
     }
 
     private func weightChartSummary(_ series: WeightSeries) -> String {
-        let values = series.points.map { "\(VNNumber.oneDecimal($0.kilograms)) kg" }
-        return "Cân nặng theo tuần: " + values.joined(separator: ", ")
+        let values = series.points.map { "\(AppNumber.oneDecimal($0.kilograms)) kg" }
+        return L("Cân nặng theo tuần: \(values.joined(separator: ", "))")
     }
 
     // MARK: Stats
@@ -283,15 +290,13 @@ struct InsightsView: View {
             GridRow {
                 statCell(
                     value: "\(model.daysWithinGoal)/\(InsightsModel.dayCount)",
-                    vi: "ngày trong mục tiêu",
-                    en: "days within goal",
+                    label: "ngày trong mục tiêu",
                     tint: DS.blue,
                     identifier: "insights.daysWithinGoal"
                 )
                 statCell(
                     value: weightChangeText(model.weightSeries),
-                    vi: "trong \(model.weightSeries.weekCount) tuần",
-                    en: "over \(model.weightSeries.weekCount) weeks",
+                    label: "trong \(model.weightSeries.weekCount) tuần",
                     tint: DS.green,
                     identifier: "insights.weightChange"
                 )
@@ -301,7 +306,7 @@ struct InsightsView: View {
                 // above it. The empty half is where §6.12's fourth cell would be.
                 GridRow {
                     statCell(
-                        value: VNNumber.percent(model.correctionRate),
+                        value: AppNumber.percent(model.correctionRate),
                         // §6.12 labels this "AI cần sửa khẩu phần", and it was
                         // right when the portion was the only correction
                         // recorded. The app now also keeps the name the model
@@ -309,8 +314,7 @@ struct InsightsView: View {
                         // precisely the errors that matter most — a dish read as
                         // the wrong dish at high confidence, where the portion
                         // was never wrong at all.
-                        vi: "kết quả AI phải sửa",
-                        en: "AI results corrected",
+                        label: "kết quả AI phải sửa",
                         // The one orange thing on this screen, and it is about
                         // the scan — which is what §3's accent rule reserves
                         // orange for.
@@ -326,13 +330,12 @@ struct InsightsView: View {
         guard let change = series.change else { return "—" }
         // A minus sign, not a hyphen: this is a number, not a dash.
         let sign = change < 0 ? "−" : (change > 0 ? "+" : "±")
-        return "\(sign)\(VNNumber.oneDecimal(abs(change))) kg"
+        return "\(sign)\(AppNumber.oneDecimal(abs(change))) kg"
     }
 
     private func statCell(
         value: String,
-        vi: String,
-        en: String,
+        label: LocalizedStringKey,
         tint: Color,
         identifier: String
     ) -> some View {
@@ -341,7 +344,7 @@ struct InsightsView: View {
                 .font(.custom(DSFontName.extrabold, size: 22))
                 .tracking(-0.44)
                 .foregroundStyle(tint)
-            LabelPair(vi: vi, en: en)
+            HFLabel(label)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(DS.s4)
@@ -352,7 +355,7 @@ struct InsightsView: View {
                 .strokeBorder(DS.borderSubtle, lineWidth: 1)
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(value) \(vi)")
+        .accessibilityLabel(Text(verbatim: value + " ") + Text(label))
         .accessibilityAddTraits(.isStaticText)
         .accessibilityIdentifier(identifier)
     }

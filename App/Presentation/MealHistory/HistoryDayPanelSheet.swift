@@ -109,11 +109,11 @@ struct HistoryDayPanelSheet: View {
     private var header: some View {
         HStack(alignment: .top, spacing: DS.s2) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(VietnameseDate.fullDayText(for: day.date))
+                Text(AppDate.fullDayText(for: day.date))
                     .font(.custom(DSFontName.bold, size: 18))
                     .foregroundStyle(DS.textStrong)
                 if isToday {
-                    Text("Hôm nay · Today")
+                    Text("Hôm nay")
                         .font(.custom(DSFontName.regular, size: 11.5))
                         .foregroundStyle(DS.textMuted)
                 }
@@ -146,7 +146,7 @@ struct HistoryDayPanelSheet: View {
     private var totals: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .firstTextBaseline, spacing: 7) {
-                Text(VNNumber.int(day.calories))
+                Text(AppNumber.int(day.calories))
                     .font(.custom(DSFontName.bold, size: 30))
                     .tracking(-0.3)
                     .monospacedDigit()
@@ -173,17 +173,16 @@ struct HistoryDayPanelSheet: View {
 
     private var goalText: String {
         goalCalories > 0
-            ? String(localized: "kcal / mục tiêu \(VNNumber.int(goalCalories))")
-            : String(localized: "kcal")
+            ? L("kcal / mục tiêu \(AppNumber.int(goalCalories))")
+            : L("kcal")
     }
 
     private var caloriesLabel: String {
         guard goalCalories > 0 else {
-            return String(localized: "\(VNNumber.int(day.calories)) ki-lô ca-lo đã ghi")
+            return L("\(AppNumber.int(day.calories)) ki-lô ca-lo đã ghi")
         }
-        return String(
-            localized:
-                "\(VNNumber.int(day.calories)) ki-lô ca-lo trên mục tiêu \(VNNumber.int(goalCalories))"
+        return L(
+            "\(AppNumber.int(day.calories)) ki-lô ca-lo trên mục tiêu \(AppNumber.int(goalCalories))"
         )
     }
 
@@ -191,40 +190,37 @@ struct HistoryDayPanelSheet: View {
     /// detail. §0.3: a measurement, never an instruction.
     private var deltaText: String {
         let mealCount = day.meals.count
-        guard goalCalories > 0 else { return String(localized: "\(mealCount) bữa") }
+        guard goalCalories > 0 else { return L("\(mealCount) bữa") }
         let difference = day.calories - goalCalories
         if abs(difference) <= goalCalories * 0.02 {
-            return String(localized: "Đạt mục tiêu · \(mealCount) bữa")
+            return L("Đạt mục tiêu · \(mealCount) bữa")
         }
         if difference > 0 {
-            return String(localized: "Vượt \(VNNumber.int(difference)) kcal · \(mealCount) bữa")
+            return L("Vượt \(AppNumber.int(difference)) kcal · \(mealCount) bữa")
         }
-        return String(localized: "Còn \(VNNumber.int(-difference)) kcal · \(mealCount) bữa")
+        return L("Còn \(AppNumber.int(-difference)) kcal · \(mealCount) bữa")
     }
 
     // MARK: Macros
 
-    /// §6's three cells. Bilingual labels per §4, and each reads its own percentage
-    /// of target aloud (§7) — a 4pt bar says "roughly" and nothing more.
+    /// §6's three cells. Each reads its own percentage of target aloud (§7) — a
+    /// 4pt bar says "roughly" and nothing more.
     private func macros(_ goal: NutritionGoal) -> some View {
         HStack(alignment: .top, spacing: 14) {
             DayMacroCell(
-                vi: "Đạm",
-                en: "Protein",
+                label: "Đạm",
                 grams: day.protein,
                 targetGrams: goal.protein,
                 tint: DS.blue
             )
             DayMacroCell(
-                vi: "Tinh bột",
-                en: "Carbs",
+                label: "Tinh bột",
                 grams: day.carbohydrates,
                 targetGrams: goal.carbohydrates,
                 tint: DS.blue300
             )
             DayMacroCell(
-                vi: "Béo",
-                en: "Fat",
+                label: "Béo",
                 grams: day.fat,
                 targetGrams: goal.fat,
                 tint: DS.blue200
@@ -250,7 +246,7 @@ struct HistoryDayPanelSheet: View {
             route = meal.type
         } label: {
             HStack(alignment: .top, spacing: 11) {
-                Text(VietnameseDate.time(for: meal.date))
+                Text(AppDate.time(for: meal.date))
                     .font(.custom(DSFontName.semibold, size: 11.5))
                     .monospacedDigit()
                     .foregroundStyle(DS.textMuted)
@@ -265,7 +261,7 @@ struct HistoryDayPanelSheet: View {
                 }
 
                 VStack(alignment: .leading, spacing: 1) {
-                    Text("\(meal.type.vi) · \(HistoryDayCard.chipName(for: meal))")
+                    Text("\(meal.type.label) · \(HistoryDayCard.chipName(for: meal))")
                         .font(.custom(DSFontName.semibold, size: 13.5))
                         .foregroundStyle(DS.textStrong)
                         .lineLimit(2)
@@ -277,7 +273,7 @@ struct HistoryDayPanelSheet: View {
 
                 Spacer(minLength: DS.s2)
 
-                Text(VNNumber.int(meal.calories))
+                Text(AppNumber.int(meal.calories))
                     .font(.custom(DSFontName.bold, size: 13))
                     .monospacedDigit()
                     .foregroundStyle(DS.textBody)
@@ -300,19 +296,18 @@ struct HistoryDayPanelSheet: View {
     /// figure that is actually informative in each case.
     private func portionText(_ meal: Meal) -> String {
         guard meal.items.count == 1, let only = meal.items.first else {
-            return String(localized: "\(meal.items.count) món")
+            return L("\(meal.items.count) món")
         }
-        return "\(VNNumber.int(only.weightGrams)) g"
+        return "\(AppNumber.int(only.weightGrams)) g"
     }
 
     /// §7: "06:50, Bữa sáng, Phở bò, 480 ki-lô ca-lo. Có ảnh."
     private func label(for meal: Meal) -> String {
-        var label = String(
-            localized:
-                "\(VietnameseDate.time(for: meal.date)), \(meal.type.vi), \(HistoryDayCard.chipName(for: meal)), \(VNNumber.int(meal.calories)) ki-lô ca-lo."
+        var label = L(
+            "\(AppDate.time(for: meal.date)), \(meal.type.label), \(HistoryDayCard.chipName(for: meal)), \(AppNumber.int(meal.calories)) ki-lô ca-lo."
         )
         if !meal.photos.isEmpty {
-            label += String(localized: " Có ảnh.")
+            label += L(" Có ảnh.")
         }
         return label
     }
@@ -321,8 +316,7 @@ struct HistoryDayPanelSheet: View {
 /// One of the day panel's three macro cells (§6): label, grams, and a 4pt bar
 /// against the day's target.
 struct DayMacroCell: View {
-    let vi: String
-    let en: String
+    let label: LocalizedStringKey
     let grams: Double
     /// 0 when the profile has no target for it, which hides the bar rather than
     /// drawing an empty one.
@@ -341,11 +335,11 @@ struct DayMacroCell: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("\(vi) / \(en)")
+            Text(label)
                 .font(.custom(DSFontName.regular, size: 11))
                 .foregroundStyle(DS.textMuted)
                 .lineLimit(2)
-            Text("\(VNNumber.int(grams)) g")
+            Text("\(AppNumber.int(grams)) g")
                 .font(.custom(DSFontName.bold, size: 14))
                 .monospacedDigit()
                 .foregroundStyle(DS.textStrong)
@@ -371,13 +365,13 @@ struct DayMacroCell: View {
 
     /// §7: "Đạm 96 gam, 78 phần trăm mục tiêu." The percentage is not clamped the
     /// way the bar is — 130% of a protein target is worth hearing.
-    private var accessibilityLabel: String {
+    private var accessibilityLabel: Text {
         guard targetGrams > 0 else {
-            return String(localized: "\(vi) \(VNNumber.int(grams)) gam")
+            return Text(label) + Text(verbatim: " \(AppNumber.int(grams)) ") + Text("gam")
         }
-        return String(
-            localized: "\(vi) \(VNNumber.int(grams)) gam, \(percent) phần trăm mục tiêu."
-        )
+        return Text(label)
+            + Text(verbatim: " ")
+            + Text("\(AppNumber.int(grams)) gam, \(percent) phần trăm mục tiêu.")
     }
 }
 

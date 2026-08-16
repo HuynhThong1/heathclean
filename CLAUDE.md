@@ -270,8 +270,10 @@ logged-day cards with search and filters) is the one to build; the same page's
   Green `#12B24C` is growth/success only.
 - Over-budget state is **neutral grey, never red, never a command.** This is a
   health app for casual users, not a scold.
-- Every label is bilingual: Vietnamese primary (14.5px/650) with English beneath
-  (11.5px, `textSubtle`). Use `LabelPair`.
+- **One language on screen, chosen on Profile.** §4 draws every label bilingual —
+  Vietnamese primary with English beneath — and that is no longer what the app
+  does; see the Language section for why the switch replaced it. Use `HFLabel`,
+  whose second line is now for a genuine second *fact*, never a translation.
 - AI results always show confidence and are always correctable. Nothing is saved
   before the user confirms.
 - Hit targets ≥ 44pt. Font: Be Vietnam Pro (or the official FPT face) — never
@@ -398,7 +400,7 @@ outlived it and are documented where they now live:
   render and the formatter cannot be cached in a `static let`, not being
   `Sendable`, so it would be constructed every pass.
 
-`VietnameseDate.weekdayShort` and `dayText` went with the strip — nothing else
+`AppDate.weekdayShort` and `dayText` went with the strip — nothing else
 called them. `InsightsView` still carries its own three-line weekday helper, which
 returns "Nay" for today; that is the copy the bar chart wants.
 
@@ -562,13 +564,13 @@ one-line divider for an empty month, and a day panel with macros.
   schedules nothing" mistake with less to show for it — and the notification
   switches, which used to be this rule's other example, were only added once
   something was behind them.
-- Localization means the **catalog**, not a language switch: every new string goes
-  through `Text` or `String(localized:)` and is synced into `Localizable.xcstrings`
-  (165 → 208 keys: +47 for HISTORY_SPEC, −10 with the week strip, +6 that had been
-  missing all along — see `GrayNote` in the Localization section; then 225, with
-  §19's notifications and the three tab-root eyebrows). A separator or
+- Every new string goes through `Text` or `L(…)` and is synced into
+  `Localizable.xcstrings` (165 → 208 keys: +47 for HISTORY_SPEC, −10 with the week
+  strip, +6 that had been missing all along — see `GrayNote` in the Localization
+  section; then 225 with §19's notifications and the tab-root eyebrows, and 348
+  once the bilingual labels collapsed and every key gained an `en`). A separator or
   other non-copy literal uses `Text(verbatim:)`, or it lands in the catalog as a key
-  to translate. §4's bilingual `LabelPair` is why there is still no `en` locale.
+  to translate.
 
 #### Meal photos (stage 2)
 
@@ -674,9 +676,11 @@ manual setup to go green is worse than a documented procedure.
 reason `AppAppearance` does — except it cannot be an `@AppStorage`, because the
 coordinator is not a view.
 
-The split is the same one `VietnameseCopy.swift` records: `PlannedNotification`
-carries a `Kind`, never a sentence, so the Vietnamese-primary copy stays in the
-App layer and Domain is not changed to fit the UI.
+The split is the same one `DisplayCopy.swift` records: `PlannedNotification`
+carries a `Kind`, never a sentence, so the copy stays in the App layer and Domain
+is not changed to fit the UI. **Changing the language re-plans**, because a
+notification's words are chosen when it is scheduled — the picker on Profile calls
+`refresh()` for the same reason the switches beside it do.
 
 - **§19 has four budget triggers and §6.13 draws three switches.** `reached` and
   `exceeded` share one: passing the target and hitting it are one event to the
@@ -977,8 +981,10 @@ find ~/Library/Developer/Xcode/DerivedData/HeathFirst-*/Build/Intermediates.noin
 
 Only `Text("…")` and other `LocalizedStringKey` positions are extracted
 automatically. A string built as a plain `String` — an error message, a status
-line — must be wrapped in `String(localized:)` or it silently stays out of the
-catalog.
+line — must be wrapped in **`L(…)`** or it silently stays out of the catalog.
+`L` is this app's replacement for `String(localized:)`; see the Language section
+for why, and note that extraction still works through it — the compiler follows
+the `String.LocalizationValue` literal at the call site.
 
 **A shared view whose text parameter is a `String` takes every literal written into
 it out of the catalog, and nothing says so.** `GrayNote` was declared `let text:
@@ -998,13 +1004,111 @@ DerivedData keeps the `.stringsdata` of **deleted** source files. So a sync afte
 deleting a screen quietly reports nothing stale; remove the orphaned
 `<DeletedFile>.stringsdata` (or clean-build) or the dead keys stay.
 
-**No translations have been added, deliberately.** §4 makes the UI *bilingual*:
-`LabelPair` shows Vietnamese and English at once, by design. That is not the
-same as switching language, and nothing in the handoff asks for a language
-switch — adding an `en` locale would turn "Bước chân / Step count" into
-"Step count / Step count" on an English device. The catalog exists so copy can
-be edited without touching Swift, and so translation is possible when someone
-decides what it should mean.
+**The catalog is fully translated: 348 keys, `vi` source and `en`.** It used to
+carry no translations at all, deliberately, because §4 made the UI *bilingual* —
+`LabelPair` drew Vietnamese and English at once, so an `en` locale would have
+turned "Bước chân / Step count" into "Step count / Step count". That is no longer
+the shape of the UI; see the Language section.
+
+A key with no `en` value falls back to the key itself, which is Vietnamese — so a
+missed translation shows up as one Vietnamese line in an English screen rather
+than as an error. `Scripts/find-untranslated.py` is the check, and it looks for
+three silent failures — see the Language section for what each one is and for the
+one it cannot see.
+
+### Language (Tiếng Việt / English)
+
+`AppLanguage` (`App/Presentation/DesignSystem/AppLanguage.swift`) is the same
+shape as `AppAppearance` — `@AppStorage`, three cases, read at the app root — and
+resolves to a `ResolvedLanguage`, which is a separate type so `.system` can never
+reach a `Locale(identifier:)` or an `.lproj` lookup and fail quietly.
+
+**This replaced §4's bilingual labels rather than joining them.** The handoff
+draws Vietnamese on the primary line with English beneath, which is right when
+there is no way to choose; with a switch it shows the user a language they did not
+ask for, and an `en` locale would have printed "Step count / Step count".
+`LabelPair` is therefore `HFLabel` and draws one line. Its `caption` slot is *not*
+the English coming back: it is for a genuine second fact — "Dùng cho công thức
+Mifflin-St Jeor" under "Giới tính sinh học" — which lived in the `en:` parameter
+only because that was the only parameter there was.
+
+**There are two resolution paths and only one is automatic.**
+
+- `Text("…")` inside a view follows `\.locale`, set once at the app root beside
+  `preferredColorScheme` and for the same reason: it has to sit above every sheet.
+- **`String(localized:)` does not.** It asks `Bundle.main.preferredLocalizations`
+  — the *phone's* language, not the choice on Profile — so a model that builds its
+  own copy would leave half a screen in the other language. Every string built
+  outside a `View` goes through **`L(…)`**, which passes the resolved language's
+  bundle and locale explicitly. Extraction still works: the compiler follows the
+  `String.LocalizationValue` literal at the `L` call site, so `xcstringstool` sees
+  it exactly as it saw `String(localized:)`.
+- The app root also takes `.id(language.resolved)`. A string a model already built
+  and stored resolved once, at load, and no environment change reaches it;
+  rebuilding the tree re-runs every `.task`. Changing language is deliberate and
+  rare, and losing the navigation stack is the right price for a screen that is
+  wholly in one language.
+
+**Numbers and dates follow the language**, which is why `VNNumber` is `AppNumber`
+and `VietnameseDate` is `AppDate` — the old names became lies the moment either
+could render "Thursday, 8/13". `AppDate` is mostly ICU: a localized *template*
+("EEEE d M") lets each locale order and punctuate, so `vi_VN` answers "Thứ Năm,
+13/8" and `en_US` "Thursday, 8/13" from one line. Four functions still branch,
+each for its own reason, and the comments say which: ICU decides *format*, the
+design decides *copy*, and where the handoff wrote the Vietnamese words itself
+those words win ("Tháng 8, 2026", "Th 5").
+
+**`weekdayNarrow` is the fourth, and it exists because two screens wrote the same
+string meaning different things.** §6.12's bar chart labels a weekday "T2"; the
+weight chart beside it labels a *week* "T2". One catalog key, `T%lld`, and
+whichever English you give it is wrong on one of the two charts — "W2" under a
+Monday, or "Mon" over week two. The weekday one therefore branches in `AppDate`
+and never reaches the catalog, and the week one keeps the key.
+
+That pair is also the one thing `find-untranslated.py` structurally cannot catch:
+the calorie chart's axis was three raw literals, and the script saw text that
+matched a key another screen had registered and said nothing. **A string
+localized at one call site and raw at another is invisible to it.** Looking at
+the screen in English is what found it, which is why that check is worth doing by
+hand after a change of this size.
+
+**Three things deliberately do not follow the language**, and all three look like
+they should:
+
+- `HistoryCalendar.mondayFirst()` sets `firstWeekday` outright and attaches no
+  locale. It used to take Monday from `vi_VN`, which was the same answer by
+  accident — `en_US` starts the week on Sunday, and these boundaries are shared
+  with the dashboard through `GetMealHistoryMonthsUseCase`, so a display
+  preference would have moved which week a 23:30 meal belongs to.
+- `VietnameseTextComparison` (Domain) and `HistorySearchText` stay `vi_VN`. They
+  fold diacritics for **dish names**, which are Vietnamese whatever the UI reads.
+- System permission dialogs read `Config/Info.plist` and follow the *phone's*
+  language — iOS picks before the app runs. Those three `…UsageDescription`
+  strings are English and are not localized at all; putting them in an
+  `InfoPlist.xcstrings` is separate work and still would not obey the switch.
+
+`-uiTesting` pins the language to Vietnamese unless `-appLanguage en` says
+otherwise, and `applyLaunchOverrideIfNeeded` writes that into `UserDefaults` so
+`@AppStorage` and `AppLanguage.current` cannot disagree. Without the pin the whole
+suite would fail on a simulator set to English, for a reason having nothing to do
+with the code. Two tests cover the feature:
+`testLaunchingInEnglishTranslatesBothTheCopyAndTheNumbers` (copy and figures
+travel by different mechanisms and fail independently) and
+`testSwitchingLanguageOnProfileChangesTheOtherTabs` (what `.id()` buys, and the
+half that fails silently).
+
+`Scripts/find-untranslated.py` is the standing check, and it looks for three
+failures, all of which render as working software: a Vietnamese literal that never
+became a key, a key with no `en`, and **any surviving `String(localized:)`**.
+Deliberate Vietnamese is listed in the script's `EXEMPT` with its reason.
+
+That third check is there because the conversion to `L()` was done with a search
+for `String(localized: ` on one line, and **eight calls wrapped the argument onto
+the next line and were missed** — including the rescan warning's first sentence and
+the History search empty state, both visible copy. Nothing else finds them: they
+resolve to a real catalog key, so the first two checks see nothing wrong, and the
+only symptom is a sentence in the phone's language on a screen drawn in the other.
+A code review found them; matching `localized:` alone is what keeps them found.
 
 ### Two token sets exist — know which you are in
 
@@ -1055,12 +1159,10 @@ bearing on any calculation, so it is not Domain state.
 because their phone is dark. `.system` becomes the right default once the dark
 values are real.
 
-A language switch is **not** part of this and should not be added casually: §4's
-`LabelPair` shows Vietnamese and English *at the same time*, so "English mode"
-would render "Step count / Step count" unless `LabelPair` is redesigned to show
-one language — which changes every screen. The catalog also still has 140 keys
-and only a `vi` locale, so there is nothing to switch to yet. It needs a design
-decision first, not a toggle.
+The language switch beside it works the same way and is documented in the
+Language section. It is the same shape — `@AppStorage`, three cases, applied at
+the app root — with one difference that matters: its default is `.system`, because
+unlike the dark palette there is nothing invented about the English.
 
 ## Scope
 
@@ -1103,6 +1205,11 @@ is a data-collection job rather than a coding one.
 
 Deviations from `plan.md` already made:
 
+- **The handoff's §4 bilingual labels are gone**, replaced by a language switch on
+  Profile and a fully translated catalog. The two are alternatives, not additions:
+  a bilingual label under an English UI prints "Step count / Step count". The
+  handoff and `plan.md` still describe the bilingual UI and are not edited — they
+  are the spec, not a log. See the Language section.
 - `UserProfile` gains `biologicalSex` and `activityLevel` (§13 omitted them but
   Mifflin-St Jeor needs them).
 - `UserRepository` is `load()` / `save(profile:goal:)` as one unit rather than

@@ -67,10 +67,10 @@ final class MealEntryModel {
     var blockedReason: String? {
         guard !isSaving else { return nil }
         if drafts.contains(where: { $0.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }) {
-            return String(localized: "Nhập tên món trước khi lưu")
+            return L("Nhập tên món trước khi lưu")
         }
         if !hasCalories {
-            return String(localized: "Nhập calo trước khi lưu")
+            return L("Nhập calo trước khi lưu")
         }
         return nil
     }
@@ -94,7 +94,7 @@ final class MealEntryModel {
             try await saveMeal.execute(meal)
             return true
         } catch {
-            errorMessage = String(localized: "Không lưu được bữa ăn. Vui lòng thử lại.")
+            errorMessage = L("Không lưu được bữa ăn. Vui lòng thử lại.")
             return false
         }
     }

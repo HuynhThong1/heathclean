@@ -21,19 +21,11 @@ enum AppAppearance: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    var vi: String {
+    var label: String {
         switch self {
-        case .light: "Sáng"
-        case .dark: "Tối"
-        case .system: "Theo hệ thống"
-        }
-    }
-
-    var en: String {
-        switch self {
-        case .light: "Light"
-        case .dark: "Dark"
-        case .system: "System"
+        case .light: L("Sáng")
+        case .dark: L("Tối")
+        case .system: L("Theo hệ thống")
         }
     }
 

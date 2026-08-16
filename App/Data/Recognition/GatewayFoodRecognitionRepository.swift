@@ -69,7 +69,7 @@ struct GatewayFoodRecognitionRepository: FoodRecognitionRepository {
     private static func detail(from data: Data) -> String {
         struct Failure: Decodable { let detail: String }
         return (try? JSONDecoder().decode(Failure.self, from: data))?.detail
-            ?? "Không phân tích được ảnh."
+            ?? L("Không phân tích được ảnh.")
     }
 
     private static func multipartBody(image: Data, mimeType: String, boundary: String) -> Data {

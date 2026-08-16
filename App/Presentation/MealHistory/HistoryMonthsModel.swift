@@ -139,11 +139,11 @@ final class HistoryMonthsModel {
     /// "4 bữa có “phở” · 3 tháng gần nhất" (§5).
     var resultsHeader: String {
         let count = results.count
-        let months = String(localized: "\(loadedMonthCount) tháng gần nhất")
+        let months = L("\(loadedMonthCount) tháng gần nhất")
         guard !activeQuery.isEmpty else {
-            return String(localized: "\(count) bữa · \(months)")
+            return L("\(count) bữa · \(months)")
         }
-        return String(localized: "\(count) bữa có “\(activeQuery)” · \(months)")
+        return L("\(count) bữa có “\(activeQuery)” · \(months)")
     }
 
     var selectedDay: HistoryDay? {
@@ -277,7 +277,7 @@ final class HistoryMonthsModel {
                             hit(meal, on: day.date, title: matched.map(\.name).joined(separator: ", "))
                         )
                     } else if HistorySearchText.contains(
-                        foldedQuery: foldedQuery, in: meal.type.vi
+                        foldedQuery: foldedQuery, in: meal.type.label
                     ) {
                         // §5's scope is the dish *and* the meal's name, so "sáng"
                         // finds every breakfast.
@@ -333,7 +333,7 @@ final class HistoryMonthsModel {
             rebuildResults()
         } catch {
             guard generation == loadGeneration else { return }
-            errorMessage = String(localized: "Không đọc được dữ liệu")
+            errorMessage = L("Không đọc được dữ liệu")
         }
     }
 
@@ -378,7 +378,7 @@ final class HistoryMonthsModel {
                 loadingMonthLabel = monthLabel(offset: loadedMonthCount, today: today)
             } catch {
                 guard generation == loadGeneration else { return }
-                errorMessage = String(localized: "Không đọc được dữ liệu")
+                errorMessage = L("Không đọc được dữ liệu")
                 return
             }
         }
@@ -406,7 +406,7 @@ final class HistoryMonthsModel {
         else { return nil }
         let parts = calendar.dateComponents([.year, .month], from: start)
         guard let year = parts.year, let month = parts.month else { return nil }
-        return VietnameseDate.monthYearText(year: year, month: month)
+        return AppDate.monthYearText(year: year, month: month)
     }
 
     /// Whether a month falls inside the period the user has been logging in.

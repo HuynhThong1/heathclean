@@ -195,7 +195,7 @@ struct CameraCaptureView: View {
 /// than a method because `PhotosPicker`'s label is built outside the main actor.
 private struct SideButton: View {
     let symbol: String
-    let caption: String
+    let caption: LocalizedStringKey
 
     var body: some View {
         VStack(spacing: 5) {

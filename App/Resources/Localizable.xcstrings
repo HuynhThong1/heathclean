@@ -1,943 +1,5755 @@
 {
-  "sourceLanguage" : "vi",
-  "strings" : {
-    "" : {
-
-    },
-    " / %@ g" : {
-
-    },
-    " Có ảnh." : {
-
-    },
-    "%@ %@" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ %2$@"
+  "sourceLanguage": "vi",
+  "strings": {
+    "": {},
+    " / %@ g": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " / %@ g"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " / %@ g"
           }
         }
       }
     },
-    "%@ %@ gam" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ %2$@ gam"
+    " Có ảnh.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " Has photos."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " Có ảnh."
           }
         }
       }
     },
-    "%@ %@ gam, %lld phần trăm mục tiêu." : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ %2$@ gam, %3$lld phần trăm mục tiêu."
+    "%@ %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ %2$@"
           }
         }
       }
     },
-    "%@ / %@" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ / %2$@"
+    "%@ Ghi lúc %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ Logged at %@."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ Ghi lúc %2$@."
           }
         }
       }
     },
-    "%@ g" : {
-
-    },
-    "%@ kcal" : {
-
-    },
-    "%@ kcal còn lại" : {
-
-    },
-    "%@ kcal mỗi ngày" : {
-
-    },
-    "%@ kcal vượt mục tiêu" : {
-
-    },
-    "%@ kg" : {
-
-    },
-    "%@ ki-lô ca-lo trên mục tiêu %@" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ ki-lô ca-lo trên mục tiêu %2$@"
+    "%@ g": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ g"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ g"
           }
         }
       }
     },
-    "%@ ki-lô ca-lo trên mục tiêu %@." : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ ki-lô ca-lo trên mục tiêu %2$@."
+    "%@ gam, %lld phần trăm mục tiêu.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ grams, %lld percent of target."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ gam, %2$lld phần trăm mục tiêu."
           }
         }
       }
     },
-    "%@ ki-lô ca-lo đã ghi" : {
-
-    },
-    "%@ ki-lô ca-lo." : {
-
-    },
-    "%@ · %@" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ · %2$@"
+    "%@ kcal": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kcal"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kcal"
           }
         }
       }
     },
-    "%@ — chưa ghi ngày nào" : {
-
-    },
-    "%@, %@" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@, %2$@"
+    "%@ kcal còn lại": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kcal remaining"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kcal còn lại"
           }
         }
       }
     },
-    "%@, %@ %@" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@, %2$@ %3$@"
+    "%@ kcal mỗi ngày": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kcal a day"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kcal mỗi ngày"
           }
         }
       }
     },
-    "%@, %@ gam" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@, %2$@ gam"
+    "%@ kcal vượt mục tiêu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kcal over target"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kcal vượt mục tiêu"
           }
         }
       }
     },
-    "%@, %@ gam, %@ kcal, %@" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@, %2$@ gam, %3$@ kcal, %4$@"
+    "%@ kg": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kg"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kg"
           }
         }
       }
     },
-    "%@, %@ kcal, %@ gam" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@, %2$@ kcal, %3$@ gam"
+    "%@ ki-lô ca-lo trên mục tiêu %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kilocalories against a target of %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ ki-lô ca-lo trên mục tiêu %2$@"
           }
         }
       }
     },
-    "%@, %@, %@ trên %@ gam" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@, %2$@, %3$@ trên %4$@ gam"
+    "%@ ki-lô ca-lo trên mục tiêu %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kilocalories against a target of %@."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ ki-lô ca-lo trên mục tiêu %2$@."
           }
         }
       }
     },
-    "%@, %@, %@, %@ ki-lô ca-lo." : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@, %2$@, %3$@, %4$@ ki-lô ca-lo."
+    "%@ ki-lô ca-lo đã ghi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kilocalories logged"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ki-lô ca-lo đã ghi"
           }
         }
       }
     },
-    "%@. %@" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@. %2$@"
+    "%@ ki-lô ca-lo.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kilocalories."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ki-lô ca-lo."
           }
         }
       }
     },
-    "%lld" : {
-
-    },
-    "%lld bữa" : {
-
-    },
-    "%lld bữa có “%@” · %@" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld bữa có “%2$@” · %3$@"
+    "%@ · %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ · %2$@"
           }
         }
       }
     },
-    "%lld bữa · %@" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld bữa · %2$@"
+    "%@ · mục tiêu %@ kg": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · target %@ kg"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@ · mục tiêu %2$@ kg"
           }
         }
       }
     },
-    "%lld bữa: %@." : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld bữa: %2$@."
+    "%@ — chưa ghi ngày nào": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ — no days logged"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ — chưa ghi ngày nào"
           }
         }
       }
     },
-    "%lld g" : {
-
-    },
-    "%lld kết quả" : {
-
-    },
-    "%lld món" : {
-
-    },
-    "%lld ngày ghi · TB %@ kcal" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld ngày ghi · TB %2$@ kcal"
+    "%@, %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@, %2$@"
           }
         }
       }
     },
-    "%lld tháng gần nhất" : {
-
-    },
-    "%lld%%" : {
-
-    },
-    "+%lld món" : {
-
-    },
-    "7 ngày qua" : {
-
-    },
-    "AI" : {
-
-    },
-    "AI ANALYSIS · you confirm" : {
-
-    },
-    "AI nhận diện món và ước lượng khẩu phần. Calo do cơ sở dữ liệu dinh dưỡng tính — hãy sửa khẩu phần nếu chưa đúng." : {
-
-    },
-    "AI nhận diện món ăn, cơ sở dữ liệu dinh dưỡng tính calo, và bạn là người xác nhận cuối cùng." : {
-
-    },
-    "AI nhận diện món ăn, cơ sở dữ liệu tính calo, và bạn xác nhận trước khi lưu." : {
-
-    },
-    "AI ước lượng ban đầu: %@ g" : {
-
-    },
-    "Analyzing your meal" : {
-
-    },
-    "Apple Health hiện không khả dụng. Bạn có thể kết nối sau." : {
-
-    },
-    "BMI" : {
-
-    },
-    "BMI %@" : {
-
-    },
-    "BMI %@ · %@" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "BMI %1$@ · %2$@"
+    "%@, %@ gam": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@ grams"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@, %2$@ gam"
           }
         }
       }
     },
-    "BMI %@, %@" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "BMI %1$@, %2$@"
+    "%@, %@ gam, %@ kcal, %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@ grams, %@ kcal, %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@, %2$@ gam, %3$@ kcal, %4$@"
           }
         }
       }
     },
-    "BMI %@, %@, %@" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "BMI %1$@, %2$@, %3$@"
+    "%@, %@ kcal, %@ gam": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@ kcal, %@ grams"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@, %2$@ kcal, %3$@ gam"
           }
         }
       }
     },
-    "BMI chỉ là bối cảnh sức khỏe — mục tiêu calo được tính từ tuổi, chiều cao, cân nặng, vận động và mục tiêu của bạn." : {
-
-    },
-    "BMI, %@, %@" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "BMI, %1$@, %2$@"
+    "%@, %@, %@, %@ ki-lô ca-lo.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@, %@, %@ kilocalories."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@, %2$@, %3$@, %4$@ ki-lô ca-lo."
           }
         }
       }
     },
-    "Buổi tối chỉ có một thông báo: tóm tắt nếu hôm đó bạn đã ghi bữa, nhắc ghi nếu chưa." : {
-
-    },
-    "Bạn còn %@ kcal cho hôm nay." : {
-
-    },
-    "Bạn vẫn có thể chọn ảnh từ thư viện." : {
-
-    },
-    "Bạn đang gần mục tiêu calo hôm nay." : {
-
-    },
-    "Bạn đã vượt mục tiêu hôm nay %@ kcal." : {
-
-    },
-    "Bạn đã đạt mục tiêu calo hôm nay." : {
-
-    },
-    "Bảng màu tối được suy ra trong dự án này, không phải màu chính thức của bộ nhận diện." : {
-
-    },
-    "Bật thông báo" : {
-
-    },
-    "Bắt đầu" : {
-
-    },
-    "Bỏ kết quả" : {
-
-    },
-    "Bỏ kết quả quét?" : {
-
-    },
-    "Bối cảnh sức khỏe, không dùng để tính calo" : {
-
-    },
-    "Bữa ăn chưa được lưu. %lld món AI nhận diện và mọi chỉnh sửa của bạn sẽ mất." : {
-
-    },
-    "Bữa ăn: %@. Chạm để đổi bữa." : {
-
-    },
-    "CALO MỖI NGÀY" : {
-
-    },
-    "Calo mỗi ngày" : {
-
-    },
-    "Cho phép truy cập" : {
-
-    },
-    "Chưa có bữa nào hôm nay" : {
-
-    },
-    "Chưa có bữa nào được ghi" : {
-
-    },
-    "Chưa có bữa ăn nào trong 7 ngày qua." : {
-
-    },
-    "Chưa có cân nặng nào được ghi." : {
-
-    },
-    "Chưa có mục tiêu" : {
-
-    },
-    "Chưa có quyền dùng máy ảnh." : {
-
-    },
-    "Chưa có trong cơ sở dữ liệu — mở món này để nhập dinh dưỡng." : {
-
-    },
-    "Chưa kết nối" : {
-
-    },
-    "Chưa món nào tra được dinh dưỡng · %@" : {
-
-    },
-    "Chạm hai lần để xem chi tiết bữa này." : {
-
-    },
-    "Chạm hai lần để xem các bữa trong ngày." : {
-
-    },
-    "Chạm hai lần để xem ngày này." : {
-
-    },
-    "Chọn ảnh bữa ăn" : {
-
-    },
-    "Chọn ảnh từ thư viện" : {
-
-    },
-    "Chụp bữa ăn.\nBiết ngay calo." : {
-
-    },
-    "Chụp lại" : {
-
-    },
-    "Chụp từ trên xuống giúp ước lượng khẩu phần chính xác hơn." : {
-
-    },
-    "Chụp ảnh bữa ăn" : {
-
-    },
-    "Couldn't load your history" : {
-
-    },
-    "Cân nặng" : {
-
-    },
-    "Còn %@ kcal · %lld bữa" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Còn %1$@ kcal · %2$lld bữa"
+    "%@, đang bật": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, on"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, đang bật"
           }
         }
       }
     },
-    "Còn %@." : {
-
-    },
-    "Có %lld ảnh." : {
-
-    },
-    "Có lỗi xảy ra" : {
-
-    },
-    "Cả đĩa ăn nằm trong khung và không bị mờ thì AI nhận diện chính xác hơn." : {
-
-    },
-    "Cần quyền thông báo của hệ thống trước khi bật các tuỳ chọn dưới đây." : {
-
-    },
-    "DINH DƯỠNG HẰNG NGÀY" : {
-
-    },
-    "Dùng ảnh này?" : {
-
-    },
-    "Dịch vụ nhận diện đang bận. Thử lại sau ít phút." : {
-
-    },
-    "Dữ liệu Apple Health không rời khỏi thiết bị và không dùng cho quảng cáo." : {
-
-    },
-    "Dữ liệu vẫn nằm an toàn trên máy bạn. Thử lại sau vài giây." : {
-
-    },
-    "Ghi bữa đầu tiên để bắt đầu lịch sử của bạn. Lịch sử chỉ hiện những ngày bạn đã ghi." : {
-
-    },
-    "Ghi lại bữa ăn để theo dõi calo trong ngày." : {
-
-    },
-    "Giao diện" : {
-
-    },
-    "Gần mục tiêu calo hôm nay" : {
-
-    },
-    "HIỂN THỊ" : {
-
-    },
-    "HealthClean" : {
-
-    },
-    "HealthClean chỉ đọc những gì bạn cho phép. Ứng dụng vẫn hoạt động đầy đủ nếu bạn từ chối." : {
-
-    },
-    "History" : {
-
-    },
-    "Hiện tại %@ kg" : {
-
-    },
-    "Huỷ" : {
-
-    },
-    "HÔM NAY · TODAY" : {
-
-    },
-    "Hãy chọn ảnh JPEG, HEIC, PNG hoặc WebP khác rồi thử lại." : {
-
-    },
-    "Hôm nay" : {
-
-    },
-    "Hôm nay · Today" : {
-
-    },
-    "Hồ sơ của bạn" : {
-
-    },
-    "Hồ sơ của bạn, %@" : {
-
-    },
-    "Không có bữa nào khớp bộ lọc trong các tháng đã tải. Thử bỏ bớt bộ lọc." : {
-
-    },
-    "Không có bữa nào tên “%@” trong các tháng đã tải. Thử bỏ bớt bộ lọc." : {
-
-    },
-    "Không có giới tính sinh học, mục tiêu sẽ dùng giá trị trung bình nên kém chính xác hơn." : {
-
-    },
-    "Không khả dụng trên thiết bị này" : {
-
-    },
-    "Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại." : {
-
-    },
-    "Không lưu được bữa ăn. Vui lòng thử lại." : {
-
-    },
-    "Không lưu được hồ sơ. Vui lòng thử lại." : {
-
-    },
-    "Không phân tích được ảnh. Vui lòng thử lại." : {
-
-    },
-    "Không tìm thấy bữa nào" : {
-
-    },
-    "Không tải được bữa ăn hôm nay." : {
-
-    },
-    "Không tải được hôm nay" : {
-
-    },
-    "Không tải được thống kê." : {
-
-    },
-    "Không xoá được bữa ăn. Vui lòng thử lại." : {
-
-    },
-    "Không xoá được món. Vui lòng thử lại." : {
-
-    },
-    "Không đọc được dữ liệu" : {
-
-    },
-    "Không đọc được ảnh" : {
-
-    },
-    "Không đọc được ảnh. Chụp lại nhé." : {
-
-    },
-    "Kết nối Apple Health" : {
-
-    },
-    "Kết nối Apple Health để thấy bước chân, năng lượng và giấc ngủ." : {
-
-    },
-    "Kết quả AI" : {
-
-    },
-    "Lưu" : {
-
-    },
-    "Lần quét mới dùng thêm một lượt phân tích." : {
-
-    },
-    "Lịch sử" : {
-
-    },
-    "Lịch sử, History" : {
-
-    },
-    "Mở Cài đặt" : {
-
-    },
-    "Mục tiêu giảm cân thường thấp hơn cân nặng hiện tại." : {
-
-    },
-    "Mục tiêu tăng cân thường cao hơn cân nặng hiện tại." : {
-
-    },
-    "Mức thiếu hụt không bao giờ đưa bạn xuống dưới chuyển hóa cơ bản của chính bạn." : {
-
-    },
-    "Nay" : {
-
-    },
-    "Nguồn: %@" : {
-
-    },
-    "Nguồn: %@ · %@" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Nguồn: %1$@ · %2$@"
+    "%@. %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$@. %2$@"
           }
         }
       }
     },
-    "Nguồn: CSDL món Việt · %@" : {
-
-    },
-    "Nguồn: không rõ · %@" : {
-
-    },
-    "Ngày này không có bữa ăn nào được ghi." : {
-
-    },
-    "Nhập calo trước khi lưu" : {
-
-    },
-    "Nhập chiều cao từ %lld đến %lld cm" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Nhập chiều cao từ %1$lld đến %2$lld cm"
+    "%lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
           }
         }
       }
     },
-    "Nhập cân nặng từ %lld đến %lld kg" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Nhập cân nặng từ %1$lld đến %2$lld kg"
+    "%lld bữa": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld meal"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld meals"
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld bữa"
           }
         }
       }
     },
-    "Nhập kcal cho %@ g đang hiển thị rồi bấm Xong. Đổi khẩu phần sau đó vẫn tính lại đúng." : {
-
-    },
-    "Nhập tay" : {
-
-    },
-    "Nhập tay thay vì chụp ảnh" : {
-
-    },
-    "Nhập tên món trước khi lưu" : {
-
-    },
-    "No meals found" : {
-
-    },
-    "No meals logged yet" : {
-
-    },
-    "OK" : {
-
-    },
-    "Open Food Facts" : {
-
-    },
-    "Phân tích ảnh này" : {
-
-    },
-    "QUYỀN RIÊNG TƯ" : {
-
-    },
-    "Quay lại" : {
-
-    },
-    "Quét bữa ăn" : {
-
-    },
-    "Quét lại" : {
-
-    },
-    "Quét lại?" : {
-
-    },
-    "Quét ảnh thay vì nhập tay" : {
-
-    },
-    "T%lld" : {
-
-    },
-    "THIẾT LẬP" : {
-
-    },
-    "THÔNG BÁO" : {
-
-    },
-    "THỐNG KÊ · INSIGHTS" : {
-
-    },
-    "Thêm món" : {
-
-    },
-    "Thêm món khác" : {
-
-    },
-    "Thông báo đang tắt trong Cài đặt của iPhone. Chỉ Cài đặt mới bật lại được." : {
-
-    },
-    "Thử lại" : {
-
-    },
-    "Trung bình %@ kcal mỗi ngày" : {
-
-    },
-    "TÔI · PROFILE" : {
-
-    },
-    "Tên món" : {
-
-    },
-    "Tìm món ăn" : {
-
-    },
-    "Tìm món ăn, ví dụ: phở" : {
-
-    },
-    "Tìm trong các tháng đã tải. Kéo xuống để tải thêm." : {
-
-    },
-    "Tóm tắt hôm nay" : {
-
-    },
-    "Tải các tháng trước" : {
-
-    },
-    "TỔNG BỮA ĂN" : {
-
-    },
-    "TỔNG ƯỚC TÍNH · ESTIMATED TOTAL" : {
-
-    },
-    "Tổng %@ kcal" : {
-
-    },
-    "Tổng bữa ăn %@ kcal" : {
-
-    },
-    "USDA FoodData Central" : {
-
-    },
-    "Ví dụ: Phở bò" : {
-
-    },
-    "Vượt %@ kcal · %lld bữa" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Vượt %1$@ kcal · %2$lld bữa"
+    "%lld bữa có “%@” · %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%#@meals@ matching “%2$@” · %3$@"
+          },
+          "substitutions": {
+            "meals": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg meal"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg meals"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$lld bữa có “%2$@” · %3$@"
           }
         }
       }
     },
-    "Vượt %@." : {
-
-    },
-    "Xong" : {
-
-    },
-    "Xoá %@" : {
-
-    },
-    "Xoá bộ lọc" : {
-
-    },
-    "Xoá bữa ăn này" : {
-
-    },
-    "Xoá món" : {
-
-    },
-    "Xoá món %lld" : {
-
-    },
-    "Xoá từ khoá" : {
-
-    },
-    "Xác nhận bữa ăn" : {
-
-    },
-    "bạn nhập" : {
-
-    },
-    "chưa ghi ngày nào" : {
-
-    },
-    "công thức từ USDA" : {
-
-    },
-    "dữ liệu tham khảo nội bộ" : {
-
-    },
-    "kcal" : {
-
-    },
-    "kcal / mục tiêu %@" : {
-
-    },
-    "kcal còn lại" : {
-
-    },
-    "kcal · mục tiêu %@" : {
-
-    },
-    "ngân sách ngày" : {
-
-    },
-    "over target" : {
-
-    },
-    "remaining" : {
-
-    },
-    "trung bình" : {
-
-    },
-    "vs mục tiêu %@ kcal" : {
-
-    },
-    "vượt mục tiêu" : {
-
-    },
-    "Đ %@ · TB %@ · B %@" : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Đ %1$@ · TB %2$@ · B %3$@"
+    "%lld bữa · %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%#@meals@ · %2$@"
+          },
+          "substitutions": {
+            "meals": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg meal"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg meals"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$lld bữa · %2$@"
           }
         }
       }
     },
-    "Đang phân tích" : {
-
-    },
-    "Đang phân tích ảnh…" : {
-
-    },
-    "Đang tải %@…" : {
-
-    },
-    "Đang tải lịch sử" : {
-
-    },
-    "Đang tải…" : {
-
-    },
-    "Đã dùng 70% ngân sách calo" : {
-
-    },
-    "Đã hiển thị toàn bộ lịch sử." : {
-
-    },
-    "Đã kết nối · bước chân, năng lượng, giấc ngủ" : {
-
-    },
-    "Đã vượt mục tiêu calo hôm nay" : {
-
-    },
-    "Đã ăn %@ / %@ kcal · %@ g đạm." : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Đã ăn %1$@ / %2$@ kcal · %3$@ g đạm."
+    "%lld bữa: %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%#@meals@: %2$@."
+          },
+          "substitutions": {
+            "meals": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg meal"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg meals"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$lld bữa: %2$@."
           }
         }
       }
     },
-    "Đã ăn %@ / %@ kcal." : {
-      "localizations" : {
-        "vi" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Đã ăn %1$@ / %2$@ kcal."
+    "%lld g": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld g"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld g"
           }
         }
       }
     },
-    "Đã đạt mục tiêu calo hôm nay" : {
-
+    "%lld kết quả": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld result"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld results"
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld kết quả"
+          }
+        }
+      }
     },
-    "Đóng" : {
-
+    "%lld món": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld item"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld items"
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld món"
+          }
+        }
+      }
     },
-    "Đạt mục tiêu · %lld bữa" : {
-
+    "%lld ngày ghi · TB %@ kcal": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%#@days@ logged · avg %2$@ kcal"
+          },
+          "substitutions": {
+            "days": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg day"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg days"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$lld ngày ghi · TB %2$@ kcal"
+          }
+        }
+      }
     },
-    "Đạt mục tiêu." : {
-
+    "%lld tháng gần nhất": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "last %lld month"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "last %lld months"
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld tháng gần nhất"
+          }
+        }
+      }
     },
-    "Đặt cả đĩa ăn vào khung." : {
-
+    "%lld tuần": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld week"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld weeks"
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld tuần"
+          }
+        }
+      }
     },
-    "Để sau" : {
-
+    "%lld tuổi · %lld cm · %@ kg": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld years · %lld cm · %@ kg"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "%1$lld tuổi · %2$lld cm · %3$@ kg"
+          }
+        }
+      }
     },
-    "đổi bữa" : {
-
+    "%lld%%": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld%%"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld%%"
+          }
+        }
+      }
     },
-    "Ảnh bữa ăn lúc %@" : {
-
+    "+%lld món": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "+%lld item"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "+%lld items"
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+%lld món"
+          }
+        }
+      }
     },
-    "Ảnh bữa ăn vừa chụp" : {
-
+    ", %@ trên %@ gam": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ", %@ of %@ grams"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": ", %1$@ trên %2$@ gam"
+          }
+        }
+      }
     },
-    "Ảnh bữa ăn vừa quét" : {
-
+    "7 ngày qua": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last 7 days"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "7 ngày qua"
+          }
+        }
+      }
     },
-    "Ảnh chỉ dùng để phân tích rồi xoá." : {
-
+    "AI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI"
+          }
+        }
+      }
+    },
+    "AI PHÂN TÍCH · bạn xác nhận": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI ANALYSIS · you confirm"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI PHÂN TÍCH · bạn xác nhận"
+          }
+        }
+      }
+    },
+    "AI nhận diện món và ước lượng khẩu phần. Calo do cơ sở dữ liệu dinh dưỡng tính — hãy sửa khẩu phần nếu chưa đúng.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The AI names the dish and estimates the portion. Calories come from a nutrition database — correct the portion if it looks wrong."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI nhận diện món và ước lượng khẩu phần. Calo do cơ sở dữ liệu dinh dưỡng tính — hãy sửa khẩu phần nếu chưa đúng."
+          }
+        }
+      }
+    },
+    "AI nhận diện món ăn, cơ sở dữ liệu dinh dưỡng tính calo, và bạn là người xác nhận cuối cùng.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The AI recognises the dish, a nutrition database counts the calories, and you have the final say."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI nhận diện món ăn, cơ sở dữ liệu dinh dưỡng tính calo, và bạn là người xác nhận cuối cùng."
+          }
+        }
+      }
+    },
+    "AI nhận diện món ăn, cơ sở dữ liệu tính calo, và bạn xác nhận trước khi lưu.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The AI recognises the dish, a database counts the calories, and you confirm before anything is saved."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI nhận diện món ăn, cơ sở dữ liệu tính calo, và bạn xác nhận trước khi lưu."
+          }
+        }
+      }
+    },
+    "AI ước lượng ban đầu: %@ g": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI first estimated %@ g"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI ước lượng ban đầu: %@ g"
+          }
+        }
+      }
+    },
+    "Apple Health": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Health"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Health"
+          }
+        }
+      }
+    },
+    "Apple Health hiện không khả dụng. Bạn có thể kết nối sau.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Health is unavailable right now. You can connect it later."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Health hiện không khả dụng. Bạn có thể kết nối sau."
+          }
+        }
+      }
+    },
+    "BMI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BMI"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BMI"
+          }
+        }
+      }
+    },
+    "BMI %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BMI %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BMI %@"
+          }
+        }
+      }
+    },
+    "BMI %@, %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BMI %@, %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "BMI %1$@, %2$@"
+          }
+        }
+      }
+    },
+    "BMI chỉ là bối cảnh sức khỏe — mục tiêu calo được tính từ tuổi, chiều cao, cân nặng, vận động và mục tiêu của bạn.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BMI is health context only — your calorie target is worked out from your age, height, weight, activity and goal."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BMI chỉ là bối cảnh sức khỏe — mục tiêu calo được tính từ tuổi, chiều cao, cân nặng, vận động và mục tiêu của bạn."
+          }
+        }
+      }
+    },
+    "BMI, %@, %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BMI, %@, %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "BMI, %1$@, %2$@"
+          }
+        }
+      }
+    },
+    "BMR %@ × vận động ×%@ %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BMR %@ × activity ×%@ %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "BMR %1$@ × vận động ×%2$@ %3$@"
+          }
+        }
+      }
+    },
+    "Buổi tối chỉ có một thông báo: tóm tắt nếu hôm đó bạn đã ghi bữa, nhắc ghi nếu chưa.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One evening notification only: a summary if you logged something that day, a reminder if you did not."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buổi tối chỉ có một thông báo: tóm tắt nếu hôm đó bạn đã ghi bữa, nhắc ghi nếu chưa."
+          }
+        }
+      }
+    },
+    "Béo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fat"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Béo"
+          }
+        }
+      }
+    },
+    "Béo g": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fat g"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Béo g"
+          }
+        }
+      }
+    },
+    "Béo phì": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obese"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Béo phì"
+          }
+        }
+      }
+    },
+    "Bình thường": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Normal"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bình thường"
+          }
+        }
+      }
+    },
+    "BƯỚC 1 · VỀ BẠN": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STEP 1 · ABOUT YOU"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BƯỚC 1 · VỀ BẠN"
+          }
+        }
+      }
+    },
+    "BƯỚC 2 · VẬN ĐỘNG": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STEP 2 · ACTIVITY"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BƯỚC 2 · VẬN ĐỘNG"
+          }
+        }
+      }
+    },
+    "BƯỚC 3 · MỤC TIÊU": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STEP 3 · GOAL"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BƯỚC 3 · MỤC TIÊU"
+          }
+        }
+      }
+    },
+    "BƯỚC 4 · KẾT QUẢ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "STEP 4 · RESULT"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BƯỚC 4 · KẾT QUẢ"
+          }
+        }
+      }
+    },
+    "Bước chân": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Step count"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bước chân"
+          }
+        }
+      }
+    },
+    "Bạn còn %@ kcal cho hôm nay.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You have %@ kcal left for today."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn còn %@ kcal cho hôm nay."
+          }
+        }
+      }
+    },
+    "Bạn muốn điều gì?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What are you after?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn muốn điều gì?"
+          }
+        }
+      }
+    },
+    "Bạn vẫn có thể chọn ảnh từ thư viện.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can still pick a photo from your library."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn vẫn có thể chọn ảnh từ thư viện."
+          }
+        }
+      }
+    },
+    "Bạn đang gần mục tiêu calo hôm nay.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You are close to today's calorie target."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn đang gần mục tiêu calo hôm nay."
+          }
+        }
+      }
+    },
+    "Bạn đã vượt mục tiêu hôm nay %@ kcal.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You are %@ kcal over today's target."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn đã vượt mục tiêu hôm nay %@ kcal."
+          }
+        }
+      }
+    },
+    "Bạn đã đạt mục tiêu calo hôm nay.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You have reached today's calorie target."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn đã đạt mục tiêu calo hôm nay."
+          }
+        }
+      }
+    },
+    "Bảng màu tối được suy ra trong dự án này, không phải màu chính thức của bộ nhận diện.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The dark palette was derived in this project; it is not an official brand colour set."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bảng màu tối được suy ra trong dự án này, không phải màu chính thức của bộ nhận diện."
+          }
+        }
+      }
+    },
+    "Bật thông báo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn on notifications"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bật thông báo"
+          }
+        }
+      }
+    },
+    "Bắt đầu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get started"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bắt đầu"
+          }
+        }
+      }
+    },
+    "Bỏ kết quả": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard result"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bỏ kết quả"
+          }
+        }
+      }
+    },
+    "Bỏ kết quả quét?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard this scan?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bỏ kết quả quét?"
+          }
+        }
+      }
+    },
+    "Bối cảnh sức khỏe, không dùng để tính calo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health context — not used to work out calories"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bối cảnh sức khỏe, không dùng để tính calo"
+          }
+        }
+      }
+    },
+    "Bữa này chiếm %lld%% ngân sách calo hôm nay.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This meal is %lld%% of today's calorie budget."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bữa này chiếm %lld%% ngân sách calo hôm nay."
+          }
+        }
+      }
+    },
+    "Bữa phụ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Snack"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bữa phụ"
+          }
+        }
+      }
+    },
+    "Bữa sáng": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Breakfast"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bữa sáng"
+          }
+        }
+      }
+    },
+    "Bữa trưa": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lunch"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bữa trưa"
+          }
+        }
+      }
+    },
+    "Bữa tối": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dinner"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bữa tối"
+          }
+        }
+      }
+    },
+    "Bữa ăn": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meals"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bữa ăn"
+          }
+        }
+      }
+    },
+    "Bữa ăn chưa được lưu. %lld món AI nhận diện và mọi chỉnh sửa của bạn sẽ mất.": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "This meal has not been saved. The %lld item the AI found, and every edit you made, will be lost."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "This meal has not been saved. The %lld items the AI found, and every edit you made, will be lost."
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bữa ăn chưa được lưu. %lld món AI nhận diện và mọi chỉnh sửa của bạn sẽ mất."
+          }
+        }
+      }
+    },
+    "Bữa ăn còn lại %lld món.": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld item will be left in this meal."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld items will be left in this meal."
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bữa ăn còn lại %lld món."
+          }
+        }
+      }
+    },
+    "Bữa ăn: %@. Chạm để đổi bữa.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meal: %@. Tap to change it."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bữa ăn: %@. Chạm để đổi bữa."
+          }
+        }
+      }
+    },
+    "CALO MỖI NGÀY": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CALORIES PER DAY"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CALO MỖI NGÀY"
+          }
+        }
+      }
+    },
+    "Calo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calories"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calo"
+          }
+        }
+      }
+    },
+    "Calo mỗi ngày": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calories per day"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calo mỗi ngày"
+          }
+        }
+      }
+    },
+    "Calo mỗi ngày: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calories per day: %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calo mỗi ngày: %@"
+          }
+        }
+      }
+    },
+    "Chiều cao": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Height"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chiều cao"
+          }
+        }
+      }
+    },
+    "Cho chúng tôi biết về bạn": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tell us about you"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cho chúng tôi biết về bạn"
+          }
+        }
+      }
+    },
+    "Cho phép truy cập": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow access"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cho phép truy cập"
+          }
+        }
+      }
+    },
+    "Chưa có bữa nào hôm nay": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing logged today"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa có bữa nào hôm nay"
+          }
+        }
+      }
+    },
+    "Chưa có bữa nào được ghi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No meals logged yet"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa có bữa nào được ghi"
+          }
+        }
+      }
+    },
+    "Chưa có bữa ăn nào trong 7 ngày qua.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No meals in the last 7 days."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa có bữa ăn nào trong 7 ngày qua."
+          }
+        }
+      }
+    },
+    "Chưa có cân nặng nào được ghi.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No weight has been recorded yet."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa có cân nặng nào được ghi."
+          }
+        }
+      }
+    },
+    "Chưa có mục tiêu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No target"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa có mục tiêu"
+          }
+        }
+      }
+    },
+    "Chưa có quyền dùng máy ảnh.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The camera has not been allowed."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa có quyền dùng máy ảnh."
+          }
+        }
+      }
+    },
+    "Chưa có trong cơ sở dữ liệu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not in the database"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa có trong cơ sở dữ liệu"
+          }
+        }
+      }
+    },
+    "Chưa có trong cơ sở dữ liệu — mở món này để nhập dinh dưỡng.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not in the database — open this item to enter its nutrition."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa có trong cơ sở dữ liệu — mở món này để nhập dinh dưỡng."
+          }
+        }
+      }
+    },
+    "Chưa ghi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not logged"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa ghi"
+          }
+        }
+      }
+    },
+    "Chưa kết nối": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not connected"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa kết nối"
+          }
+        }
+      }
+    },
+    "Chưa món nào tra được dinh dưỡng · %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No item has nutrition yet · %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa món nào tra được dinh dưỡng · %@"
+          }
+        }
+      }
+    },
+    "Chạm hai lần để xem chi tiết bữa này.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double tap to open this meal."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chạm hai lần để xem chi tiết bữa này."
+          }
+        }
+      }
+    },
+    "Chạm hai lần để xem các bữa trong ngày.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double tap to see the meals for this day."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chạm hai lần để xem các bữa trong ngày."
+          }
+        }
+      }
+    },
+    "Chạm hai lần để xem ngày này.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double tap to open this day."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chạm hai lần để xem ngày này."
+          }
+        }
+      }
+    },
+    "Chất béo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fat"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chất béo"
+          }
+        }
+      }
+    },
+    "Chọn ảnh bữa ăn": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a meal photo"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chọn ảnh bữa ăn"
+          }
+        }
+      }
+    },
+    "Chọn ảnh từ thư viện": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a photo from the library"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chọn ảnh từ thư viện"
+          }
+        }
+      }
+    },
+    "Chụp bữa ăn.\nBiết ngay calo.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Photograph a meal.\nKnow the calories."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chụp bữa ăn.\nBiết ngay calo."
+          }
+        }
+      }
+    },
+    "Chụp lại": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retake"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chụp lại"
+          }
+        }
+      }
+    },
+    "Chụp từ trên xuống giúp ước lượng khẩu phần chính xác hơn.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shooting from above makes the portion estimate more accurate."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chụp từ trên xuống giúp ước lượng khẩu phần chính xác hơn."
+          }
+        }
+      }
+    },
+    "Chụp ảnh bữa ăn": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Take a meal photo"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chụp ảnh bữa ăn"
+          }
+        }
+      }
+    },
+    "Cân nặng": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weight"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cân nặng"
+          }
+        }
+      }
+    },
+    "Cân nặng & BMI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Body mass"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cân nặng & BMI"
+          }
+        }
+      }
+    },
+    "Cân nặng mục tiêu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Target weight"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cân nặng mục tiêu"
+          }
+        }
+      }
+    },
+    "Cân nặng theo tuần: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weight by week: %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cân nặng theo tuần: %@"
+          }
+        }
+      }
+    },
+    "Còn %@ kcal · %lld bữa": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ kcal under · %#@meals@"
+          },
+          "substitutions": {
+            "meals": {
+              "argNum": 2,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg meal"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg meals"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Còn %1$@ kcal · %2$lld bữa"
+          }
+        }
+      }
+    },
+    "Còn %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ under."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Còn %@."
+          }
+        }
+      }
+    },
+    "Còn lại": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remaining"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Còn lại"
+          }
+        }
+      }
+    },
+    "Có %lld ảnh.": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Has %lld photo."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Has %lld photos."
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Có %lld ảnh."
+          }
+        }
+      }
+    },
+    "Có lỗi xảy ra": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Something went wrong"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Có lỗi xảy ra"
+          }
+        }
+      }
+    },
+    "Có ảnh": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Has a photo"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Có ảnh"
+          }
+        }
+      }
+    },
+    "Cả đĩa ăn nằm trong khung và không bị mờ thì AI nhận diện chính xác hơn.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The AI does better when the whole plate is in the frame and in focus."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cả đĩa ăn nằm trong khung và không bị mờ thì AI nhận diện chính xác hơn."
+          }
+        }
+      }
+    },
+    "Cần quyền thông báo của hệ thống trước khi bật các tuỳ chọn dưới đây.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iOS has to allow notifications before the switches below do anything."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cần quyền thông báo của hệ thống trước khi bật các tuỳ chọn dưới đây."
+          }
+        }
+      }
+    },
+    "DINH DƯỠNG HẰNG NGÀY": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DAILY NUTRITION"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DINH DƯỠNG HẰNG NGÀY"
+          }
+        }
+      }
+    },
+    "Dinh dưỡng": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Macros"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dinh dưỡng"
+          }
+        }
+      }
+    },
+    "Duy trì": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maintain"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duy trì"
+          }
+        }
+      }
+    },
+    "Dùng cho công thức Mifflin-St Jeor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Used by the Mifflin-St Jeor formula"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dùng cho công thức Mifflin-St Jeor"
+          }
+        }
+      }
+    },
+    "Dùng để tính chuyển hóa cơ bản theo công thức Mifflin-St Jeor.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Used to work out your basal metabolic rate with the Mifflin-St Jeor formula."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dùng để tính chuyển hóa cơ bản theo công thức Mifflin-St Jeor."
+          }
+        }
+      }
+    },
+    "Dùng ảnh này?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use this photo?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dùng ảnh này?"
+          }
+        }
+      }
+    },
+    "Dịch vụ nhận diện đang bận. Thử lại sau ít phút.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The recognition service is busy. Try again in a few minutes."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dịch vụ nhận diện đang bận. Thử lại sau ít phút."
+          }
+        }
+      }
+    },
+    "Dữ liệu Apple Health không rời khỏi thiết bị và không dùng cho quảng cáo.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Health data never leaves your device and is never used for advertising."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dữ liệu Apple Health không rời khỏi thiết bị và không dùng cho quảng cáo."
+          }
+        }
+      }
+    },
+    "Dữ liệu sức khỏe không bao giờ được bán hay dùng cho quảng cáo.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health data is never sold or used for advertising."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dữ liệu sức khỏe không bao giờ được bán hay dùng cho quảng cáo."
+          }
+        }
+      }
+    },
+    "Dữ liệu sức khỏe lưu trên thiết bị": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health data stays on your device"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dữ liệu sức khỏe lưu trên thiết bị"
+          }
+        }
+      }
+    },
+    "Dữ liệu sức khỏe được lưu trên thiết bị của bạn.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your health data is kept on your device."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dữ liệu sức khỏe được lưu trên thiết bị của bạn."
+          }
+        }
+      }
+    },
+    "Dữ liệu vẫn nằm an toàn trên máy bạn. Thử lại sau vài giây.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your data is safe on this device. Try again in a few seconds."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dữ liệu vẫn nằm an toàn trên máy bạn. Thử lại sau vài giây."
+          }
+        }
+      }
+    },
+    "Ghi bữa đầu tiên để bắt đầu lịch sử của bạn. Lịch sử chỉ hiện những ngày bạn đã ghi.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Log your first meal to start your history. Only days you logged appear here."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ghi bữa đầu tiên để bắt đầu lịch sử của bạn. Lịch sử chỉ hiện những ngày bạn đã ghi."
+          }
+        }
+      }
+    },
+    "Ghi lại bữa ăn để theo dõi calo trong ngày.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Log a meal to keep track of today's calories."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ghi lại bữa ăn để theo dõi calo trong ngày."
+          }
+        }
+      }
+    },
+    "Giao diện": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appearance"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giao diện"
+          }
+        }
+      }
+    },
+    "Giảm": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lose"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giảm"
+          }
+        }
+      }
+    },
+    "Giấc ngủ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giấc ngủ"
+          }
+        }
+      }
+    },
+    "Giới tính sinh học": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Biological sex"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giới tính sinh học"
+          }
+        }
+      }
+    },
+    "Gần mục tiêu calo hôm nay": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close to today's calorie target"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gần mục tiêu calo hôm nay"
+          }
+        }
+      }
+    },
+    "HIỂN THỊ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DISPLAY"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HIỂN THỊ"
+          }
+        }
+      }
+    },
+    "HealthClean": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HealthClean"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HealthClean"
+          }
+        }
+      }
+    },
+    "HealthClean chỉ đọc những gì bạn cho phép. Ứng dụng vẫn hoạt động đầy đủ nếu bạn từ chối.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HealthClean reads only what you allow. The app works in full if you decline."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HealthClean chỉ đọc những gì bạn cho phép. Ứng dụng vẫn hoạt động đầy đủ nếu bạn từ chối."
+          }
+        }
+      }
+    },
+    "Hiện tại %@ kg": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Currently %@ kg"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hiện tại %@ kg"
+          }
+        }
+      }
+    },
+    "Huỷ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Huỷ"
+          }
+        }
+      }
+    },
+    "HÔM NAY": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TODAY"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HÔM NAY"
+          }
+        }
+      }
+    },
+    "Hãy chọn ảnh JPEG, HEIC, PNG hoặc WebP khác rồi thử lại.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pick a different JPEG, HEIC, PNG or WebP photo and try again."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hãy chọn ảnh JPEG, HEIC, PNG hoặc WebP khác rồi thử lại."
+          }
+        }
+      }
+    },
+    "Hôm nay": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hôm nay"
+          }
+        }
+      }
+    },
+    "Hồ sơ của bạn": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your profile"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hồ sơ của bạn"
+          }
+        }
+      }
+    },
+    "Hồ sơ của bạn, %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your profile, %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hồ sơ của bạn, %@"
+          }
+        }
+      }
+    },
+    "Khi dùng 70% ngân sách": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "At 70% of budget"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Khi dùng 70% ngân sách"
+          }
+        }
+      }
+    },
+    "Khi gần mục tiêu (90%)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Near target (90%)"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Khi gần mục tiêu (90%)"
+          }
+        }
+      }
+    },
+    "Khi đạt mục tiêu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Target reached"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Khi đạt mục tiêu"
+          }
+        }
+      }
+    },
+    "Không có bữa nào khớp bộ lọc trong các tháng đã tải. Thử bỏ bớt bộ lọc.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No meal matches these filters in the months loaded. Try removing a filter."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không có bữa nào khớp bộ lọc trong các tháng đã tải. Thử bỏ bớt bộ lọc."
+          }
+        }
+      }
+    },
+    "Không có bữa nào tên “%@” trong các tháng đã tải. Thử bỏ bớt bộ lọc.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No meal named “%@” in the months loaded. Try removing a filter."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không có bữa nào tên “%@” trong các tháng đã tải. Thử bỏ bớt bộ lọc."
+          }
+        }
+      }
+    },
+    "Không có giới tính sinh học, mục tiêu sẽ dùng giá trị trung bình nên kém chính xác hơn.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Without a biological sex the target uses a midpoint value, so it is less precise."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không có giới tính sinh học, mục tiêu sẽ dùng giá trị trung bình nên kém chính xác hơn."
+          }
+        }
+      }
+    },
+    "Không khả dụng trên thiết bị này": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not available on this device"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không khả dụng trên thiết bị này"
+          }
+        }
+      }
+    },
+    "Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not reach the server. Check your connection and try again."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại."
+          }
+        }
+      }
+    },
+    "Không lưu được bữa ăn. Vui lòng thử lại.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not save the meal. Please try again."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không lưu được bữa ăn. Vui lòng thử lại."
+          }
+        }
+      }
+    },
+    "Không lưu được hồ sơ. Vui lòng thử lại.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not save your profile. Please try again."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không lưu được hồ sơ. Vui lòng thử lại."
+          }
+        }
+      }
+    },
+    "Không nhận ra món nào. Thử chụp lại hoặc nhập tay.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No dish was recognised. Retake the photo or enter it by hand."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không nhận ra món nào. Thử chụp lại hoặc nhập tay."
+          }
+        }
+      }
+    },
+    "Không nói": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prefer not to say"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không nói"
+          }
+        }
+      }
+    },
+    "Không phân tích được ảnh.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The photo could not be analysed."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không phân tích được ảnh."
+          }
+        }
+      }
+    },
+    "Không phân tích được ảnh. Vui lòng thử lại.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The photo could not be analysed. Please try again."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không phân tích được ảnh. Vui lòng thử lại."
+          }
+        }
+      }
+    },
+    "Không tìm thấy bữa nào": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No meals found"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không tìm thấy bữa nào"
+          }
+        }
+      }
+    },
+    "Không tải được bữa ăn hôm nay.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not load today's meals."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không tải được bữa ăn hôm nay."
+          }
+        }
+      }
+    },
+    "Không tải được hôm nay": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not load today"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không tải được hôm nay"
+          }
+        }
+      }
+    },
+    "Không tải được thống kê.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not load your insights."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không tải được thống kê."
+          }
+        }
+      }
+    },
+    "Không xoá được bữa ăn. Vui lòng thử lại.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not delete the meal. Please try again."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không xoá được bữa ăn. Vui lòng thử lại."
+          }
+        }
+      }
+    },
+    "Không xoá được món. Vui lòng thử lại.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not delete the item. Please try again."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không xoá được món. Vui lòng thử lại."
+          }
+        }
+      }
+    },
+    "Không đặt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not set"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không đặt"
+          }
+        }
+      }
+    },
+    "Không đọc được dữ liệu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not read your data"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không đọc được dữ liệu"
+          }
+        }
+      }
+    },
+    "Không đọc được ảnh": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not read the photo"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không đọc được ảnh"
+          }
+        }
+      }
+    },
+    "Không đọc được ảnh. Chụp lại nhé.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not read the photo. Take another one."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không đọc được ảnh. Chụp lại nhé."
+          }
+        }
+      }
+    },
+    "Khối lượng": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weight"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Khối lượng"
+          }
+        }
+      }
+    },
+    "Kết nối Apple Health": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect Apple Health"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kết nối Apple Health"
+          }
+        }
+      }
+    },
+    "Kết nối Apple Health để thấy bước chân, năng lượng và giấc ngủ.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect Apple Health to see steps, energy and sleep."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kết nối Apple Health để thấy bước chân, năng lượng và giấc ngủ."
+          }
+        }
+      }
+    },
+    "Kết quả AI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI result"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kết quả AI"
+          }
+        }
+      }
+    },
+    "Lưu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lưu"
+          }
+        }
+      }
+    },
+    "Lần quét mới dùng thêm một lượt phân tích.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A new scan spends another analysis."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lần quét mới dùng thêm một lượt phân tích."
+          }
+        }
+      }
+    },
+    "Lịch sử": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "History"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lịch sử"
+          }
+        }
+      }
+    },
+    "Món %lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Item %lld"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Món %lld"
+          }
+        }
+      }
+    },
+    "Món Việt: cơm tấm, phở, bánh mì…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vietnamese dishes: cơm tấm, phở, bánh mì…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Món Việt: cơm tấm, phở, bánh mì…"
+          }
+        }
+      }
+    },
+    "Món ăn": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Food"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Món ăn"
+          }
+        }
+      }
+    },
+    "Món đã ghi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Items"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Món đã ghi"
+          }
+        }
+      }
+    },
+    "Mỗi ngày": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Per day"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mỗi ngày"
+          }
+        }
+      }
+    },
+    "Một tuần của bạn thế nào?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What does your week look like?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Một tuần của bạn thế nào?"
+          }
+        }
+      }
+    },
+    "Mở Cài đặt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Settings"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở Cài đặt"
+          }
+        }
+      }
+    },
+    "Mục tiêu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Goal"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mục tiêu"
+          }
+        }
+      }
+    },
+    "Mục tiêu giảm cân thường thấp hơn cân nặng hiện tại.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A weight-loss target is usually below your current weight."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mục tiêu giảm cân thường thấp hơn cân nặng hiện tại."
+          }
+        }
+      }
+    },
+    "Mục tiêu hằng ngày của bạn": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your daily target"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mục tiêu hằng ngày của bạn"
+          }
+        }
+      }
+    },
+    "Mục tiêu quyết định phần calo cộng thêm hoặc bớt đi.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your goal decides the calories added or taken away."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mục tiêu quyết định phần calo cộng thêm hoặc bớt đi."
+          }
+        }
+      }
+    },
+    "Mục tiêu tăng cân thường cao hơn cân nặng hiện tại.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A weight-gain target is usually above your current weight."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mục tiêu tăng cân thường cao hơn cân nặng hiện tại."
+          }
+        }
+      }
+    },
+    "Mức thiếu hụt không bao giờ đưa bạn xuống dưới chuyển hóa cơ bản của chính bạn.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A deficit never takes you below your own basal metabolic rate."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mức thiếu hụt không bao giờ đưa bạn xuống dưới chuyển hóa cơ bản của chính bạn."
+          }
+        }
+      }
+    },
+    "Mức vận động được nhân với chuyển hóa cơ bản của bạn.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your activity level multiplies your basal metabolic rate."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mức vận động được nhân với chuyển hóa cơ bản của bạn."
+          }
+        }
+      }
+    },
+    "Nam": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Male"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nam"
+          }
+        }
+      }
+    },
+    "Nay": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Now"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nay"
+          }
+        }
+      }
+    },
+    "Nguồn: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Source: %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nguồn: %@"
+          }
+        }
+      }
+    },
+    "Nguồn: %@ · %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Source: %@ · %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Nguồn: %1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "Nguồn: không rõ · %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Source: unknown · %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nguồn: không rõ · %@"
+          }
+        }
+      }
+    },
+    "Ngày này không có bữa ăn nào được ghi.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No meal was logged on this day."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ngày này không có bữa ăn nào được ghi."
+          }
+        }
+      }
+    },
+    "Ngôn ngữ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ngôn ngữ"
+          }
+        }
+      }
+    },
+    "Nhận diện món ăn": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recognising the dish"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhận diện món ăn"
+          }
+        }
+      }
+    },
+    "Nhập calo trước khi lưu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter the calories before saving"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhập calo trước khi lưu"
+          }
+        }
+      }
+    },
+    "Nhập chiều cao từ %lld đến %lld cm": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a height between %lld and %lld cm"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Nhập chiều cao từ %1$lld đến %2$lld cm"
+          }
+        }
+      }
+    },
+    "Nhập cân nặng từ %lld đến %lld kg": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a weight between %lld and %lld kg"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Nhập cân nặng từ %1$lld đến %2$lld kg"
+          }
+        }
+      }
+    },
+    "Nhập dinh dưỡng hoặc bỏ món chưa rõ trước khi lưu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter the nutrition, or remove the unknown item, before saving"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhập dinh dưỡng hoặc bỏ món chưa rõ trước khi lưu"
+          }
+        }
+      }
+    },
+    "Nhập kcal cho %@ g đang hiển thị rồi bấm Xong. Đổi khẩu phần sau đó vẫn tính lại đúng.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter the kcal for the %@ g shown, then tap Done. Changing the portion afterwards still rescales correctly."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhập kcal cho %@ g đang hiển thị rồi bấm Xong. Đổi khẩu phần sau đó vẫn tính lại đúng."
+          }
+        }
+      }
+    },
+    "Nhập tay": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter by hand"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhập tay"
+          }
+        }
+      }
+    },
+    "Nhập tay thay vì chụp ảnh": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter by hand instead of taking a photo"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhập tay thay vì chụp ảnh"
+          }
+        }
+      }
+    },
+    "Nhập tên món trước khi lưu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name the dish before saving"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhập tên món trước khi lưu"
+          }
+        }
+      }
+    },
+    "Nhắc ghi bữa ăn": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meal logging reminder"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhắc ghi bữa ăn"
+          }
+        }
+      }
+    },
+    "Nhẹ — 1–3 ngày/tuần": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light — 1–3 days a week"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhẹ — 1–3 ngày/tuần"
+          }
+        }
+      }
+    },
+    "Nên kiểm tra %lld%%": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Worth checking %lld%%"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nên kiểm tra %lld%%"
+          }
+        }
+      }
+    },
+    "Năng lượng": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Energy"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Năng lượng"
+          }
+        }
+      }
+    },
+    "Năng lượng vận động": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Active energy"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Năng lượng vận động"
+          }
+        }
+      }
+    },
+    "Nữ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Female"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nữ"
+          }
+        }
+      }
+    },
+    "OK": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        }
+      }
+    },
+    "Open Food Facts": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Food Facts"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Food Facts"
+          }
+        }
+      }
+    },
+    "Phân tích ảnh này": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analyse this photo"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Phân tích ảnh này"
+          }
+        }
+      }
+    },
+    "QUYỀN RIÊNG TƯ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PRIVACY"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QUYỀN RIÊNG TƯ"
+          }
+        }
+      }
+    },
+    "Quay lại": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quay lại"
+          }
+        }
+      }
+    },
+    "Quét bữa ăn": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scan a meal"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quét bữa ăn"
+          }
+        }
+      }
+    },
+    "Quét lại": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scan again"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quét lại"
+          }
+        }
+      }
+    },
+    "Quét lại?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scan again?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quét lại?"
+          }
+        }
+      }
+    },
+    "Quét ảnh thay vì nhập tay": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scan a photo instead of typing"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quét ảnh thay vì nhập tay"
+          }
+        }
+      }
+    },
+    "Rất tích cực — việc thể lực": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Very active — physical job"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rất tích cực — việc thể lực"
+          }
+        }
+      }
+    },
+    "Sáng": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sáng"
+          }
+        }
+      }
+    },
+    "T%lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "W%lld"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "T%lld"
+          }
+        }
+      }
+    },
+    "THIẾT LẬP": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SETTINGS"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "THIẾT LẬP"
+          }
+        }
+      }
+    },
+    "THÔNG BÁO": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOTIFICATIONS"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "THÔNG BÁO"
+          }
+        }
+      }
+    },
+    "THỐNG KÊ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "INSIGHTS"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "THỐNG KÊ"
+          }
+        }
+      }
+    },
+    "Theo hệ thống": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Theo hệ thống"
+          }
+        }
+      }
+    },
+    "Thiếu cân": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Underweight"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thiếu cân"
+          }
+        }
+      }
+    },
+    "Thêm món": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add an item"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thêm món"
+          }
+        }
+      }
+    },
+    "Thêm món khác": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add another item"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thêm món khác"
+          }
+        }
+      }
+    },
+    "Thông báo đang tắt trong Cài đặt của iPhone. Chỉ Cài đặt mới bật lại được.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notifications are off in iPhone Settings. Only Settings can turn them back on."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thông báo đang tắt trong Cài đặt của iPhone. Chỉ Cài đặt mới bật lại được."
+          }
+        }
+      }
+    },
+    "Thông tin cơ thể & mục tiêu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Body info & goal"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thông tin cơ thể & mục tiêu"
+          }
+        }
+      }
+    },
+    "Thư viện": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Library"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thư viện"
+          }
+        }
+      }
+    },
+    "Thống kê": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Insights"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thống kê"
+          }
+        }
+      }
+    },
+    "Thừa cân": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overweight"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thừa cân"
+          }
+        }
+      }
+    },
+    "Thử lại": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try again"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thử lại"
+          }
+        }
+      }
+    },
+    "Tin cậy %lld%%": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confidence %lld%%"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tin cậy %lld%%"
+          }
+        }
+      }
+    },
+    "Tinh bột": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carbs"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tinh bột"
+          }
+        }
+      }
+    },
+    "Tinh bột g": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carbs g"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tinh bột g"
+          }
+        }
+      }
+    },
+    "Tiếp tục": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếp tục"
+          }
+        }
+      }
+    },
+    "Tra cứu dinh dưỡng": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Looking up nutrition"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tra cứu dinh dưỡng"
+          }
+        }
+      }
+    },
+    "Trung bình %@ kcal mỗi ngày": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kcal a day on average"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trung bình %@ kcal mỗi ngày"
+          }
+        }
+      }
+    },
+    "Trung bình — 3–5 ngày/tuần": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moderate — 3–5 days a week"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trung bình — 3–5 ngày/tuần"
+          }
+        }
+      }
+    },
+    "Tuổi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Age"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tuổi"
+          }
+        }
+      }
+    },
+    "TÔI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PROFILE"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TÔI"
+          }
+        }
+      }
+    },
+    "Tên món": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tên món"
+          }
+        }
+      }
+    },
+    "Tìm món ăn": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search for a dish"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tìm món ăn"
+          }
+        }
+      }
+    },
+    "Tìm món ăn, ví dụ: phở": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search for a dish, e.g. phở"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tìm món ăn, ví dụ: phở"
+          }
+        }
+      }
+    },
+    "Tìm trong các tháng đã tải. Kéo xuống để tải thêm.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Searches the months already loaded. Pull down to load more."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tìm trong các tháng đã tải. Kéo xuống để tải thêm."
+          }
+        }
+      }
+    },
+    "Tích cực — 6–7 ngày/tuần": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Active — 6–7 days a week"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tích cực — 6–7 ngày/tuần"
+          }
+        }
+      }
+    },
+    "Tính từ tuổi, chiều cao, cân nặng, vận động và mục tiêu.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Worked out from your age, height, weight, activity and goal."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tính từ tuổi, chiều cao, cân nặng, vận động và mục tiêu."
+          }
+        }
+      }
+    },
+    "Tóm tắt hôm nay": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today's summary"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tóm tắt hôm nay"
+          }
+        }
+      }
+    },
+    "Tóm tắt hằng ngày": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Daily summary"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tóm tắt hằng ngày"
+          }
+        }
+      }
+    },
+    "Tôi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profile"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tôi"
+          }
+        }
+      }
+    },
+    "Tăng": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gain"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tăng"
+          }
+        }
+      }
+    },
+    "Tải các tháng trước": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Load earlier months"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tải các tháng trước"
+          }
+        }
+      }
+    },
+    "Tất cả": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tất cả"
+          }
+        }
+      }
+    },
+    "Tất cả %lld món trong bữa này sẽ bị xoá. Thao tác không thể hoàn tác.": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "The %lld item in this meal will be deleted. This cannot be undone."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "All %lld items in this meal will be deleted. This cannot be undone."
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tất cả %lld món trong bữa này sẽ bị xoá. Thao tác không thể hoàn tác."
+          }
+        }
+      }
+    },
+    "Tối": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dark"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tối"
+          }
+        }
+      }
+    },
+    "TỔNG BỮA ĂN": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MEAL TOTAL"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TỔNG BỮA ĂN"
+          }
+        }
+      }
+    },
+    "TỔNG ƯỚC TÍNH": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ESTIMATED TOTAL"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TỔNG ƯỚC TÍNH"
+          }
+        }
+      }
+    },
+    "Tổng %@ kcal": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Total %@ kcal"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tổng %@ kcal"
+          }
+        }
+      }
+    },
+    "Tổng bữa ăn %@ kcal": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meal total %@ kcal"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tổng bữa ăn %@ kcal"
+          }
+        }
+      }
+    },
+    "USDA FoodData Central": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "USDA FoodData Central"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "USDA FoodData Central"
+          }
+        }
+      }
+    },
+    "Ví dụ: Phở bò": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For example: Phở bò"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ví dụ: Phở bò"
+          }
+        }
+      }
+    },
+    "Vượt %@ kcal · %lld bữa": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ kcal over · %#@meals@"
+          },
+          "substitutions": {
+            "meals": {
+              "argNum": 2,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg meal"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg meals"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Vượt %1$@ kcal · %2$lld bữa"
+          }
+        }
+      }
+    },
+    "Vượt %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ over."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vượt %@."
+          }
+        }
+      }
+    },
+    "Vượt mục tiêu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Over target"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vượt mục tiêu"
+          }
+        }
+      }
+    },
+    "Vận động": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activity"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vận động"
+          }
+        }
+      }
+    },
+    "Xem mục tiêu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See my target"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xem mục tiêu"
+          }
+        }
+      }
+    },
+    "Xong": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xong"
+          }
+        }
+      }
+    },
+    "Xoá %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá %@"
+          }
+        }
+      }
+    },
+    "Xoá bộ lọc": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear filters"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá bộ lọc"
+          }
+        }
+      }
+    },
+    "Xoá bữa ăn này": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this meal"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá bữa ăn này"
+          }
+        }
+      }
+    },
+    "Xoá cả %@?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete the whole %@?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá cả %@?"
+          }
+        }
+      }
+    },
+    "Xoá cả bữa ăn": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete the meal"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá cả bữa ăn"
+          }
+        }
+      }
+    },
+    "Xoá món": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete item"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá món"
+          }
+        }
+      }
+    },
+    "Xoá món %lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete item %lld"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá món %lld"
+          }
+        }
+      }
+    },
+    "Xoá món này": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this item"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá món này"
+          }
+        }
+      }
+    },
+    "Xoá từ khoá": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear the search"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá từ khoá"
+          }
+        }
+      }
+    },
+    "Xoá “%@”?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete “%@”?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá “%@”?"
+          }
+        }
+      }
+    },
+    "Xác nhận bữa ăn": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm the meal"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xác nhận bữa ăn"
+          }
+        }
+      }
+    },
+    "bạn nhập": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "entered by you"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bạn nhập"
+          }
+        }
+      }
+    },
+    "chưa có dữ liệu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "no data yet"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "chưa có dữ liệu"
+          }
+        }
+      }
+    },
+    "chưa ghi ngày nào": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "no days logged"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "chưa ghi ngày nào"
+          }
+        }
+      }
+    },
+    "công thức từ USDA": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "a USDA recipe"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "công thức từ USDA"
+          }
+        }
+      }
+    },
+    "dữ liệu tham khảo nội bộ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "internal reference data"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dữ liệu tham khảo nội bộ"
+          }
+        }
+      }
+    },
+    "gam": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "grams"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gam"
+          }
+        }
+      }
+    },
+    "kcal": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kcal"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kcal"
+          }
+        }
+      }
+    },
+    "kcal / mục tiêu %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kcal / target %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kcal / mục tiêu %@"
+          }
+        }
+      }
+    },
+    "kcal còn lại": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kcal remaining"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kcal còn lại"
+          }
+        }
+      }
+    },
+    "kcal · mục tiêu %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kcal · target %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kcal · mục tiêu %@"
+          }
+        }
+      }
+    },
+    "kết quả AI phải sửa": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI results corrected"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kết quả AI phải sửa"
+          }
+        }
+      }
+    },
+    "ngày trong mục tiêu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "days within goal"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ngày trong mục tiêu"
+          }
+        }
+      }
+    },
+    "ngân sách ngày": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "daily budget"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ngân sách ngày"
+          }
+        }
+      }
+    },
+    "trong %lld tuần": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "over %lld week"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "over %lld weeks"
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "trong %lld tuần"
+          }
+        }
+      }
+    },
+    "trung bình": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "average"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "trung bình"
+          }
+        }
+      }
+    },
+    "vs mục tiêu %@ kcal": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vs target %@ kcal"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vs mục tiêu %@ kcal"
+          }
+        }
+      }
+    },
+    "vượt mục tiêu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "over target"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vượt mục tiêu"
+          }
+        }
+      }
+    },
+    "Ít vận động": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sedentary — little or no exercise"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ít vận động"
+          }
+        }
+      }
+    },
+    "Đ %@ · TB %@ · B %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "P %@ · C %@ · F %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Đ %1$@ · TB %2$@ · B %3$@"
+          }
+        }
+      }
+    },
+    "Đang phân tích": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analysing"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang phân tích"
+          }
+        }
+      }
+    },
+    "Đang phân tích ảnh…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analysing the photo…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang phân tích ảnh…"
+          }
+        }
+      }
+    },
+    "Đang tải %@…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading %@…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang tải %@…"
+          }
+        }
+      }
+    },
+    "Đang tải lịch sử": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading history"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang tải lịch sử"
+          }
+        }
+      }
+    },
+    "Đang tải…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang tải…"
+          }
+        }
+      }
+    },
+    "Đây là món cuối cùng, nên cả bữa ăn sẽ bị xoá.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This is the last item, so the whole meal will be deleted."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đây là món cuối cùng, nên cả bữa ăn sẽ bị xoá."
+          }
+        }
+      }
+    },
+    "Đã dùng 70% ngân sách calo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "70% of your calorie budget used"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã dùng 70% ngân sách calo"
+          }
+        }
+      }
+    },
+    "Đã hiển thị toàn bộ lịch sử.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That is your whole history."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã hiển thị toàn bộ lịch sử."
+          }
+        }
+      }
+    },
+    "Đã kết nối · bước chân, năng lượng, giấc ngủ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connected · steps, energy, sleep"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã kết nối · bước chân, năng lượng, giấc ngủ"
+          }
+        }
+      }
+    },
+    "Đã lưu bữa ăn · %@ kcal": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meal saved · %@ kcal"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã lưu bữa ăn · %@ kcal"
+          }
+        }
+      }
+    },
+    "Đã vượt mục tiêu calo hôm nay": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today's calorie target passed"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã vượt mục tiêu calo hôm nay"
+          }
+        }
+      }
+    },
+    "Đã xoá bữa ăn": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meal deleted"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã xoá bữa ăn"
+          }
+        }
+      }
+    },
+    "Đã ăn": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eaten"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã ăn"
+          }
+        }
+      }
+    },
+    "Đã ăn %@ / %@ kcal · %@ g đạm.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ / %@ kcal eaten · %@ g protein."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Đã ăn %1$@ / %2$@ kcal · %3$@ g đạm."
+          }
+        }
+      }
+    },
+    "Đã ăn %@ / %@ kcal.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ / %@ kcal eaten."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Đã ăn %1$@ / %2$@ kcal."
+          }
+        }
+      }
+    },
+    "Đã đạt mục tiêu calo hôm nay": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today's calorie target reached"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã đạt mục tiêu calo hôm nay"
+          }
+        }
+      }
+    },
+    "Đóng": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đóng"
+          }
+        }
+      }
+    },
+    "Đạm": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Protein"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đạm"
+          }
+        }
+      }
+    },
+    "Đạm g": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Protein g"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đạm g"
+          }
+        }
+      }
+    },
+    "Đạt mục tiêu · %lld bữa": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "On target · %lld meal"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "On target · %lld meals"
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đạt mục tiêu · %lld bữa"
+          }
+        }
+      }
+    },
+    "Đạt mục tiêu.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On target."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đạt mục tiêu."
+          }
+        }
+      }
+    },
+    "Đặt cả đĩa ăn vào khung.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fit the whole plate in the frame."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đặt cả đĩa ăn vào khung."
+          }
+        }
+      }
+    },
+    "Để sau": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Later"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Để sau"
+          }
+        }
+      }
+    },
+    "đổi bữa": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "change meal"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "đổi bữa"
+          }
+        }
+      }
+    },
+    "Ước lượng khẩu phần": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimating the portion"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ước lượng khẩu phần"
+          }
+        }
+      }
+    },
+    "Ảnh bữa ăn chỉ dùng tạm để phân tích rồi xoá.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meal photos are used for analysis and then deleted."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ảnh bữa ăn chỉ dùng tạm để phân tích rồi xoá."
+          }
+        }
+      }
+    },
+    "Ảnh bữa ăn lúc %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meal photo at %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ảnh bữa ăn lúc %@"
+          }
+        }
+      }
+    },
+    "Ảnh bữa ăn vừa chụp": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The meal photo just taken"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ảnh bữa ăn vừa chụp"
+          }
+        }
+      }
+    },
+    "Ảnh bữa ăn vừa quét": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The meal photo just scanned"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ảnh bữa ăn vừa quét"
+          }
+        }
+      }
+    },
+    "Ảnh chỉ dùng để phân tích rồi xoá.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The photo is used for analysis and then deleted."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ảnh chỉ dùng để phân tích rồi xoá."
+          }
+        }
+      }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

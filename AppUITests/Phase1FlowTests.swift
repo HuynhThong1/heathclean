@@ -4,9 +4,10 @@ import XCTest
 /// a logged meal moves the dashboard, and crossing a threshold surfaces the
 /// status note.
 ///
-/// Both screens now follow the design handoff and are Vietnamese-primary.
-/// Numbers are built with a `vi_VN` formatter rather than hardcoded, because
-/// the app formats with that locale whatever the device is set to.
+/// The suite runs in Vietnamese: `-uiTesting` pins the language, because the
+/// stored default is "follow the system" and a simulator runs in English. Numbers
+/// are built with a `vi_VN` formatter rather than hardcoded, for the same reason —
+/// and the two language tests at the bottom are the ones that opt out.
 final class Phase1FlowTests: XCTestCase {
     private var app: XCUIApplication!
 
@@ -213,7 +214,9 @@ final class Phase1FlowTests: XCTestCase {
         weight.doubleTap()
         weight.typeText("500")
         // `TextField(value:format:)` commits on end-editing, so move focus off.
-        app.staticTexts["Tuổi, Age"].tap()
+        // "Tuổi" alone, not "Tuổi, Age": `HFLabel` draws one line now, so its
+        // combined label is the one line.
+        app.staticTexts["Tuổi"].tap()
 
         // DSFieldMessage prefixes its accessibility label with "Error: " so
         // VoiceOver distinguishes an error from a hint.
@@ -824,6 +827,55 @@ final class Phase1FlowTests: XCTestCase {
         XCTAssertNotEqual(reminder.value as? String, before, "and keeps it")
     }
 
+    // MARK: Language
+
+    /// Launched in English, the whole screen is English **and so are the
+    /// figures**. Both halves in one test on purpose: the copy travels through
+    /// SwiftUI's environment locale and the numbers travel through `AppNumber`,
+    /// two mechanisms that fail independently, and either one alone leaves a
+    /// screen that reads as broken.
+    func testLaunchingInEnglishTranslatesBothTheCopyAndTheNumbers() {
+        app.terminate()
+        app.launchArguments = ["-uiTesting", "-appLanguage", "en"]
+        app.launch()
+
+        XCTAssertTrue(app.buttons["welcome.start"].waitForExistence(timeout: 30))
+        XCTAssertEqual(app.buttons["welcome.start"].label, "Get started")
+        app.buttons["welcome.start"].tap()
+
+        reachDashboard()
+
+        // 2,378 with a comma, not the 2.378 a Vietnamese formatter writes.
+        let target = NumberFormatter()
+        target.locale = Locale(identifier: "en_US")
+        target.numberStyle = .decimal
+        target.maximumFractionDigits = 0
+        let english = target.string(from: 2378) ?? "2,378"
+        XCTAssertNotEqual(english, vn(2378), "the two locales have to disagree for this to test anything")
+
+        app.buttons["tab.profile"].tap()
+        XCTAssertTrue(app.buttons["profile.editBody"].waitForExistence(timeout: 30))
+        XCTAssertTrue(app.staticTexts["Per day, \(english) kcal"].exists)
+    }
+
+    /// Switching on Profile changes the tab you came from, not just the row you
+    /// touched. That is what rebuilding the view tree at the app root buys, and
+    /// it is the half that fails silently — every string still resolves, they
+    /// just resolve to what a model cached at load.
+    func testSwitchingLanguageOnProfileChangesTheOtherTabs() {
+        reachDashboard()
+        XCTAssertTrue(app.staticTexts["HÔM NAY"].waitForExistence(timeout: 30))
+
+        app.buttons["tab.profile"].tap()
+        let picker = app.segmentedControls["profile.language"]
+        scrollUntilHittable(picker)
+        picker.buttons["English"].tap()
+
+        app.buttons["tab.today"].tap()
+        XCTAssertTrue(app.staticTexts["TODAY"].waitForExistence(timeout: 30))
+        XCTAssertFalse(app.staticTexts["HÔM NAY"].exists)
+    }
+
     // MARK: Helpers
 
     /// A lazy stack keeps off-screen rows in the accessibility tree, and
@@ -870,8 +922,8 @@ final class Phase1FlowTests: XCTestCase {
         field.typeText("\(value)")
     }
 
-    /// The app formats every number as `vi_VN` ("1.878") whatever the device
-    /// locale is, so expectations are built the same way.
+    /// Figures follow the app's language, and `-uiTesting` pins that to
+    /// Vietnamese ("1.878"), so expectations are built the same way.
     private func vn(_ value: Int) -> String {
         let formatter = NumberFormatter()
         formatter.locale = Locale(identifier: "vi_VN")

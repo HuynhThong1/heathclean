@@ -61,7 +61,7 @@ struct HistoryMonthsView: View {
                     onChanged: { Task { await model.load() } },
                     onDeleted: {
                         model.clearSelection()
-                        toast = "Đã xoá bữa ăn"
+                        toast = L("Đã xoá bữa ăn")
                         Task { await model.load() }
                     }
                 )
@@ -71,7 +71,7 @@ struct HistoryMonthsView: View {
             MealEntryView(
                 type: type,
                 onSaved: { calories in
-                    toast = "Đã lưu bữa ăn · \(VNNumber.int(calories)) kcal"
+                    toast = L("Đã lưu bữa ăn · \(AppNumber.int(calories)) kcal")
                     Task { await model?.load() }
                 },
                 onScanInstead: onScanRequested.map { request in
@@ -139,24 +139,21 @@ struct HistoryMonthsView: View {
         }
     }
 
-    /// §1's `LabelPair`, at screen-title size. The component itself is 14.5/11.5 —
-    /// what a title needs is the pair *pattern*, not the pair view.
+    /// HISTORY_SPEC §1's screen title. It used to carry an English second line
+    /// under it, the way every label on every screen did; the language switch
+    /// takes that with it.
     private var title: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text("Lịch sử")
-                .font(.custom(DSFontName.bold, size: 26))
-                .tracking(-0.26)
-                .foregroundStyle(DS.textStrong)
-            Text("History")
-                .font(.custom(DSFontName.regular, size: 11.5))
-                .foregroundStyle(DS.textMuted)
-        }
-        .padding(.horizontal, DS.s1)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Lịch sử, History")
-        .accessibilityAddTraits(.isHeader)
-        .accessibilityIdentifier("history.title")
+        Text("Lịch sử")
+            .font(.custom(DSFontName.bold, size: 26))
+            .tracking(-0.26)
+            .foregroundStyle(DS.textStrong)
+            .padding(.horizontal, DS.s1)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            // No `accessibilityElement(children: .ignore)` any more: it was there
+            // to merge the two lines under one label, and with one line it would
+            // throw the only line away.
+            .accessibilityAddTraits(.isHeader)
+            .accessibilityIdentifier("history.title")
     }
 
     // MARK: The state machine (§1, §6)
@@ -248,7 +245,7 @@ struct HistoryMonthsView: View {
         // §7: the count changing is the outcome of typing, and nothing else on screen
         // announces it — the list itself is below the keyboard.
         .onChange(of: model.results.count) { _, count in
-            AccessibilityNotification.Announcement(String(localized: "\(count) kết quả")).post()
+            AccessibilityNotification.Announcement(L("\(count) kết quả")).post()
         }
     }
 
@@ -300,9 +297,9 @@ struct HistoryMonthsView: View {
     /// mid-sentence (§6).
     private func loadingText(_ model: HistoryMonthsModel) -> String {
         guard let label = model.loadingMonthLabel else {
-            return String(localized: "Đang tải…")
+            return L("Đang tải…")
         }
-        return String(localized: "Đang tải \(label.lowercased())…")
+        return L("Đang tải \(label.lowercased())…")
     }
 
     /// The sheet is driven by the model's selection rather than by local state, so a

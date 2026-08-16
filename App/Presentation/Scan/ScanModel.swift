@@ -72,11 +72,11 @@ final class ScanModel {
 
     var blockedReason: String? {
         guard let result, !isSaving else { return nil }
-        if result.foods.isEmpty { return "Không nhận ra món nào. Thử chụp lại hoặc nhập tay." }
+        if result.foods.isEmpty { return L("Không nhận ra món nào. Thử chụp lại hoặc nhập tay.") }
         if result.foods.contains(where: { !$0.isResolved }) {
             // Names the action that actually works. It used to say "sửa", which
             // invited renaming — and renaming never resolves anything.
-            return "Nhập dinh dưỡng hoặc bỏ món chưa rõ trước khi lưu"
+            return L("Nhập dinh dưỡng hoặc bỏ món chưa rõ trước khi lưu")
         }
         return nil
     }
@@ -90,16 +90,16 @@ final class ScanModel {
         } catch let error as FoodRecognitionError {
             state = .failed(Self.message(for: error))
         } catch {
-            state = .failed(String(localized: "Không phân tích được ảnh. Vui lòng thử lại."))
+            state = .failed(L("Không phân tích được ảnh. Vui lòng thử lại."))
         }
     }
 
     private static func message(for error: FoodRecognitionError) -> String {
         switch error {
         case .modelUnavailable:
-            String(localized: "Dịch vụ nhận diện đang bận. Thử lại sau ít phút.")
+            L("Dịch vụ nhận diện đang bận. Thử lại sau ít phút.")
         case .unreachable:
-            String(localized: "Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.")
+            L("Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.")
         case let .rejected(reason):
             reason
         }
@@ -196,7 +196,7 @@ final class ScanModel {
             // The row never landed, so the bytes must not stay: nothing would
             // ever point at them again.
             await photoStore.delete(ids: photos.map(\.id))
-            state = .failed(String(localized: "Không lưu được bữa ăn. Vui lòng thử lại."))
+            state = .failed(L("Không lưu được bữa ăn. Vui lòng thử lại."))
             return nil
         }
     }

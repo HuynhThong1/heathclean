@@ -7,17 +7,21 @@ import Foundation
 /// `GetMealHistoryMonthsUseCase` with it: history's day boundaries have to be
 /// the dashboard's, or a 23:30 meal lands on different days in different places.
 enum HistoryCalendar {
-    /// Monday-first, so the first column is T2. `Calendar.current` starts the
-    /// week on Sunday under a US locale, which would put CN first while the
-    /// labels underneath still read T2…CN.
+    /// Monday-first, and **deliberately independent of the app's language**.
     ///
-    /// The Vietnamese UI and persisted meal dates use the civil Gregorian
-    /// calendar. Do not inherit an alternate system calendar from Settings: it
-    /// would make the numeric month disagree with `VietnameseDate`, whose
-    /// `vi_VN` formatters are Gregorian.
+    /// It used to take Monday from a `vi_VN` locale. That was the same answer by
+    /// accident: `en_US` starts the week on Sunday, so once the UI can be drawn
+    /// in English a locale-derived calendar would silently move every week
+    /// boundary — and these boundaries are shared with the dashboard through
+    /// `GetMealHistoryMonthsUseCase`, so a 23:30 meal would land on a different
+    /// week depending on a display preference. `firstWeekday` is set outright
+    /// and no locale is attached.
+    ///
+    /// The persisted meal dates use the civil Gregorian calendar. Do not inherit
+    /// an alternate system calendar from Settings either: it would make the
+    /// numeric month disagree with `AppDate`, whose formatters are Gregorian.
     static func mondayFirst() -> Calendar {
         var calendar = Calendar(identifier: .gregorian)
-        calendar.locale = Locale(identifier: "vi_VN")
         calendar.timeZone = .autoupdatingCurrent
         calendar.firstWeekday = 2
         return calendar

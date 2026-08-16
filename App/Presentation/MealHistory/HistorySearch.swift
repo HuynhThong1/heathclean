@@ -11,15 +11,15 @@ enum HistoryFilter: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    var vi: String {
+    var label: String {
         switch self {
-        case .all: "Tất cả"
-        case .hasPhoto: "Có ảnh"
-        case .overBudget: "Vượt mục tiêu"
-        case .breakfast: MealType.breakfast.vi
-        case .lunch: MealType.lunch.vi
-        case .dinner: MealType.dinner.vi
-        case .snack: MealType.snack.vi
+        case .all: L("Tất cả")
+        case .hasPhoto: L("Có ảnh")
+        case .overBudget: L("Vượt mục tiêu")
+        case .breakfast: MealType.breakfast.label
+        case .lunch: MealType.lunch.label
+        case .dinner: MealType.dinner.label
+        case .snack: MealType.snack.label
         }
     }
 
@@ -39,9 +39,11 @@ enum HistoryFilter: String, CaseIterable, Identifiable {
 /// Diacritic- and case-insensitive matching, per §5: "pho" finds "phở", and so does
 /// "PHO".
 ///
-/// The Vietnamese locale is passed explicitly rather than taken from the device: the
-/// app's copy is Vietnamese wherever the phone is set, so its folding rules have to
-/// be too — the same reason `VNNumber` pins `vi_VN`.
+/// The Vietnamese locale is passed explicitly and **does not follow the app's
+/// language**: what is folded here is a *dish name*, which is Vietnamese whatever
+/// the UI is drawn in. This used to cite `AppNumber` as the precedent, and that is
+/// now the opposite of what `AppNumber` does — figures follow the language, and
+/// deliberately so. The two look alike and are answering different questions.
 enum HistorySearchText {
     static let minimumQueryLength = 2
 
@@ -158,7 +160,7 @@ struct HistoryFilterChipRow: View {
         return Button {
             onToggle(filter)
         } label: {
-            Text(filter.vi)
+            Text(filter.label)
                 .font(.custom(DSFontName.semibold, size: 12.5))
                 .foregroundStyle(isOn ? DS.blueOnSurface : DS.textBody)
                 .lineLimit(1)
@@ -174,7 +176,7 @@ struct HistoryFilterChipRow: View {
                 .contentShape(Capsule())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(isOn ? "\(filter.vi), đang bật" : filter.vi)
+        .accessibilityLabel(isOn ? L("\(filter.label), đang bật") : filter.label)
         .accessibilityAddTraits(isOn ? [.isButton, .isSelected] : .isButton)
         .accessibilityIdentifier("history.filter.\(filter.rawValue)")
     }
@@ -204,7 +206,7 @@ struct MealResultRow: View {
                         .lineLimit(2)
                 }
                 Spacer(minLength: DS.s2)
-                Text(VietnameseDate.dayMonth(for: hit.dayDate))
+                Text(AppDate.dayMonth(for: hit.dayDate))
                     .font(.custom(DSFontName.semibold, size: 11.5))
                     .monospacedDigit()
                     .foregroundStyle(DS.textBody)
@@ -242,16 +244,15 @@ struct MealResultRow: View {
 
     /// "Bữa sáng · 480 kcal".
     private var meta: String {
-        "\(hit.meal.type.vi) · \(VNNumber.int(hit.meal.calories)) kcal"
+        "\(hit.meal.type.label) · \(AppNumber.int(hit.meal.calories)) kcal"
     }
 
     private var accessibilityLabel: String {
-        var label = String(
-            localized:
-                "\(VietnameseDate.spokenDayText(for: hit.dayDate)), \(hit.meal.type.vi), \(hit.title), \(VNNumber.int(hit.meal.calories)) ki-lô ca-lo."
+        var label = L(
+            "\(AppDate.spokenDayText(for: hit.dayDate)), \(hit.meal.type.label), \(hit.title), \(AppNumber.int(hit.meal.calories)) ki-lô ca-lo."
         )
         if !hit.meal.photos.isEmpty {
-            label += String(localized: " Có ảnh.")
+            label += L(" Có ảnh.")
         }
         return label
     }

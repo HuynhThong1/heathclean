@@ -152,7 +152,7 @@ struct ScanFlowView: View {
                     Text("Quét bữa ăn")
                         .font(.custom(DSFontName.bold, size: 18))
                         .foregroundStyle(DS.textStrong)
-                    Text("\(model.type.vi) · \(model.type.en)")
+                    Text(verbatim: model.type.label)
                         .hfStyle(HFType.subLabel)
                         .foregroundStyle(DS.textSubtle)
                 }
@@ -225,10 +225,13 @@ private struct AnalyzingView: View {
 
     @State private var progress = 0.0
 
-    private let steps = [
-        (vi: "Nhận diện món ăn", threshold: 0.30),
-        (vi: "Ước lượng khẩu phần", threshold: 0.65),
-        (vi: "Tra cứu dinh dưỡng", threshold: 0.95),
+    /// §6.7's three checklist rows. `threshold` is also the identity `ForEach`
+    /// needs — a `LocalizedStringKey` is not `Hashable`, and the thresholds are
+    /// distinct by construction.
+    private let steps: [(label: LocalizedStringKey, threshold: Double)] = [
+        (label: "Nhận diện món ăn", threshold: 0.30),
+        (label: "Ước lượng khẩu phần", threshold: 0.65),
+        (label: "Tra cứu dinh dưỡng", threshold: 0.95),
     ]
 
     var body: some View {
@@ -249,17 +252,13 @@ private struct AnalyzingView: View {
                 .foregroundStyle(.white)
                 .padding(.top, DS.s5)
                 .accessibilityIdentifier("scan.analyzing")
-            Text("Analyzing your meal")
-                .font(.custom(DSFontName.regular, size: 12.5))
-                .foregroundStyle(.white.opacity(0.45))
-                .padding(.top, 2)
 
             progressBar
                 .padding(.top, DS.s5)
 
             VStack(alignment: .leading, spacing: DS.s3) {
-                ForEach(steps, id: \.vi) { step in
-                    checklistRow(step.vi, isDone: progress >= step.threshold)
+                ForEach(steps, id: \.threshold) { step in
+                    checklistRow(step.label, isDone: progress >= step.threshold)
                 }
             }
             .padding(.top, DS.s6)
@@ -298,7 +297,7 @@ private struct AnalyzingView: View {
         .accessibilityLabel("Đang phân tích")
     }
 
-    private func checklistRow(_ label: String, isDone: Bool) -> some View {
+    private func checklistRow(_ label: LocalizedStringKey, isDone: Bool) -> some View {
         HStack(spacing: DS.s2) {
             Image(systemName: isDone ? "checkmark.circle.fill" : "circle")
                 .font(.system(size: 14, weight: .semibold))
@@ -309,7 +308,7 @@ private struct AnalyzingView: View {
         }
         .animation(DS.ease, value: isDone)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(label)
+        .accessibilityLabel(Text(label))
         .accessibilityAddTraits(.isStaticText)
     }
 }

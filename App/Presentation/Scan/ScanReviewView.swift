@@ -82,12 +82,12 @@ struct ScanReviewView: View {
             // `LocalizedStringKey`; that is a wider change than this screen.
             HFDestructiveConfirm(
                 title: intent == .back
-                    ? String(localized: "Bỏ kết quả quét?")
-                    : String(localized: "Quét lại?"),
+                    ? L("Bỏ kết quả quét?")
+                    : L("Quét lại?"),
                 message: message(for: intent),
                 confirmLabel: intent == .back
-                    ? String(localized: "Bỏ kết quả")
-                    : String(localized: "Quét lại"),
+                    ? L("Bỏ kết quả")
+                    : L("Quét lại"),
                 onConfirm: {
                     pendingExit = nil
                     switch intent {
@@ -104,11 +104,11 @@ struct ScanReviewView: View {
     /// user has not touched as well, where the warning is only in the way.
     private func message(for intent: ExitIntent) -> String {
         let count = model.foods.count
-        let base = String(
-            localized: "Bữa ăn chưa được lưu. \(count) món AI nhận diện và mọi chỉnh sửa của bạn sẽ mất."
+        let base = L(
+            "Bữa ăn chưa được lưu. \(count) món AI nhận diện và mọi chỉnh sửa của bạn sẽ mất."
         )
         guard intent == .rescan else { return base }
-        return base + " " + String(localized: "Lần quét mới dùng thêm một lượt phân tích.")
+        return base + " " + L("Lần quét mới dùng thêm một lượt phân tích.")
     }
 
     private var portionBinding: Binding<RecognizedFood?> {
@@ -129,7 +129,7 @@ struct ScanReviewView: View {
                 Text("Kết quả AI")
                     .font(.custom(DSFontName.bold, size: 18))
                     .foregroundStyle(DS.textStrong)
-                Text("AI ANALYSIS · you confirm")
+                Text("AI PHÂN TÍCH · bạn xác nhận")
                     .hfStyle(HFType.subLabel)
                     .foregroundStyle(DS.textSubtle)
             }
@@ -224,11 +224,11 @@ struct ScanReviewView: View {
     private var totalCard: some View {
         HFCard(padding: DS.s5, radius: 14) {
             VStack(alignment: .leading, spacing: DS.s3) {
-                Text("TỔNG ƯỚC TÍNH · ESTIMATED TOTAL")
+                Text("TỔNG ƯỚC TÍNH")
                     .hfStyle(HFType.eyebrow)
                     .foregroundStyle(DS.textSubtle)
 
-                Text("\(VNNumber.int(model.result?.totalCalories ?? 0)) kcal")
+                Text("\(AppNumber.int(model.result?.totalCalories ?? 0)) kcal")
                     .font(.custom(DSFontName.extrabold, size: 30))
                     .tracking(-0.6)
                     .foregroundStyle(DS.blue)
@@ -272,7 +272,7 @@ struct ScanReviewView: View {
         let resolved = model.foods.filter(\.isResolved)
 
         guard !resolved.isEmpty else {
-            return String(localized: "Chưa món nào tra được dinh dưỡng · \(provider)")
+            return L("Chưa món nào tra được dinh dưỡng · \(provider)")
         }
 
         var seen = Set<String>()
@@ -285,9 +285,9 @@ struct ScanReviewView: View {
         // reporting that as "nothing resolved" would be false about a plate
         // that is showing real figures.
         guard !names.isEmpty else {
-            return String(localized: "Nguồn: không rõ · \(provider)")
+            return L("Nguồn: không rõ · \(provider)")
         }
-        return String(localized: "Nguồn: \(names.joined(separator: ", ")) · \(provider)")
+        return L("Nguồn: \(names.joined(separator: ", ")) · \(provider)")
     }
 
     private var bottomBar: some View {
@@ -296,7 +296,7 @@ struct ScanReviewView: View {
             // "bữa ăn", which named the value without offering to change it.
             Button { model.cycleMealType() } label: {
                 VStack(spacing: 1) {
-                    Text(model.type.vi)
+                    Text(model.type.label)
                         .font(.custom(DSFontName.bold, size: 13))
                         .foregroundStyle(DS.textStrong)
                     Text("đổi bữa")
@@ -309,7 +309,7 @@ struct ScanReviewView: View {
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("scan.mealType")
-            .accessibilityLabel("Bữa ăn: \(model.type.vi). Chạm để đổi bữa.")
+            .accessibilityLabel("Bữa ăn: \(model.type.label). Chạm để đổi bữa.")
 
             Button("Xác nhận bữa ăn") {
                 Task {
@@ -351,7 +351,7 @@ private struct ScanItemCard: View {
                 }
                 Spacer(minLength: DS.s2)
                 VStack(alignment: .trailing, spacing: 0) {
-                    Text(VNNumber.int(food.calories))
+                    Text(AppNumber.int(food.calories))
                         .font(.custom(DSFontName.bold, size: 16))
                         .foregroundStyle(DS.textStrong)
                     Text("kcal")
@@ -361,7 +361,7 @@ private struct ScanItemCard: View {
             }
 
             HStack(spacing: DS.s2) {
-                Text("\(VNNumber.int(food.weightGrams)) g")
+                Text("\(AppNumber.int(food.weightGrams)) g")
                     .font(.custom(DSFontName.semibold, size: 12.5))
                     .foregroundStyle(DS.textBody)
                     .padding(.horizontal, DS.s2)
@@ -379,7 +379,7 @@ private struct ScanItemCard: View {
 
             if food.isResolved {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Đ \(VNNumber.int(food.protein)) · TB \(VNNumber.int(food.carbohydrates)) · B \(VNNumber.int(food.fat))")
+                    Text("Đ \(AppNumber.int(food.protein)) · TB \(AppNumber.int(food.carbohydrates)) · B \(AppNumber.int(food.fat))")
                         .hfStyle(HFType.subLabel)
                         .foregroundStyle(DS.textSubtle)
                     if let source = nutritionSourceLabel {
@@ -409,19 +409,19 @@ private struct ScanItemCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
-            "\(food.name), \(VNNumber.int(food.weightGrams)) gam, \(VNNumber.int(food.calories)) kcal, \(confidenceText)"
+            "\(food.name), \(AppNumber.int(food.weightGrams)) gam, \(AppNumber.int(food.calories)) kcal, \(confidenceText)"
         )
     }
 
     private var percent: Int { Int((food.confidence * 100).rounded()) }
 
     private var confidenceText: String {
-        food.isLowConfidence ? "Nên kiểm tra \(percent)%" : "Tin cậy \(percent)%"
+        food.isLowConfidence ? L("Nên kiểm tra \(percent)%") : L("Tin cậy \(percent)%")
     }
 
     private var nutritionSourceLabel: String? {
         NutritionSourceCopy.name(for: food.nutritionSource).map {
-            String(localized: "Nguồn: \($0)")
+            L("Nguồn: \($0)")
         }
     }
 

@@ -28,10 +28,8 @@ final class ProfileModel {
     /// "30 tuổi · 170 cm · 70 kg" — the identity line from §6.13.
     var bodyLine: String? {
         guard let profile else { return nil }
-        let weight = profile.weightKg.formatted(
-            .number.precision(.fractionLength(0...1)).locale(Locale(identifier: "vi_VN"))
-        )
-        return "\(profile.age) tuổi · \(Int(profile.heightCm.rounded())) cm · \(weight) kg"
+        let weight = AppNumber.upTo(fractionDigits: 1, profile.weightKg)
+        return L("\(profile.age) tuổi · \(Int(profile.heightCm.rounded())) cm · \(weight) kg")
     }
 
     /// Kilograms between current and target weight. `nil` when maintaining, or
@@ -47,10 +45,10 @@ final class ProfileModel {
     /// whether a *read* was granted, so the only honest signal is whether any
     /// data actually came back.
     var healthStatusText: String {
-        guard healthRepository.isAvailable else { return String(localized: "Không khả dụng trên thiết bị này") }
+        guard healthRepository.isAvailable else { return L("Không khả dụng trên thiết bị này") }
         return hasHealthData
-            ? String(localized: "Đã kết nối · bước chân, năng lượng, giấc ngủ")
-            : String(localized: "Chưa kết nối")
+            ? L("Đã kết nối · bước chân, năng lượng, giấc ngủ")
+            : L("Chưa kết nối")
     }
 
     func load() async {

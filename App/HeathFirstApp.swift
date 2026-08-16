@@ -10,6 +10,9 @@ struct HeathFirstApp: App {
     )
 
     init() {
+        // Before anything reads the language — `@AppStorage` below resolves when
+        // `body` first runs, which is after this.
+        AppLanguage.applyLaunchOverrideIfNeeded()
         DSAppearance.apply()
     }
 
@@ -17,11 +20,23 @@ struct HeathFirstApp: App {
     /// be applied above every sheet and full-screen cover to reach them all.
     @AppStorage(AppAppearance.storageKey) private var appearance: AppAppearance = .light
 
+    /// Same reason as `appearance`, and the same placement: `\.locale` has to sit
+    /// above every sheet for the strings inside one to follow the choice.
+    @AppStorage(AppLanguage.storageKey) private var language: AppLanguage = .system
+
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environment(container)
+                .environment(\.locale, language.resolved.locale)
                 .preferredColorScheme(appearance.colorScheme)
+                // The environment locale reaches `Text`, but not a string a
+                // model already built and stored — those resolve once, at load.
+                // Rebuilding the tree re-runs every `.task`, which is the only
+                // thing that makes them agree. Changing language is deliberate
+                // and rare; losing the navigation stack is the right price for a
+                // screen that is wholly in one language.
+                .id(language.resolved)
         }
     }
 }

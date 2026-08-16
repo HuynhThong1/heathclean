@@ -9,21 +9,12 @@ enum HealthDataKind: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    var vi: String {
+    var label: String {
         switch self {
-        case .steps: "Bước chân"
-        case .energy: "Năng lượng vận động"
-        case .sleep: "Giấc ngủ"
-        case .weight: "Cân nặng & BMI"
-        }
-    }
-
-    var en: String {
-        switch self {
-        case .steps: "Step count"
-        case .energy: "Active energy"
-        case .sleep: "Sleep"
-        case .weight: "Body mass"
+        case .steps: L("Bước chân")
+        case .energy: L("Năng lượng vận động")
+        case .sleep: L("Giấc ngủ")
+        case .weight: L("Cân nặng & BMI")
         }
     }
 
@@ -132,7 +123,7 @@ struct HealthPermissionView: View {
                 .frame(width: 32, height: 32)
                 .background(DS.blue50, in: RoundedRectangle(cornerRadius: 9, style: .continuous))
 
-            LabelPair(vi: kind.vi, en: kind.en)
+            HFLabel(verbatim: kind.label)
 
             Spacer(minLength: DS.s2)
 
@@ -146,7 +137,7 @@ struct HealthPermissionView: View {
             .labelsHidden()
             .tint(DS.blue)
             .accessibilityIdentifier("health.\(kind.rawValue)")
-            .accessibilityLabel(kind.vi)
+            .accessibilityLabel(kind.label)
         }
         .padding(.horizontal, DS.s4)
         .frame(minHeight: 62)

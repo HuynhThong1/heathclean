@@ -10,6 +10,7 @@ struct ProfileView: View {
     @State private var isEditingProfile = false
     @State private var isShowingHealth = false
     @AppStorage(AppAppearance.storageKey) private var appearance: AppAppearance = .light
+    @AppStorage(AppLanguage.storageKey) private var language: AppLanguage = .system
 
     var body: some View {
         ScrollView {
@@ -19,7 +20,7 @@ struct ProfileView: View {
                     statCards(model: model, profile: profile, goal: goal)
                     settingsSection(model: model)
                     notificationsSection
-                    appearanceSection
+                    displaySection
                     privacySection
                 } else {
                     ProgressView().frame(maxWidth: .infinity)
@@ -63,7 +64,7 @@ struct ProfileView: View {
     /// stop content scrolling up into the clock — had nothing to give it height,
     /// so the strip was 16pt of padding and the switches ran under the status bar.
     private var header: some View {
-        Text("TÔI · PROFILE")
+        Text("TÔI")
             .hfStyle(HFType.eyebrow)
             .foregroundStyle(DS.textSubtle)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -96,7 +97,7 @@ struct ProfileView: View {
             Spacer(minLength: 0)
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Hồ sơ của bạn, \(model.bodyLine ?? "")")
+        .accessibilityLabel(L("Hồ sơ của bạn, \(model.bodyLine ?? "")"))
         .accessibilityAddTraits(.isStaticText)
     }
 
@@ -109,23 +110,23 @@ struct ProfileView: View {
     ) -> some View {
         HStack(spacing: DS.s2) {
             statCard(
-                value: VNNumber.int(goal.calories),
+                value: AppNumber.int(goal.calories),
                 unit: "kcal",
-                vi: "Mỗi ngày",
+                label: "Mỗi ngày",
                 background: DS.blue50,
                 foreground: DS.blue700
             )
             statCard(
-                value: model.bmi.map { VNNumber.oneDecimal($0.value) } ?? "—",
-                unit: model.bmi?.category.vi ?? "",
-                vi: "BMI",
+                value: model.bmi.map { AppNumber.oneDecimal($0.value) } ?? "—",
+                unit: model.bmi?.category.label ?? "",
+                label: "BMI",
                 background: DS.surfaceSunken,
                 foreground: DS.textStrong
             )
             statCard(
-                value: model.kilogramsToTarget.map { VNNumber.oneDecimal($0) } ?? "—",
+                value: model.kilogramsToTarget.map { AppNumber.oneDecimal($0) } ?? "—",
                 unit: "kg",
-                vi: model.kilogramsToTarget == nil ? "Không đặt" : "Còn lại",
+                label: model.kilogramsToTarget == nil ? "Không đặt" : "Còn lại",
                 background: DS.green100,
                 foreground: DS.green700
             )
@@ -135,7 +136,7 @@ struct ProfileView: View {
     private func statCard(
         value: String,
         unit: String,
-        vi: String,
+        label: LocalizedStringKey,
         background: Color,
         foreground: Color
     ) -> some View {
@@ -150,7 +151,7 @@ struct ProfileView: View {
                 .foregroundStyle(foreground.opacity(0.8))
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
-            Text(vi)
+            Text(label)
                 .hfStyle(HFType.subLabel)
                 .foregroundStyle(DS.textSubtle)
         }
@@ -158,7 +159,7 @@ struct ProfileView: View {
         .padding(DS.s3)
         .background(background, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(vi), \(value) \(unit)")
+        .accessibilityLabel(Text(label) + Text(verbatim: ", \(value) \(unit)"))
         .accessibilityAddTraits(.isStaticText)
     }
 
@@ -173,8 +174,7 @@ struct ProfileView: View {
             HFCard(padding: 0) {
                 VStack(spacing: 0) {
                     settingsRow(
-                        vi: "Thông tin cơ thể & mục tiêu",
-                        en: "Body info & goal",
+                        "Thông tin cơ thể & mục tiêu",
                         detail: nil,
                         identifier: "profile.editBody"
                     ) { isEditingProfile = true }
@@ -182,8 +182,7 @@ struct ProfileView: View {
                     Rectangle().fill(DS.borderSubtle).frame(height: 1).padding(.leading, DS.s4)
 
                     settingsRow(
-                        vi: "Apple Health",
-                        en: "Health data",
+                        "Apple Health",
                         detail: model.healthStatusText,
                         identifier: "profile.health"
                     ) { isShowingHealth = true }
@@ -273,19 +272,14 @@ struct ProfileView: View {
         }
     }
 
-    /// The bilingual label is written out rather than reusing `LabelPair`: that
-    /// declares itself an accessibility element with `.isStaticText`, and a
-    /// control has to own the element so VoiceOver announces the switch.
+    /// The label is written out rather than reusing `HFLabel`: that declares
+    /// itself an accessibility element with `.isStaticText`, and a control has to
+    /// own the element so VoiceOver announces the switch.
     private func notificationRow(_ preference: NotificationPreference) -> some View {
         Toggle(isOn: binding(for: preference)) {
-            VStack(alignment: .leading, spacing: 1) {
-                Text(preference.vi)
-                    .hfStyle(HFType.rowLabel)
-                    .foregroundStyle(DS.textStrong)
-                Text(preference.en)
-                    .hfStyle(HFType.subLabel)
-                    .foregroundStyle(DS.textSubtle)
-            }
+            Text(verbatim: preference.label)
+                .hfStyle(HFType.rowLabel)
+                .foregroundStyle(DS.textStrong)
         }
         .tint(DS.blue)
         .padding(.horizontal, DS.s4)
@@ -307,9 +301,14 @@ struct ProfileView: View {
         )
     }
 
-    /// Appearance is its own section rather than a row with a chevron: there is
-    /// nowhere to go, the choice is made here.
-    private var appearanceSection: some View {
+    /// Display settings are their own section rather than rows with a chevron:
+    /// there is nowhere to go, the choices are made here.
+    ///
+    /// Language sits in the same card as appearance because it is the same kind
+    /// of thing — a preference about how the app is drawn, with no bearing on
+    /// any figure — and a second "HIỂN THỊ" heading for one more picker would
+    /// say otherwise.
+    private var displaySection: some View {
         VStack(alignment: .leading, spacing: DS.s3) {
             Text("HIỂN THỊ")
                 .hfStyle(HFType.eyebrow)
@@ -317,11 +316,29 @@ struct ProfileView: View {
 
             HFCard {
                 VStack(alignment: .leading, spacing: DS.s3) {
-                    LabelPair(vi: "Giao diện", en: "Appearance")
+                    HFLabel("Ngôn ngữ")
+
+                    Picker("Ngôn ngữ", selection: $language) {
+                        ForEach(AppLanguage.allCases) { option in
+                            option.label.tag(option)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .accessibilityIdentifier("profile.language")
+                    // A notification's words are chosen when it is scheduled, so
+                    // one already sitting in the queue would fire in the language
+                    // the user just left. Same hook the switches above use.
+                    .onChange(of: language) {
+                        Task { await container.notifications.refresh() }
+                    }
+
+                    Divider().overlay(DS.borderSubtle)
+
+                    HFLabel("Giao diện")
 
                     Picker("Giao diện", selection: $appearance) {
                         ForEach(AppAppearance.allCases) { option in
-                            Text(option.vi).tag(option)
+                            Text(verbatim: option.label).tag(option)
                         }
                     }
                     .pickerStyle(.segmented)
@@ -336,9 +353,12 @@ struct ProfileView: View {
         }
     }
 
+    /// The sub-line is the row's `detail` and nothing else. It used to fall back
+    /// to the English label when there was no detail, which was §4's second line
+    /// wearing a different name — with one language that fallback would print the
+    /// row's own title twice.
     private func settingsRow(
-        vi: String,
-        en: String,
+        _ label: LocalizedStringKey,
         detail: String?,
         identifier: String,
         action: @escaping () -> Void
@@ -346,14 +366,16 @@ struct ProfileView: View {
         Button(action: action) {
             HStack(spacing: DS.s3) {
                 VStack(alignment: .leading, spacing: 1) {
-                    Text(vi)
+                    Text(label)
                         .hfStyle(HFType.rowLabel)
                         .foregroundStyle(DS.textStrong)
-                    Text(detail ?? en)
-                        .hfStyle(HFType.subLabel)
-                        .foregroundStyle(DS.textSubtle)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
+                    if let detail {
+                        Text(detail)
+                            .hfStyle(HFType.subLabel)
+                            .foregroundStyle(DS.textSubtle)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                    }
                 }
                 Spacer(minLength: DS.s2)
                 Image(systemName: "chevron.right")
@@ -366,7 +388,7 @@ struct ProfileView: View {
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier(identifier)
-        .accessibilityLabel("\(vi), \(detail ?? en)")
+        .accessibilityLabel(Text(label) + Text(verbatim: detail.map { ", " + $0 } ?? ""))
     }
 
     // MARK: Privacy
@@ -389,7 +411,7 @@ struct ProfileView: View {
         }
     }
 
-    private func privacyLine(_ text: String) -> some View {
+    private func privacyLine(_ text: LocalizedStringKey) -> some View {
         HStack(alignment: .top, spacing: DS.s2) {
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 14, weight: .semibold))

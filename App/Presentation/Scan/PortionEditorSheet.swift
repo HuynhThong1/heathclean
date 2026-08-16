@@ -76,7 +76,7 @@ struct PortionEditorSheet: View {
                     .background(DS.blue50, in: Capsule())
             }
 
-            Text("AI ước lượng ban đầu: \(VNNumber.int(food.originalWeightGrams)) g")
+            Text("AI ước lượng ban đầu: \(AppNumber.int(food.originalWeightGrams)) g")
                 .hfStyle(HFType.subLabel)
                 .foregroundStyle(DS.textSubtle)
 
@@ -138,9 +138,9 @@ struct PortionEditorSheet: View {
     /// stays blocked, so the scan would be a dead end.
     private var nutritionEntry: some View {
         VStack(alignment: .leading, spacing: DS.s3) {
-            LabelPair(vi: "Chưa có trong cơ sở dữ liệu", en: "Not in the database")
+            HFLabel("Chưa có trong cơ sở dữ liệu")
 
-            Text("Nhập kcal cho \(VNNumber.int(grams)) g đang hiển thị rồi bấm Xong. Đổi khẩu phần sau đó vẫn tính lại đúng.")
+            Text("Nhập kcal cho \(AppNumber.int(grams)) g đang hiển thị rồi bấm Xong. Đổi khẩu phần sau đó vẫn tính lại đúng.")
                 .hfStyle(HFType.subLabel)
                 .foregroundStyle(DS.textSubtle)
                 .fixedSize(horizontal: false, vertical: true)
@@ -163,7 +163,7 @@ struct PortionEditorSheet: View {
     }
 
     private func nutrientField(
-        _ placeholder: String,
+        _ placeholder: LocalizedStringKey,
         text: Binding<String>,
         id: String
     ) -> some View {
@@ -187,13 +187,13 @@ struct PortionEditorSheet: View {
             stepButton("minus") { set(max(0, grams - 10)) }
 
             VStack(spacing: 2) {
-                Text("\(VNNumber.int(grams)) g")
+                Text("\(AppNumber.int(grams)) g")
                     .font(.custom(DSFontName.extrabold, size: 34))
                     .foregroundStyle(DS.textStrong)
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
                     .accessibilityIdentifier("portion.grams")
-                Text("\(VNNumber.int(derivedCalories)) kcal")
+                Text("\(AppNumber.int(derivedCalories)) kcal")
                     .font(.custom(DSFontName.semibold, size: 12.5))
                     .foregroundStyle(DS.blue)
             }

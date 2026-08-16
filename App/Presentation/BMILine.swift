@@ -15,11 +15,11 @@ struct BMILine: View {
             Text(bmi.value, format: .number.precision(.fractionLength(1)))
                 .font(DSType.bodySemibold)
                 .foregroundStyle(DSColor.textStrong)
-            DSBadge(text: bmi.category.title, tone: bmi.category.badgeTone)
+            DSBadge(text: bmi.category.label, tone: bmi.category.badgeTone)
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
-            "BMI, \(bmi.value.formatted(.number.precision(.fractionLength(1)))), \(bmi.category.title)"
+            "BMI, \(bmi.value.formatted(.number.precision(.fractionLength(1)))), \(bmi.category.label)"
         )
         .accessibilityAddTraits(.isStaticText)
     }

@@ -60,10 +60,7 @@ final class MealDetailModel {
 
     var loggedAtText: String? {
         guard let loggedAt else { return nil }
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "vi_VN")
-        formatter.dateFormat = "HH:mm"
-        return formatter.string(from: loggedAt)
+        return AppDate.time(for: loggedAt)
     }
 
     /// Energy contributed by each macro, for the split bar (§6.10): protein and
@@ -108,7 +105,7 @@ final class MealDetailModel {
                 return .unchanged
             }
         } catch {
-            errorMessage = String(localized: "Không xoá được món. Vui lòng thử lại.")
+            errorMessage = L("Không xoá được món. Vui lòng thử lại.")
             return .unchanged
         }
     }
@@ -123,7 +120,7 @@ final class MealDetailModel {
             meals = []
             return true
         } catch {
-            errorMessage = String(localized: "Không xoá được bữa ăn. Vui lòng thử lại.")
+            errorMessage = L("Không xoá được bữa ăn. Vui lòng thử lại.")
             return false
         }
     }

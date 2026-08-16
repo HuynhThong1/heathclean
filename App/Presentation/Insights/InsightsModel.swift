@@ -80,7 +80,7 @@ final class InsightsModel {
             )
             errorMessage = nil
         } catch {
-            errorMessage = String(localized: "Không tải được thống kê.")
+            errorMessage = L("Không tải được thống kê.")
         }
     }
 

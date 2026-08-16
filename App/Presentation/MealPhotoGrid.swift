@@ -106,9 +106,6 @@ private struct MealPhotoTile: View {
     }
 
     private var accessibilityLabel: String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "vi_VN")
-        formatter.dateFormat = "HH:mm"
-        return String(localized: "Ảnh bữa ăn lúc \(formatter.string(from: photo.capturedAt))")
+        L("Ảnh bữa ăn lúc \(AppDate.time(for: photo.capturedAt))")
     }
 }

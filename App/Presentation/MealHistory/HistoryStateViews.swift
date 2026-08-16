@@ -101,10 +101,6 @@ struct HistoryEmptyState: View {
                 .font(.custom(DSFontName.bold, size: 17))
                 .foregroundStyle(DS.textStrong)
                 .multilineTextAlignment(.center)
-            Text("No meals logged yet")
-                .font(.custom(DSFontName.regular, size: 11.5))
-                .foregroundStyle(DS.textMuted)
-                .padding(.top, 3)
             Text(
                 "Ghi bữa đầu tiên để bắt đầu lịch sử của bạn. Lịch sử chỉ hiện những ngày bạn đã ghi."
             )
@@ -148,10 +144,6 @@ struct HistoryErrorState: View {
                 .font(.custom(DSFontName.bold, size: 17))
                 .foregroundStyle(DS.textStrong)
                 .multilineTextAlignment(.center)
-            Text("Couldn't load your history")
-                .font(.custom(DSFontName.regular, size: 11.5))
-                .foregroundStyle(DS.textMuted)
-                .padding(.top, 3)
             Text("Dữ liệu vẫn nằm an toàn trên máy bạn. Thử lại sau vài giây.")
                 .font(.custom(DSFontName.regular, size: 13))
                 .foregroundStyle(DS.textBody)
@@ -184,10 +176,6 @@ struct HistorySearchEmptyState: View {
                 .font(.custom(DSFontName.bold, size: 16))
                 .foregroundStyle(DS.textStrong)
                 .multilineTextAlignment(.center)
-            Text("No meals found")
-                .font(.custom(DSFontName.regular, size: 11.5))
-                .foregroundStyle(DS.textMuted)
-                .padding(.top, 3)
             Text(detail)
                 .font(.custom(DSFontName.regular, size: 13))
                 .foregroundStyle(DS.textBody)
@@ -205,13 +193,9 @@ struct HistorySearchEmptyState: View {
 
     private var detail: String {
         guard !query.isEmpty else {
-            return String(
-                localized: "Không có bữa nào khớp bộ lọc trong các tháng đã tải. Thử bỏ bớt bộ lọc."
-            )
+            return L("Không có bữa nào khớp bộ lọc trong các tháng đã tải. Thử bỏ bớt bộ lọc.")
         }
-        return String(
-            localized: "Không có bữa nào tên “\(query)” trong các tháng đã tải. Thử bỏ bớt bộ lọc."
-        )
+        return L("Không có bữa nào tên “\(query)” trong các tháng đã tải. Thử bỏ bớt bộ lọc.")
     }
 }
 

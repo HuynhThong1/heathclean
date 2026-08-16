@@ -100,7 +100,7 @@ struct WelcomeView: View {
         .accessibilityLabel("HealthClean")
     }
 
-    private func checkLine(_ text: String) -> some View {
+    private func checkLine(_ text: LocalizedStringKey) -> some View {
         HStack(spacing: DS.s2) {
             Image(systemName: "checkmark")
                 .font(.system(size: 12, weight: .bold))
@@ -110,7 +110,7 @@ struct WelcomeView: View {
                 .foregroundStyle(.white.opacity(0.9))
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(text)
+        .accessibilityLabel(Text(text))
     }
 
     /// `linear-gradient(160deg, #004E8C 0%, #0062B0 55%, #0E9F43 140%)`.

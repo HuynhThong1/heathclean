@@ -62,7 +62,7 @@ struct MonthHeader: View {
     }
 
     private var title: String {
-        VietnameseDate.monthYearText(year: month.year, month: month.month)
+        AppDate.monthYearText(year: month.year, month: month.month)
     }
 
     /// "5 ngày ghi · TB 1.780 kcal".
@@ -72,9 +72,9 @@ struct MonthHeader: View {
     /// one good day look like a starvation month.
     private var meta: String {
         let count = month.days.count
-        guard count > 0 else { return String(localized: "chưa ghi ngày nào") }
+        guard count > 0 else { return L("chưa ghi ngày nào") }
         let average = month.calories / Double(count)
-        return String(localized: "\(count) ngày ghi · TB \(VNNumber.int(average)) kcal")
+        return L("\(count) ngày ghi · TB \(AppNumber.int(average)) kcal")
     }
 }
 
@@ -123,10 +123,7 @@ struct EmptyMonthDivider: View {
     }
 
     private var text: String {
-        String(
-            localized:
-                "\(VietnameseDate.monthYearText(year: year, month: month)) — chưa ghi ngày nào"
-        )
+        L("\(AppDate.monthYearText(year: year, month: month)) — chưa ghi ngày nào")
     }
 }
 

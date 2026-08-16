@@ -1,47 +1,76 @@
 import SwiftUI
 
-/// Vietnamese label with its English sub-label beneath — the pattern that
-/// repeats on every screen (handoff §4).
+/// The row label that repeats on every screen (handoff §4).
 ///
-/// Read as a single element by VoiceOver, Vietnamese first: the two halves name
-/// the same thing, and announcing them separately would double every row.
-struct LabelPair: View {
-    let vi: String
-    let en: String
-    var alignment: HorizontalAlignment = .leading
+/// **This was `LabelPair`, and it drew two lines**: Vietnamese, with the English
+/// underneath. §4 asks for that because the design has no way to choose a
+/// language — but `AppLanguage` is that way, and once it exists a second line
+/// shows the user a language they did not ask for. One line, in the language
+/// they picked.
+///
+/// `caption` is **not** the old English line coming back. It is for a genuine
+/// second fact — "Dùng cho công thức Mifflin-St Jeor" under "Giới tính sinh học"
+/// — which was living in the `en:` slot because that was the only slot there
+/// was, and would have been thrown away with the translations.
+struct HFLabel: View {
+    private let text: Text
+    private let captionText: Text?
+    private let alignment: HorizontalAlignment
+
+    init(
+        _ title: LocalizedStringKey,
+        caption: LocalizedStringKey? = nil,
+        alignment: HorizontalAlignment = .leading
+    ) {
+        self.text = Text(title)
+        self.captionText = caption.map { (key: LocalizedStringKey) in Text(key) }
+        self.alignment = alignment
+    }
+
+    /// For copy that was already resolved where it was built — an enum's
+    /// `label`, a model's sentence. A single `String` initializer would take
+    /// every literal written into it out of the catalog, which is the mistake
+    /// `GrayNote` made; this one is named so the call site says which it is.
+    init(verbatim title: String, caption: String? = nil, alignment: HorizontalAlignment = .leading) {
+        self.text = Text(verbatim: title)
+        self.captionText = caption.map { Text(verbatim: $0) }
+        self.alignment = alignment
+    }
 
     var body: some View {
         VStack(alignment: alignment, spacing: 1) {
-            Text(vi)
+            text
                 .hfStyle(HFType.rowLabel)
                 .foregroundStyle(DS.textStrong)
-            Text(en)
-                .hfStyle(HFType.subLabel)
-                .foregroundStyle(DS.textSubtle)
+            if let captionText {
+                captionText
+                    .hfStyle(HFType.subLabel)
+                    .foregroundStyle(DS.textSubtle)
+            }
         }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(vi), \(en)")
+        // Still one element even with a caption: the two lines describe one
+        // thing, and announcing them separately doubles every row.
+        .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.isStaticText)
     }
 }
 
 /// Section heading, which sits *outside* the card (handoff §4).
 struct HFSectionHeader: View {
-    let vi: String
-    let en: String
+    let title: LocalizedStringKey
+
+    init(_ title: LocalizedStringKey) {
+        self.title = title
+    }
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: DS.s2) {
-            Text(vi)
+            Text(title)
                 .hfStyle(HFType.sectionHead)
                 .foregroundStyle(DS.textStrong)
-            Text(en)
-                .hfStyle(HFType.subLabel)
-                .foregroundStyle(DS.textSubtle)
             Spacer(minLength: 0)
         }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(vi), \(en)")
+        .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.isHeader)
     }
 }
@@ -96,9 +125,9 @@ struct HFCard<Content: View>: View {
 /// privacy line, the scan explainer, two onboarding asides, two Insights empty
 /// states — sat outside `Localizable.xcstrings` with nothing to show it. The
 /// History day panel's empty state was in the catalog only by accident, because the
-/// screen this replaced happened to pass the same sentence through
-/// `String(localized:)`; deleting that screen took the key with it, which is how
-/// the whole set came to light.
+/// screen this replaced happened to pass the same sentence through the resolving
+/// call (`String(localized:)` then, `L()` now); deleting that screen took the key
+/// with it, which is how the whole set came to light.
 ///
 /// A message that was already localized where it was built — a status line, an
 /// error — comes in through `init(verbatim:)` instead, so it is not looked up a

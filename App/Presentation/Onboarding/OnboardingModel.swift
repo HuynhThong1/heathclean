@@ -71,7 +71,7 @@ final class OnboardingModel {
             // the request itself failed, and claiming "connected" would be a lie.
             hasRequestedHealth = true
         } catch {
-            healthMessage = String(localized: "Apple Health hiện không khả dụng. Bạn có thể kết nối sau.")
+            healthMessage = L("Apple Health hiện không khả dụng. Bạn có thể kết nối sau.")
         }
     }
 
@@ -113,13 +113,13 @@ final class OnboardingModel {
     var heightError: String? {
         Self.heightRange.contains(heightCm)
             ? nil
-            : String(localized: "Nhập chiều cao từ \(Int(Self.heightRange.lowerBound)) đến \(Int(Self.heightRange.upperBound)) cm")
+            : L("Nhập chiều cao từ \(Int(Self.heightRange.lowerBound)) đến \(Int(Self.heightRange.upperBound)) cm")
     }
 
     var weightError: String? {
         Self.weightRange.contains(weightKg)
             ? nil
-            : String(localized: "Nhập cân nặng từ \(Int(Self.weightRange.lowerBound)) đến \(Int(Self.weightRange.upperBound)) kg")
+            : L("Nhập cân nặng từ \(Int(Self.weightRange.lowerBound)) đến \(Int(Self.weightRange.upperBound)) kg")
     }
 
     /// Target weight is optional, but a value pointing the wrong way is worth
@@ -128,9 +128,9 @@ final class OnboardingModel {
         guard let target = targetWeightKg else { return nil }
         switch goal {
         case .lose where target >= weightKg:
-            return String(localized: "Mục tiêu giảm cân thường thấp hơn cân nặng hiện tại.")
+            return L("Mục tiêu giảm cân thường thấp hơn cân nặng hiện tại.")
         case .gain where target <= weightKg:
-            return String(localized: "Mục tiêu tăng cân thường cao hơn cân nặng hiện tại.")
+            return L("Mục tiêu tăng cân thường cao hơn cân nặng hiện tại.")
         default:
             return nil
         }
@@ -173,13 +173,12 @@ final class OnboardingModel {
     /// The formula line under the result, e.g. "BMR 1.735 × vận động ×1,375 −500 kcal".
     var formulaLine: String {
         let bmr = CalculateCalorieGoalUseCase.basalMetabolicRate(profile: profile)
-        let multiplier = activityLevel.multiplier
-            .formatted(.number.precision(.fractionLength(0...3)).locale(Locale(identifier: "vi_VN")))
+        let multiplier = AppNumber.upTo(fractionDigits: 3, activityLevel.multiplier)
         let delta = goal.dailyCalorieDelta
         let deltaText = delta == 0
             ? "±0 kcal"
-            : (delta < 0 ? "−\(VNNumber.int(abs(delta))) kcal" : "+\(VNNumber.int(delta)) kcal")
-        return "BMR \(VNNumber.int(bmr)) × vận động ×\(multiplier) \(deltaText)"
+            : (delta < 0 ? "−\(AppNumber.int(abs(delta))) kcal" : "+\(AppNumber.int(delta)) kcal")
+        return L("BMR \(AppNumber.int(bmr)) × vận động ×\(multiplier) \(deltaText)")
     }
 
     /// Shown when the user leaves sex unspecified, so the lower confidence of
@@ -204,7 +203,7 @@ final class OnboardingModel {
 
             return true
         } catch {
-            errorMessage = String(localized: "Không lưu được hồ sơ. Vui lòng thử lại.")
+            errorMessage = L("Không lưu được hồ sơ. Vui lòng thử lại.")
             return false
         }
     }

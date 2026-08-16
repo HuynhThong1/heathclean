@@ -106,10 +106,11 @@ struct HFSegments<Value: Hashable>: View {
     }
 }
 
-/// Radio card from §6.2 step 2 — ring, bilingual label, trailing meta.
+/// Radio card from §6.2 step 2 — ring, label, trailing meta.
 struct HFRadioCard: View {
-    let vi: String
-    let en: String
+    /// Resolved where it was built: every call site passes an `ActivityLevel`'s
+    /// `label`, which a `switch` picks at runtime.
+    let title: String
     let meta: String
     let isSelected: Bool
     let identifier: String
@@ -127,7 +128,7 @@ struct HFRadioCard: View {
                     }
                 }
 
-                LabelPair(vi: vi, en: en)
+                HFLabel(verbatim: title)
 
                 Spacer(minLength: DS.s2)
 
@@ -163,7 +164,7 @@ struct MacroChip: View {
 
     var body: some View {
         VStack(spacing: 2) {
-            Text("\(VNNumber.int(grams)) g")
+            Text("\(AppNumber.int(grams)) g")
                 .font(.custom(DSFontName.extrabold, size: 20))
                 .foregroundStyle(foreground)
                 .lineLimit(1)
@@ -176,7 +177,7 @@ struct MacroChip: View {
         .padding(.vertical, DS.s3)
         .background(background, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(vi), \(VNNumber.int(grams)) gam")
+        .accessibilityLabel("\(vi), \(AppNumber.int(grams)) gam")
         .accessibilityAddTraits(.isStaticText)
     }
 }

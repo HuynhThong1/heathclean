@@ -45,7 +45,7 @@ struct DashboardView: View {
             MealEntryView(
                 type: type,
                 onSaved: { savedCalories in
-                    toast = "Đã lưu bữa ăn · \(VNNumber.int(savedCalories)) kcal"
+                    toast = L("Đã lưu bữa ăn · \(AppNumber.int(savedCalories)) kcal")
                     Task { await model?.load() }
                 },
                 onScanInstead: onScanRequested.map { request in
@@ -96,7 +96,7 @@ struct DashboardView: View {
                     Task { await self.model?.load() }
                 },
                 onDeleted: {
-                    toast = "Đã xoá bữa ăn"
+                    toast = L("Đã xoá bữa ăn")
                     Task { await self.model?.load() }
                 }
             )
@@ -112,10 +112,10 @@ struct DashboardView: View {
             // clock with nothing between them. 2pt, because the two lines are
             // meant to read as one block.
             VStack(alignment: .leading, spacing: 2) {
-                Text("HÔM NAY · TODAY")
+                Text("HÔM NAY")
                     .hfStyle(HFType.eyebrow)
                     .foregroundStyle(DS.textSubtle)
-                Text(VietnameseDate.headerText(for: Date()))
+                Text(AppDate.headerText(for: Date()))
                     .hfStyle(HFType.screenTitle)
                     .foregroundStyle(DS.textStrong)
             }
@@ -163,7 +163,7 @@ struct DashboardView: View {
         let overBudget = remaining < 0
 
         return VStack(spacing: 2) {
-            Text(VNNumber.int(abs(remaining)))
+            Text(AppNumber.int(abs(remaining)))
                 .hfStyle(HFType.heroMetric)
                 .foregroundStyle(DS.textStrong)
                 .minimumScaleFactor(0.5)
@@ -174,16 +174,13 @@ struct DashboardView: View {
                 // agree. The big number stays `textStrong`: it is the figure, and
                 // colouring it too would shout.
                 .foregroundStyle(overBudget ? DS.danger : DS.textBody)
-            Text(overBudget ? "over target" : "remaining")
-                .hfStyle(HFType.subLabel)
-                .foregroundStyle(DS.textSubtle)
         }
         .padding(.horizontal, DS.s6)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
             overBudget
-                ? "\(VNNumber.int(abs(remaining))) kcal vượt mục tiêu"
-                : "\(VNNumber.int(abs(remaining))) kcal còn lại"
+                ? "\(AppNumber.int(abs(remaining))) kcal vượt mục tiêu"
+                : "\(AppNumber.int(abs(remaining))) kcal còn lại"
         )
         .accessibilityAddTraits(.isStaticText)
         .accessibilityIdentifier("hero.remaining")
@@ -192,19 +189,19 @@ struct DashboardView: View {
     private func statsRow(model: DashboardModel, summary: DailyNutritionSummary) -> some View {
         HStack(spacing: 0) {
             heroStat(
-                value: VNNumber.int(summary.goal.calories),
-                vi: "Mục tiêu", en: "Goal"
+                value: AppNumber.int(summary.goal.calories),
+                label: "Mục tiêu"
             )
             divider
             heroStat(
-                value: VNNumber.int(summary.consumedCalories),
-                vi: "Đã ăn", en: "Eaten"
+                value: AppNumber.int(summary.consumedCalories),
+                label: "Đã ăn"
             )
             divider
             heroStat(
                 // "—" when Health isn't connected (§6.4).
-                value: model.health?.activeEnergyKcal.map { VNNumber.int($0) } ?? "—",
-                vi: "Vận động", en: "Activity"
+                value: model.health?.activeEnergyKcal.map { AppNumber.int($0) } ?? "—",
+                label: "Vận động"
             )
         }
     }
@@ -215,43 +212,40 @@ struct DashboardView: View {
             .frame(width: 1, height: 34)
     }
 
-    private func heroStat(value: String, vi: String, en: String) -> some View {
+    private func heroStat(value: String, label: LocalizedStringKey) -> some View {
         VStack(spacing: 2) {
             Text(value)
                 .hfStyle(HFType.statValue)
                 .foregroundStyle(DS.textStrong)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
-            Text(vi)
+            Text(label)
                 .hfStyle(HFType.subLabelSemibold)
                 .foregroundStyle(DS.textMuted)
-            Text(en)
-                .hfStyle(HFType.subLabel)
-                .foregroundStyle(DS.textSubtle)
         }
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(vi), \(value)")
+        .accessibilityLabel(Text(label) + Text(verbatim: ", " + value))
     }
 
     // MARK: Macros
 
     private func macrosSection(summary: DailyNutritionSummary) -> some View {
         VStack(alignment: .leading, spacing: DS.s3) {
-            HFSectionHeader(vi: "Dinh dưỡng", en: "Macros")
+            HFSectionHeader("Dinh dưỡng")
             HFCard {
                 VStack(spacing: 14) {
                     MacroBar(
-                        vi: "Đạm", en: "Protein", tint: DS.blue,
+                        label: "Đạm", tint: DS.blue,
                         consumed: summary.consumedProtein, target: summary.goal.protein
                     )
                     MacroBar(
-                        vi: "Tinh bột", en: "Carbs", tint: DS.orange,
+                        label: "Tinh bột", tint: DS.orange,
                         consumed: summary.consumedCarbohydrates,
                         target: summary.goal.carbohydrates
                     )
                     MacroBar(
-                        vi: "Chất béo", en: "Fat", tint: DS.green,
+                        label: "Chất béo", tint: DS.green,
                         consumed: summary.consumedFat, target: summary.goal.fat
                     )
                 }
@@ -263,7 +257,7 @@ struct DashboardView: View {
 
     private func mealsSection(summary: DailyNutritionSummary) -> some View {
         VStack(alignment: .leading, spacing: DS.s3) {
-            HFSectionHeader(vi: "Bữa ăn", en: "Meals")
+            HFSectionHeader("Bữa ăn")
             HFCard(padding: 0) {
                 VStack(spacing: 0) {
                     ForEach(Array(MealType.allCases.enumerated()), id: \.element) { index, type in
@@ -301,27 +295,27 @@ struct DashboardView: View {
     @ViewBuilder
     private func healthSection(model: DashboardModel) -> some View {
         VStack(alignment: .leading, spacing: DS.s3) {
-            HFSectionHeader(vi: "Apple Health", en: "Activity")
+            HFSectionHeader("Apple Health")
 
             if let health = model.health, !health.isEmpty {
                 let columns = [GridItem(.flexible(), spacing: DS.s3),
                                GridItem(.flexible(), spacing: DS.s3)]
                 LazyVGrid(columns: columns, spacing: DS.s3) {
                     HealthTile(
-                        vi: "Bước chân", en: "Steps",
-                        value: health.steps.map { VNNumber.int($0) }
+                        label: "Bước chân",
+                        value: health.steps.map { AppNumber.int($0) }
                     )
                     HealthTile(
-                        vi: "Năng lượng", en: "Energy",
-                        value: health.activeEnergyKcal.map { "\(VNNumber.int($0)) kcal" }
+                        label: "Năng lượng",
+                        value: health.activeEnergyKcal.map { "\(AppNumber.int($0)) kcal" }
                     )
                     HealthTile(
-                        vi: "Giấc ngủ", en: "Sleep",
+                        label: "Giấc ngủ",
                         value: health.sleepDuration.map { Self.sleepText($0) }
                     )
                     HealthTile(
-                        vi: "Cân nặng", en: "Weight",
-                        value: health.weightKg.map { "\(VNNumber.oneDecimal($0)) kg" }
+                        label: "Cân nặng",
+                        value: health.weightKg.map { "\(AppNumber.oneDecimal($0)) kg" }
                     )
                 }
             } else {
@@ -348,7 +342,7 @@ struct DashboardView: View {
         HFCard {
             HStack(alignment: .center, spacing: DS.s3) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("BMI \(VNNumber.oneDecimal(bmi.value)) · \(bmi.category.vi)")
+                    Text("BMI \(AppNumber.oneDecimal(bmi.value))")
                         .hfStyle(HFType.rowLabel)
                         .foregroundStyle(DS.textStrong)
                     Text("Bối cảnh sức khỏe, không dùng để tính calo")
@@ -356,7 +350,9 @@ struct DashboardView: View {
                         .foregroundStyle(DS.textSubtle)
                 }
                 Spacer(minLength: DS.s2)
-                Text(bmi.category.en)
+                // Once, in the badge — see the same change in onboarding's
+                // result step.
+                Text(verbatim: bmi.category.label)
                     .hfStyle(HFType.subLabelSemibold)
                     .foregroundStyle(DS.blue700)
                     .padding(.horizontal, 10)
@@ -365,7 +361,7 @@ struct DashboardView: View {
             }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(
-                "BMI \(VNNumber.oneDecimal(bmi.value)), \(bmi.category.vi), \(bmi.category.en)"
+                "BMI \(AppNumber.oneDecimal(bmi.value)), \(bmi.category.label)"
             )
         }
     }
@@ -395,8 +391,7 @@ private struct RoundedMerge: InsettableShape {
 }
 
 private struct MacroBar: View {
-    let vi: String
-    let en: String
+    let label: LocalizedStringKey
     let tint: Color
     let consumed: Double
     let target: Double
@@ -408,12 +403,12 @@ private struct MacroBar: View {
     var body: some View {
         VStack(alignment: .leading, spacing: DS.s2) {
             HStack(alignment: .firstTextBaseline) {
-                LabelPair(vi: vi, en: en)
+                HFLabel(label)
                 Spacer(minLength: DS.s2)
-                Text(VNNumber.int(consumed))
+                Text(AppNumber.int(consumed))
                     .hfStyle(HFType.rowValue)
                     .foregroundStyle(DS.textStrong)
-                    + Text(" / \(VNNumber.int(target)) g")
+                    + Text(" / \(AppNumber.int(target)) g")
                     .hfStyle(HFType.rowValue)
                     .foregroundStyle(DS.textMuted)
             }
@@ -428,7 +423,7 @@ private struct MacroBar: View {
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
-            "\(vi), \(en), \(VNNumber.int(consumed)) trên \(VNNumber.int(target)) gam"
+            Text(label) + Text(", \(AppNumber.int(consumed)) trên \(AppNumber.int(target)) gam")
         )
     }
 }
@@ -439,7 +434,7 @@ private struct MealRow: View {
     let foodNames: [String]
 
     private var detail: String {
-        foodNames.isEmpty ? "Chưa ghi · not logged" : foodNames.joined(separator: ", ")
+        foodNames.isEmpty ? L("Chưa ghi") : foodNames.joined(separator: ", ")
     }
 
     var body: some View {
@@ -451,7 +446,7 @@ private struct MealRow: View {
                 .background(type.chipColor, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
 
             VStack(alignment: .leading, spacing: 1) {
-                Text(type.vi)
+                Text(type.label)
                     .hfStyle(HFType.rowLabel)
                     .foregroundStyle(DS.textStrong)
                 Text(detail)
@@ -463,7 +458,7 @@ private struct MealRow: View {
 
             Spacer(minLength: DS.s2)
 
-            Text(foodNames.isEmpty ? "—" : VNNumber.int(kcal))
+            Text(foodNames.isEmpty ? "—" : AppNumber.int(kcal))
                 .hfStyle(HFType.rowValue)
                 .foregroundStyle(foodNames.isEmpty ? DS.textSubtle : DS.textStrong)
 
@@ -475,13 +470,12 @@ private struct MealRow: View {
         .frame(minHeight: 62)
         .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(type.vi), \(foodNames.isEmpty ? "chưa ghi" : VNNumber.int(kcal) + " kcal")")
+        .accessibilityLabel("\(type.label), \(foodNames.isEmpty ? "chưa ghi" : AppNumber.int(kcal) + " kcal")")
     }
 }
 
 private struct HealthTile: View {
-    let vi: String
-    let en: String
+    let label: LocalizedStringKey
     let value: String?
 
     var body: some View {
@@ -492,10 +486,14 @@ private struct HealthTile: View {
                     .foregroundStyle(DS.textStrong)
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
-                LabelPair(vi: vi, en: en)
+                HFLabel(label)
             }
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(vi), \(value ?? "chưa có dữ liệu")")
+        // Built as `Text` rather than a string: the label is a catalog key, and
+        // only `Text` resolves one against the environment locale.
+        .accessibilityLabel(
+            Text(label) + Text(verbatim: ", ") + Text(value ?? L("chưa có dữ liệu"))
+        )
     }
 }

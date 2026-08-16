@@ -26,7 +26,7 @@ struct MealEntryView: View {
                 }
             }
             .background(DS.surfacePage)
-            .navigationTitle(type.vi)
+            .navigationTitle(type.label)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -135,8 +135,7 @@ struct MealEntryView: View {
         VStack(alignment: .leading, spacing: DS.s3) {
             HStack {
                 HFSectionHeader(
-                    vi: model.drafts.count > 1 ? "Món \(index + 1)" : "Món ăn",
-                    en: "Food"
+                    model.drafts.count > 1 ? "Món \(index + 1)" : "Món ăn"
                 )
                 if model.drafts.count > 1 {
                     Button {
@@ -157,7 +156,7 @@ struct MealEntryView: View {
             HFCard(padding: 0) {
                 VStack(spacing: 0) {
                     HStack(spacing: DS.s3) {
-                        LabelPair(vi: "Tên món", en: "Name")
+                        HFLabel("Tên món")
                         Spacer(minLength: DS.s2)
                         TextField("Ví dụ: Phở bò", text: draft.name)
                             .multilineTextAlignment(.trailing)
@@ -169,29 +168,28 @@ struct MealEntryView: View {
                     .frame(minHeight: 58)
 
                     separator
-                    numericRow("Khối lượng", "Weight", "g", draft.weightGrams, "field.weight")
+                    numericRow("Khối lượng", "g", draft.weightGrams, "field.weight")
                     separator
-                    numericRow("Calo", "Calories", "kcal", draft.calories, "field.calories")
+                    numericRow("Calo", "kcal", draft.calories, "field.calories")
                     separator
-                    numericRow("Đạm", "Protein", "g", draft.protein, "field.protein")
+                    numericRow("Đạm", "g", draft.protein, "field.protein")
                     separator
-                    numericRow("Tinh bột", "Carbs", "g", draft.carbohydrates, "field.carbs")
+                    numericRow("Tinh bột", "g", draft.carbohydrates, "field.carbs")
                     separator
-                    numericRow("Chất béo", "Fat", "g", draft.fat, "field.fat")
+                    numericRow("Chất béo", "g", draft.fat, "field.fat")
                 }
             }
         }
     }
 
     private func numericRow(
-        _ vi: String,
-        _ en: String,
+        _ label: LocalizedStringKey,
         _ suffix: String,
         _ value: Binding<Double>,
         _ identifier: String
     ) -> some View {
         HStack(spacing: DS.s3) {
-            LabelPair(vi: vi, en: en)
+            HFLabel(label)
             Spacer(minLength: DS.s2)
             HFNumericField(value: value, suffix: suffix, identifier: identifier)
         }
@@ -211,7 +209,7 @@ struct MealEntryView: View {
                     .foregroundStyle(DS.textSubtle)
 
                 HStack(alignment: .firstTextBaseline, spacing: DS.s2) {
-                    Text(VNNumber.int(model.totalCalories))
+                    Text(AppNumber.int(model.totalCalories))
                         .font(.custom(DSFontName.extrabold, size: 38))
                         .tracking(-1.14)
                         .foregroundStyle(DS.textStrong)
@@ -220,7 +218,7 @@ struct MealEntryView: View {
                         .foregroundStyle(DS.textMuted)
                 }
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel("Tổng \(VNNumber.int(model.totalCalories)) kcal")
+                .accessibilityLabel("Tổng \(AppNumber.int(model.totalCalories)) kcal")
                 .accessibilityAddTraits(.isStaticText)
                 .accessibilityIdentifier("mealEntry.total")
 

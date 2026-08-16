@@ -146,7 +146,7 @@ private struct BodyStep: View {
             HFCard(padding: 0) {
                 VStack(spacing: 0) {
                     row {
-                        LabelPair(vi: "Tuổi", en: "Age")
+                        HFLabel("Tuổi")
                         Spacer(minLength: DS.s2)
                         HFStepper(
                             value: model.age,
@@ -156,7 +156,7 @@ private struct BodyStep: View {
                     }
                     separator
                     row {
-                        LabelPair(vi: "Chiều cao", en: "Height")
+                        HFLabel("Chiều cao")
                         Spacer(minLength: DS.s2)
                         HFNumericField(
                             value: $model.heightCm, suffix: "cm", identifier: "field.height"
@@ -165,7 +165,7 @@ private struct BodyStep: View {
                     if let error = model.heightError { messageRow(error) }
                     separator
                     row {
-                        LabelPair(vi: "Cân nặng", en: "Weight")
+                        HFLabel("Cân nặng")
                         Spacer(minLength: DS.s2)
                         HFNumericField(
                             value: $model.weightKg, suffix: "kg", identifier: "field.weight"
@@ -176,12 +176,18 @@ private struct BodyStep: View {
             }
 
             VStack(alignment: .leading, spacing: DS.s2) {
-                LabelPair(vi: "Giới tính sinh học", en: "Dùng cho công thức Mifflin-St Jeor")
+                // The second line here was never a translation — it names the
+                // formula the field feeds. It survives the bilingual labels
+                // going away because it is a fact, not a language.
+                HFLabel(
+                    "Giới tính sinh học",
+                    caption: "Dùng cho công thức Mifflin-St Jeor"
+                )
                 HFSegments(
                     options: [
-                        (BiologicalSex?.some(.male), BiologicalSex.male.vi, "sex.male"),
-                        (BiologicalSex?.some(.female), BiologicalSex.female.vi, "sex.female"),
-                        (BiologicalSex?.none, BiologicalSex.preferNotToSay.vi, "sex.unspecified")
+                        (BiologicalSex?.some(.male), BiologicalSex.male.label, "sex.male"),
+                        (BiologicalSex?.some(.female), BiologicalSex.female.label, "sex.female"),
+                        (BiologicalSex?.none, BiologicalSex.preferNotToSay.label, "sex.unspecified")
                     ],
                     selection: $model.biologicalSex
                 )
@@ -222,8 +228,7 @@ private struct ActivityStep: View {
         VStack(spacing: 9) {
             ForEach(ActivityLevel.allCases, id: \.self) { level in
                 HFRadioCard(
-                    vi: level.vi,
-                    en: level.en,
+                    title: level.label,
                     meta: level.multiplierText,
                     isSelected: model.activityLevel == level,
                     identifier: "activity.\(level.rawValue)"
@@ -251,7 +256,7 @@ private struct GoalStep: View {
             if model.goal != .maintain {
                 HFCard(padding: 0) {
                     HStack(spacing: DS.s3) {
-                        LabelPair(vi: "Cân nặng mục tiêu", en: "Target weight")
+                        HFLabel("Cân nặng mục tiêu")
                         Spacer(minLength: DS.s2)
                         HFNumericField(
                             value: Binding(
@@ -283,7 +288,7 @@ private struct GoalStep: View {
             model.goal = goal
         } label: {
             VStack(spacing: DS.s1) {
-                Text(goal.vi)
+                Text(goal.label)
                     .font(.custom(DSFontName.bold, size: 15))
                     .foregroundStyle(isSelected ? DS.blue700 : DS.textStrong)
                 Text(goal.deltaText)
@@ -322,7 +327,7 @@ private struct ResultStep: View {
                         .foregroundStyle(DS.textSubtle)
 
                     HStack(alignment: .firstTextBaseline, spacing: DS.s2) {
-                        Text(VNNumber.int(model.nutritionGoal.calories))
+                        Text(AppNumber.int(model.nutritionGoal.calories))
                             .font(.custom(DSFontName.extrabold, size: 46))
                             .tracking(-1.38)
                             .foregroundStyle(DS.blue)
@@ -333,7 +338,7 @@ private struct ResultStep: View {
                             .foregroundStyle(DS.textMuted)
                     }
                     .accessibilityElement(children: .ignore)
-                    .accessibilityLabel("\(VNNumber.int(model.nutritionGoal.calories)) kcal mỗi ngày")
+                    .accessibilityLabel("\(AppNumber.int(model.nutritionGoal.calories)) kcal mỗi ngày")
                     .accessibilityAddTraits(.isStaticText)
                     .accessibilityIdentifier("result.calories")
 
@@ -362,14 +367,15 @@ private struct ResultStep: View {
             HFCard {
                 VStack(alignment: .leading, spacing: DS.s3) {
                     HStack(spacing: DS.s2) {
-                        Text("BMI \(VNNumber.oneDecimal(model.bmi.value))")
+                        Text("BMI \(AppNumber.oneDecimal(model.bmi.value))")
                             .hfStyle(HFType.rowLabel)
                             .foregroundStyle(DS.textStrong)
-                        Text("\(model.bmi.category.vi) · \(model.bmi.category.en)")
-                            .hfStyle(HFType.subLabel)
-                            .foregroundStyle(DS.textSubtle)
                         Spacer(minLength: DS.s2)
-                        Text(model.bmi.category.en)
+                        // The category is drawn once, in the badge. It used to be
+                        // here in the line as well — Vietnamese in the text and
+                        // English in the capsule — which with one language is the
+                        // same word printed twice.
+                        Text(verbatim: model.bmi.category.label)
                             .hfStyle(HFType.subLabelSemibold)
                             .foregroundStyle(DS.blue700)
                             .padding(.horizontal, 10)
@@ -378,7 +384,7 @@ private struct ResultStep: View {
                     }
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(
-                        "BMI \(VNNumber.oneDecimal(model.bmi.value)), \(model.bmi.category.vi)"
+                        "BMI \(AppNumber.oneDecimal(model.bmi.value)), \(model.bmi.category.label)"
                     )
 
                     BMIScaleBar(bmi: model.bmi.value)

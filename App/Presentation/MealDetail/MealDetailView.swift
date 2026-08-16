@@ -30,7 +30,7 @@ struct MealDetailView: View {
         }
         .scrollIndicators(.hidden)
         .background(DS.surfacePage)
-        .navigationTitle(model.type.vi)
+        .navigationTitle(model.type.label)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -41,9 +41,9 @@ struct MealDetailView: View {
         }
         .sheet(isPresented: $model.isConfirmingDelete) {
             HFDestructiveConfirm(
-                title: "Xoá cả \(model.type.vi.lowercased())?",
-                message: "Tất cả \(model.items.count) món trong bữa này sẽ bị xoá. Thao tác không thể hoàn tác.",
-                confirmLabel: "Xoá cả bữa ăn",
+                title: L("Xoá cả \(model.type.label.lowercased())?"),
+                message: L("Tất cả \(model.items.count) món trong bữa này sẽ bị xoá. Thao tác không thể hoàn tác."),
+                confirmLabel: L("Xoá cả bữa ăn"),
                 onConfirm: {
                     model.isConfirmingDelete = false
                     Task {
@@ -58,13 +58,13 @@ struct MealDetailView: View {
         }
         .sheet(item: $model.itemPendingRemoval) { item in
             HFDestructiveConfirm(
-                title: "Xoá “\(item.name)”?",
+                title: L("Xoá “\(item.name)”?"),
                 // Says what is left afterwards, because the alternative — deleting
                 // the last food — quietly removes the whole meal.
                 message: model.items.count > 1
-                    ? "Bữa ăn còn lại \(model.items.count - 1) món."
-                    : "Đây là món cuối cùng, nên cả bữa ăn sẽ bị xoá.",
-                confirmLabel: "Xoá món này",
+                    ? L("Bữa ăn còn lại \(model.items.count - 1) món.")
+                    : L("Đây là món cuối cùng, nên cả bữa ăn sẽ bị xoá."),
+                confirmLabel: L("Xoá món này"),
                 onConfirm: {
                     model.itemPendingRemoval = nil
                     Task {
@@ -106,7 +106,7 @@ struct MealDetailView: View {
                             .hfStyle(HFType.eyebrow)
                             .foregroundStyle(DS.textSubtle)
                         HStack(alignment: .firstTextBaseline, spacing: DS.s2) {
-                            Text(VNNumber.int(model.totalCalories))
+                            Text(AppNumber.int(model.totalCalories))
                                 .font(.custom(DSFontName.extrabold, size: 38))
                                 .tracking(-1.14)
                                 .foregroundStyle(DS.textStrong)
@@ -115,7 +115,7 @@ struct MealDetailView: View {
                                 .foregroundStyle(DS.textMuted)
                         }
                         .accessibilityElement(children: .ignore)
-                        .accessibilityLabel("Tổng bữa ăn \(VNNumber.int(model.totalCalories)) kcal")
+                        .accessibilityLabel("Tổng bữa ăn \(AppNumber.int(model.totalCalories)) kcal")
                         .accessibilityAddTraits(.isStaticText)
                         .accessibilityIdentifier("mealDetail.total")
                     }
@@ -176,7 +176,7 @@ struct MealDetailView: View {
 
     private var itemsCard: some View {
         VStack(alignment: .leading, spacing: DS.s3) {
-            HFSectionHeader(vi: "Món đã ghi", en: "Items")
+            HFSectionHeader("Món đã ghi")
             HFCard(padding: 0) {
                 VStack(spacing: 0) {
                     ForEach(Array(model.items.enumerated()), id: \.element.id) { index, item in
@@ -205,10 +205,10 @@ struct MealDetailView: View {
             }
             Spacer(minLength: DS.s2)
             VStack(alignment: .trailing, spacing: 1) {
-                Text("\(VNNumber.int(item.calories)) kcal")
+                Text("\(AppNumber.int(item.calories)) kcal")
                     .font(.custom(DSFontName.bold, size: 14.5))
                     .foregroundStyle(DS.textStrong)
-                Text("\(VNNumber.int(item.weightGrams)) g")
+                Text("\(AppNumber.int(item.weightGrams)) g")
                     .font(.custom(DSFontName.regular, size: 11))
                     .foregroundStyle(DS.textSubtle)
             }
@@ -237,15 +237,15 @@ struct MealDetailView: View {
         // a food from VoiceOver entirely.
         .accessibilityElement(children: .contain)
         .accessibilityLabel(
-            "\(item.name), \(VNNumber.int(item.calories)) kcal, \(VNNumber.int(item.weightGrams)) gam"
+            "\(item.name), \(AppNumber.int(item.calories)) kcal, \(AppNumber.int(item.weightGrams)) gam"
         )
     }
 
     private var summaryNote: String? {
         guard model.totalCalories > 0 else { return nil }
-        let share = "Bữa này chiếm \(model.budgetSharePercent)% ngân sách calo hôm nay."
+        let share = L("Bữa này chiếm \(model.budgetSharePercent)% ngân sách calo hôm nay.")
         guard let time = model.loggedAtText else { return share }
-        return "\(share) Ghi lúc \(time)."
+        return L("\(share) Ghi lúc \(time).")
     }
 
     private var deleteButton: some View {

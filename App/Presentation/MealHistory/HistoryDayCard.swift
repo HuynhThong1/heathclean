@@ -79,11 +79,11 @@ struct HistoryDayCard: View {
 
     private var dayColumn: some View {
         VStack(spacing: 1) {
-            Text(VietnameseDate.dayNumber(for: day.date))
+            Text(AppDate.dayNumber(for: day.date))
                 .font(.custom(DSFontName.bold, size: 20))
                 .monospacedDigit()
                 .foregroundStyle(isToday ? DS.blueOnSurface : DS.textStrong)
-            Text(VietnameseDate.weekdayCompact(for: day.date))
+            Text(AppDate.weekdayCompact(for: day.date))
                 .font(.custom(DSFontName.semibold, size: 10.5))
                 .foregroundStyle(DS.textMuted)
             if isToday {
@@ -103,7 +103,7 @@ struct HistoryDayCard: View {
     /// The same information as a line, for when the column no longer fits.
     private var dayRow: some View {
         HStack(spacing: 6) {
-            Text(VietnameseDate.dayNumber(for: day.date))
+            Text(AppDate.dayNumber(for: day.date))
                 .font(.custom(DSFontName.bold, size: 20))
                 .monospacedDigit()
                 .foregroundStyle(isToday ? DS.blueOnSurface : DS.textStrong)
@@ -112,7 +112,7 @@ struct HistoryDayCard: View {
             Text(verbatim: "·")
                 .font(.custom(DSFontName.semibold, size: 10.5))
                 .foregroundStyle(DS.axis)
-            Text(VietnameseDate.weekdayCompact(for: day.date))
+            Text(AppDate.weekdayCompact(for: day.date))
                 .font(.custom(DSFontName.semibold, size: 10.5))
                 .foregroundStyle(DS.textMuted)
             if isToday {
@@ -128,7 +128,7 @@ struct HistoryDayCard: View {
     private var figures: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .firstTextBaseline, spacing: 6) {
-                Text(VNNumber.int(day.calories))
+                Text(AppNumber.int(day.calories))
                     .font(.custom(DSFontName.bold, size: 17))
                     .monospacedDigit()
                     .foregroundStyle(DS.textStrong)
@@ -152,8 +152,8 @@ struct HistoryDayCard: View {
 
     private var goalText: String {
         goalCalories > 0
-            ? String(localized: "kcal · mục tiêu \(VNNumber.int(goalCalories))")
-            : String(localized: "kcal")
+            ? L("kcal · mục tiêu \(AppNumber.int(goalCalories))")
+            : L("kcal")
     }
 
     /// §4's three cases. Never a command and never a judgement — "Vượt 180 kcal" is
@@ -161,16 +161,16 @@ struct HistoryDayCard: View {
     private var deltaText: String {
         let mealCount = day.meals.count
         guard goalCalories > 0 else {
-            return String(localized: "\(mealCount) bữa")
+            return L("\(mealCount) bữa")
         }
         let difference = day.calories - goalCalories
         if abs(difference) <= goalCalories * Self.onTargetTolerance {
-            return String(localized: "Đạt mục tiêu · \(mealCount) bữa")
+            return L("Đạt mục tiêu · \(mealCount) bữa")
         }
         if difference > 0 {
-            return String(localized: "Vượt \(VNNumber.int(difference)) kcal · \(mealCount) bữa")
+            return L("Vượt \(AppNumber.int(difference)) kcal · \(mealCount) bữa")
         }
-        return String(localized: "Còn \(VNNumber.int(-difference)) kcal · \(mealCount) bữa")
+        return L("Còn \(AppNumber.int(-difference)) kcal · \(mealCount) bữa")
     }
 
     /// §4: within 2% of the target reads as having hit it. Without a tolerance,
@@ -183,25 +183,22 @@ struct HistoryDayCard: View {
     /// §7's label, in its order: the date spelled out, the figure against the
     /// target, how far off, the meals by name, then whether there are photos.
     private var accessibilityLabel: String {
-        var parts: [String] = [VietnameseDate.spokenDayText(for: day.date) + "."]
+        var parts: [String] = [AppDate.spokenDayText(for: day.date) + "."]
 
         if goalCalories > 0 {
             parts.append(
-                String(
-                    localized:
-                        "\(VNNumber.int(day.calories)) ki-lô ca-lo trên mục tiêu \(VNNumber.int(goalCalories))."
-                )
+                L("\(AppNumber.int(day.calories)) ki-lô ca-lo trên mục tiêu \(AppNumber.int(goalCalories)).")
             )
             let difference = day.calories - goalCalories
             if abs(difference) <= goalCalories * Self.onTargetTolerance {
-                parts.append(String(localized: "Đạt mục tiêu."))
+                parts.append(L("Đạt mục tiêu."))
             } else if difference > 0 {
-                parts.append(String(localized: "Vượt \(VNNumber.int(difference))."))
+                parts.append(L("Vượt \(AppNumber.int(difference))."))
             } else {
-                parts.append(String(localized: "Còn \(VNNumber.int(-difference))."))
+                parts.append(L("Còn \(AppNumber.int(-difference))."))
             }
         } else {
-            parts.append(String(localized: "\(VNNumber.int(day.calories)) ki-lô ca-lo."))
+            parts.append(L("\(AppNumber.int(day.calories)) ki-lô ca-lo."))
         }
 
         // Every meal, not only the three the card has room to draw: the chips are
@@ -210,11 +207,11 @@ struct HistoryDayCard: View {
         let names = day.meals.map(HistoryDayCard.chipName(for:))
         if !names.isEmpty {
             parts.append(
-                String(localized: "\(names.count) bữa: \(names.joined(separator: ", ")).")
+                L("\(names.count) bữa: \(names.joined(separator: ", ")).")
             )
         }
         if day.photoCount > 0 {
-            parts.append(String(localized: "Có \(day.photoCount) ảnh."))
+            parts.append(L("Có \(day.photoCount) ảnh."))
         }
         return parts.joined(separator: " ")
     }
@@ -225,7 +222,7 @@ struct HistoryDayCard: View {
     /// A meal with nothing in it cannot happen through the UI, but a chip with an
     /// empty name could, so it falls back to the meal's own name.
     static func chipName(for meal: Meal) -> String {
-        guard let first = meal.items.first?.name, !first.isEmpty else { return meal.type.vi }
+        guard let first = meal.items.first?.name, !first.isEmpty else { return meal.type.label }
         guard meal.items.count > 1 else { return first }
         return "\(first) +\(meal.items.count - 1)"
     }
@@ -266,7 +263,7 @@ struct MealChipRow: View {
 
     /// "06:50 · 480 kcal".
     private func chipMeta(for meal: Meal) -> String {
-        "\(VietnameseDate.time(for: meal.date)) · \(VNNumber.int(meal.calories)) kcal"
+        "\(AppDate.time(for: meal.date)) · \(AppNumber.int(meal.calories)) kcal"
     }
 }
 
