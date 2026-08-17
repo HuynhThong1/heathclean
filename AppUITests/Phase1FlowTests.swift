@@ -176,13 +176,102 @@ final class Phase1FlowTests: XCTestCase {
         // and is gone: it duplicated the tab, and was a 38pt target besides.
         app.buttons["tab.profile"].tap()
         XCTAssertTrue(app.buttons["profile.editBody"].waitForExistence(timeout: 30))
-        XCTAssertTrue(app.staticTexts["Mỗi ngày, \(vn(2378)) kcal"].exists)
+        XCTAssertTrue(app.staticTexts["Mục tiêu mỗi ngày \(vn(2378)) kcal"].exists)
 
-        // Editing reuses the onboarding steps, seeded from the stored profile
-        // rather than reset to the first-run defaults.
+        // Editing is a push into PROFILE_SPEC §5's form, seeded from the stored
+        // profile rather than reset to the first-run defaults.
         app.buttons["profile.editBody"].tap()
-        XCTAssertTrue(app.staticTexts["onboarding.counter"].waitForExistence(timeout: 30))
+        XCTAssertTrue(app.staticTexts["editProfile.newGoal"].waitForExistence(timeout: 30))
         XCTAssertEqual(app.textFields["field.weight"].value as? String ?? "", "70")
+
+        // The card opens on the *current* target and only calls it new once
+        // something has been edited.
+        XCTAssertEqual(
+            app.staticTexts["editProfile.newGoal"].label,
+            "Mục tiêu mới \(vn(2378)) ki-lô ca-lo mỗi ngày"
+        )
+    }
+
+    /// §5's rule the whole screen is built around: the target moves as the form
+    /// is edited, before anything is saved. It is also the half that can fail
+    /// silently — a form that only recalculates on save looks identical until
+    /// you read the number.
+    func testEditingTheProfileRecalculatesTheTargetBeforeSaving() {
+        reachDashboard()
+        app.buttons["tab.profile"].tap()
+        XCTAssertTrue(app.buttons["profile.editBody"].waitForExistence(timeout: 30))
+        app.buttons["profile.editBody"].tap()
+
+        let goalCard = app.staticTexts["editProfile.newGoal"]
+        XCTAssertTrue(goalCard.waitForExistence(timeout: 30))
+        let before = goalCard.label
+
+        // Sedentary instead of the onboarding default, which lowers the
+        // multiplier and so the target.
+        app.buttons["editProfile.activity"].tap()
+        // By identifier, not by label: each row merges its name and its
+        // description into one element, so "Ít vận động" alone matches nothing
+        // — the same trap `LabeledContent` sets on the dashboard.
+        let option = app.buttons["choice.activity.sedentary"]
+        XCTAssertTrue(option.waitForExistence(timeout: 30))
+        option.tap()
+
+        XCTAssertNotEqual(goalCard.label, before, "the target moved without saving")
+        XCTAssertTrue(app.buttons["editProfile.saveBar"].isEnabled, "and Lưu woke up")
+
+        // §5, state C: leaving with unsaved changes asks, and the default answer
+        // keeps the work.
+        app.buttons["editProfile.cancel"].tap()
+        let keepEditing = app.buttons["confirm.cancel"]
+        XCTAssertTrue(keepEditing.waitForExistence(timeout: 10))
+        XCTAssertEqual(keepEditing.label, "Tiếp tục sửa")
+        keepEditing.tap()
+        XCTAssertTrue(goalCard.waitForExistence(timeout: 10), "still on the form")
+    }
+
+    /// §5's states B and D. B is the one worth a test: the app has to say the
+    /// target is outside the usual safe range **and then get out of the way** —
+    /// no red, no blocked Save — and "explains but also blocks" is a one-word
+    /// change that nothing else would catch.
+    func testATargetBelowTheSafeRangeExplainsItselfAndStillSaves() {
+        reachDashboard()
+        app.buttons["tab.profile"].tap()
+        XCTAssertTrue(app.buttons["profile.editBody"].waitForExistence(timeout: 30))
+        app.buttons["profile.editBody"].tap()
+
+        // The goal weight field only exists once the profile is not "maintain".
+        XCTAssertTrue(app.buttons["editProfile.goal"].waitForExistence(timeout: 30))
+        app.buttons["editProfile.goal"].tap()
+        let lose = app.buttons["choice.goal.lose"]
+        XCTAssertTrue(lose.waitForExistence(timeout: 30))
+        lose.tap()
+
+        // 42 kg against the onboarding default 170 cm is below the band. A
+        // numeric field puts the caret at the start, so select before typing or
+        // the digits merge with what is there.
+        let target = app.textFields["field.targetWeight"]
+        XCTAssertTrue(target.waitForExistence(timeout: 30))
+        target.doubleTap()
+        target.typeText("42")
+
+        let note = app.staticTexts["editProfile.outsideSafeRange"]
+        XCTAssertTrue(note.waitForExistence(timeout: 10), "the app says the goal is outside the range")
+        XCTAssertTrue(
+            app.buttons["editProfile.useSuggestedTarget"].exists,
+            "and offers a weight inside it"
+        )
+        XCTAssertTrue(
+            app.buttons["editProfile.saveBar"].isEnabled,
+            "and still lets the user set it — §5 is explicit that this does not block"
+        )
+
+        app.buttons["editProfile.saveBar"].tap()
+
+        // State D: what saving did, then back to Profile on its own.
+        XCTAssertTrue(
+            app.descendants(matching: .any)["editProfile.saved"].waitForExistence(timeout: 10)
+        )
+        XCTAssertTrue(app.buttons["profile.editBody"].waitForExistence(timeout: 30))
     }
 
     func testAppleHealthCanReturnToTheGoalStep() {
@@ -612,6 +701,108 @@ final class Phase1FlowTests: XCTestCase {
         // this test is about is the layout.
     }
 
+    // MARK: Fibre and water (Phase 5)
+
+    /// Fibre is drawn **only once something carries a figure**, and the figure
+    /// says how much of the day it does not cover.
+    ///
+    /// This is the whole design in one test. The gateway returns no fibre, so a
+    /// day of scanned meals has none at all — a bar sitting at "0 g" would tell
+    /// the user they ate no fibre when nothing measured it. Typing one in is
+    /// currently the only way a value exists.
+    ///
+    /// Onboarding's defaults derive 2.378 kcal, so the fibre target is
+    /// 2.378 × 14 ÷ 1.000 = 33 g.
+    func testFibreAppearsOnlyOnceSomethingHasBeenMeasured() {
+        reachDashboard()
+
+        let bar = app.staticTexts["macro.fiber"]
+        XCTAssertFalse(bar.exists, "nothing measured, so nothing is claimed")
+
+        logMeal(named: "breakfast", food: "Rau luoc", calories: 120, fiber: 6)
+
+        XCTAssertTrue(bar.waitForExistence(timeout: 30), "the bar appears with the day's fibre")
+        XCTAssertEqual(bar.label, "Chất xơ, \(vn(6)) trên \(vn(33)) gam")
+    }
+
+    /// A day mixing a measured food with an unmeasured one says so, rather than
+    /// reporting the part it knows as the whole.
+    func testAPartlyMeasuredDaySaysHowMuchItDoesNotKnow() {
+        reachDashboard()
+
+        logMeal(named: "breakfast", food: "Rau luoc", calories: 120, fiber: 6)
+        XCTAssertTrue(app.buttons["mealRow.lunch"].waitForExistence(timeout: 30))
+        // Fibre left blank — the ordinary case, and what every scan produces.
+        logMeal(named: "lunch", food: "Com trang", calories: 300)
+
+        let bar = app.staticTexts["macro.fiber"]
+        XCTAssertTrue(bar.waitForExistence(timeout: 30))
+        XCTAssertTrue(
+            bar.label.contains("1 món chưa có số liệu chất xơ"),
+            "the 6 g has to read as a floor rather than a total — got \(bar.label)"
+        )
+    }
+
+    /// Water is logged by tapping, so a mis-tap has to be reversible — and the
+    /// total has to come back from the store rather than from the button.
+    ///
+    /// Onboarding's default 70 kg × 35 ml gives a 2.450 ml target.
+    func testWaterAddsUpAndCanBeTakenBack() {
+        reachDashboard()
+
+        let glass = app.buttons["water.add.250"]
+        scrollUntilHittable(glass)
+        glass.tap()
+        XCTAssertTrue(
+            app.staticTexts["\(vn(250)) / \(vn(2450)) ml"].waitForExistence(timeout: 30)
+        )
+
+        app.buttons["water.add.500"].tap()
+        XCTAssertTrue(
+            app.staticTexts["\(vn(750)) / \(vn(2450)) ml"].waitForExistence(timeout: 30)
+        )
+
+        app.buttons["water.undo"].tap()
+        XCTAssertTrue(
+            app.staticTexts["\(vn(250)) / \(vn(2450)) ml"].waitForExistence(timeout: 30),
+            "undo takes back the 500 logged last, not the 250"
+        )
+    }
+
+    /// PROFILE_SPEC §6's last item: a settings row stacks its label and its value
+    /// at accessibility text sizes instead of squeezing both into one line.
+    ///
+    /// It also pins the thing that is *invisible* until VoiceOver is on — the
+    /// numeric field in a row is still its own element. A row that merged its
+    /// children would swallow it, and the only way to edit the number would be
+    /// gone with no visual sign at all.
+    func testProfileRowsStackAndStayEditableAtAccessibilitySizes() {
+        app.terminate()
+        app.launchArguments = [
+            "-uiTesting",
+            "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXL",
+        ]
+        app.launch()
+        startOnboarding()
+        reachDashboard()
+
+        app.buttons["tab.profile"].tap()
+        let row = app.buttons["profile.editBody"]
+        XCTAssertTrue(row.waitForExistence(timeout: 30))
+        XCTAssertLessThanOrEqual(row.frame.maxX, app.frame.width, "no sideways spill")
+        XCTAssertGreaterThan(row.frame.height, 60, "the row grew rather than squeezing")
+
+        row.tap()
+        let goalCard = app.staticTexts["editProfile.newGoal"]
+        XCTAssertTrue(goalCard.waitForExistence(timeout: 30))
+        XCTAssertLessThanOrEqual(goalCard.frame.maxX, app.frame.width)
+
+        // The field is still reachable, and still says what it is.
+        let age = app.textFields["field.age"]
+        XCTAssertTrue(age.exists, "the row did not swallow its control")
+        XCTAssertEqual(age.label, "Tuổi")
+    }
+
     /// Deleting a whole meal from history, which is three screens deep: the day
     /// sheet pushes the detail, and the detail presents its confirmation from
     /// inside that sheet.
@@ -855,7 +1046,7 @@ final class Phase1FlowTests: XCTestCase {
 
         app.buttons["tab.profile"].tap()
         XCTAssertTrue(app.buttons["profile.editBody"].waitForExistence(timeout: 30))
-        XCTAssertTrue(app.staticTexts["Per day, \(english) kcal"].exists)
+        XCTAssertTrue(app.staticTexts["Daily target \(english) kcal"].exists)
     }
 
     /// Switching on Profile changes the tab you came from, not just the row you
@@ -867,9 +1058,13 @@ final class Phase1FlowTests: XCTestCase {
         XCTAssertTrue(app.staticTexts["HÔM NAY"].waitForExistence(timeout: 30))
 
         app.buttons["tab.profile"].tap()
-        let picker = app.segmentedControls["profile.language"]
-        scrollUntilHittable(picker)
-        picker.buttons["English"].tap()
+        // PROFILE_SPEC §1 measures a pill segmented control the system one
+        // cannot draw, so this is a row of buttons rather than an
+        // `XCUIElement.ElementType.segmentedControl`. Each segment carries its
+        // own identifier for exactly this reason.
+        let english = app.buttons["profile.language.en"]
+        scrollUntilHittable(english)
+        english.tap()
 
         app.buttons["tab.today"].tap()
         XCTAssertTrue(app.staticTexts["TODAY"].waitForExistence(timeout: 30))
@@ -947,7 +1142,7 @@ final class Phase1FlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["mealRow.breakfast"].waitForExistence(timeout: 30))
     }
 
-    private func logMeal(named meal: String, food: String, calories: Int) {
+    private func logMeal(named meal: String, food: String, calories: Int, fiber: Int? = nil) {
         app.buttons["mealRow.\(meal)"].tap()
 
         let name = app.textFields["field.food"]
@@ -960,6 +1155,15 @@ final class Phase1FlowTests: XCTestCase {
         let caloriesField = app.textFields["field.calories"]
         caloriesField.doubleTap()
         caloriesField.typeText("\(calories)")
+
+        // The fibre box starts *empty*, because blank means "not measured" —
+        // so unlike every other number here it is typed into rather than
+        // selected first.
+        if let fiber {
+            let fiberField = app.textFields["field.fiber"]
+            fiberField.tap()
+            fiberField.typeText("\(fiber)")
+        }
 
         app.buttons["mealEntry.save"].tap()
     }

@@ -6,13 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 swift build            # compiles the Domain library
-swift test             # 102 Domain tests (swift-testing) — fast, no simulator
+swift test             # 120 Domain tests (swift-testing) — fast, no simulator
 
 xcodebuild -scheme HeathFirst \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
 
 xcodebuild -scheme HeathFirst \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test   # + 29 UI tests
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test   # + 39 UI tests
 ```
 
 ```bash
@@ -91,6 +91,105 @@ Warning thresholds (`EvaluateCalorieBudgetUseCase`) are boundary-sensitive:
 `<0.70 normal`, `≥0.70 informUser`, `≥0.90 nearTarget`, `≥1.00 reached`,
 `>1.00 exceeded`. Message copy stays neutral and informative by design — `plan.md`
 §18 explicitly rules out instructing the user whether to eat.
+
+### Fibre and water (Phase 5)
+
+Two more targets come out of the same use case, and **neither touches the energy
+arithmetic**: fibre is a component of `carbohydrates` and is already counted
+there, water has no energy at all. `macrosReSum` still holds, and
+`FiberAndWaterTests` restates it at the one place fibre could have broken it.
+
+- **Fibre: 14 g per 1.000 kcal** — the US DRI rule (IOM 2005), used instead of a
+  flat 25/38 g so it scales with the target the app already derived.
+- **Water: 35 ml per kg of body weight, floored at 1.500 ml.** This one is a
+  **rule of thumb, not a sourced reference value**, and is flagged in code the
+  way the 88-row nutrition table is: the published references (EFSA, D-A-CH) give
+  flat *total* water figures that include what comes from food, which is not what
+  this app can measure. Replace it if a sourced drinking-water value is adopted.
+
+#### `FoodItem.fiber` is optional, and that is the whole design
+
+**The gateway contract (`plan.md` §25) has no fibre field**, so a scan can never
+supply one. A `Double` defaulting to `0` would therefore tell every user who logs
+by scanning that they ate no fibre — the "switch that schedules nothing" mistake
+with a number attached. So `nil` and `0` are different facts and every reader
+keeps them apart:
+
+- `Meal.knownFiber` sums only what is known; `Meal.itemsMissingFiber` is what says
+  whether that sum is a total or a floor.
+- `DailyNutritionSummary.consumedFiber` is **`nil`** for a day nothing measured,
+  and the dashboard draws no bar at all rather than an empty one.
+- When some of the day is measured and some is not, the bar carries "N món chưa
+  có số liệu chất xơ" — otherwise a partial sum reads as a total.
+- Manual entry and the portion editor's nutrition box are the two places a
+  figure gets typed, both through blank-means-`nil` fields
+  (`HFOptionalNumericField`, and `fiberText` in `PortionEditorSheet`). They show
+  "—" rather than a 0 waiting to be corrected, because most packaging does not
+  print fibre and a required field would make people type a zero that is not
+  true.
+
+**The wire is built and waiting.** `AnalyzeResponse.Item.fiber` decodes an
+optional `fiber`, `RecognizedFood.fiber` carries it, `scaled(toWeightGrams:)`
+scales it, `resolved(…)` accepts it, and `foodItem` saves it — so the gateway
+can start sending the field with **no client release as a prerequisite**. That
+is the whole reason it is `Optional` on the DTO rather than defaulted: a
+non-optional would fail the entire response the moment a gateway build did not
+send it, which would mean the client could not talk to today's gateway.
+
+**Unverified: the decode itself.** Everything from `RecognizedFood` inwards is
+covered by `FiberAndWaterTests`, but no gateway sends `fiber`, so no real
+payload has ever carried the field through `AnalyzeResponse`. The first gateway
+build that emits it is also the first test of that one line.
+
+What is missing is the *data*: `/v1/meals/analyze` has no `fiber` field yet
+because the nutrition table behind it has no fibre column. USDA FDC carries it
+(nutrient 1079, *Fiber, total dietary*) and Open Food Facts has `fiber_100g`;
+the 88-row local table does not — and since that table is already slated for
+replacement, adding a column to it would be work thrown away twice.
+
+`MockFoodRecognitionRepository` gives **two of its four foods** a fibre figure
+and leaves two without, on purpose: a mock that filled in all four would
+exercise a state the app has never been in and never the mixed one, where the
+day's total is a floor and has to say so.
+
+#### Water is a log, not a food
+
+`WaterEntry` / `WaterRepository` beside the day, the same shape `WeightEntry`
+takes beside the profile. It is deliberately **not** a `FoodItem`: it carries no
+energy and is not part of a meal, and putting it in one would drag it into
+`Meal.calories`, the history bar, the budget engine and §22's rates, each of
+which would then need to learn to skip it.
+
+- Millilitres, never glasses — a glass is not a unit, and two screens disagreeing
+  about how big one is would make the total meaningless. `WaterServing` names the
+  sizes (250 / 500) in Domain because *how much a tap is worth* is a product
+  decision; only the wording is in `DisplayCopy`.
+- The card **re-reads the store after every tap** rather than adding to a local
+  total: a figure that moved before the write landed would be inventing one.
+- Undo is a first-class action, because water is the only figure in the app
+  logged by tapping rather than typing, and a quick-add that cannot be taken back
+  is one people stop trusting. A failed undo now *says so* — see below.
+- `DailyWater.remaining` never goes negative. Passing a rule-of-thumb figure is
+  not a finding, and §0.3's rule against scolding applies here with more force
+  than it does to calories.
+
+#### Two traps this cost
+
+- **`MacroBar` was an `otherElement`, and had been since it was written.** It
+  merges its children with `.accessibilityElement(children: .ignore)` and a
+  composed label but never claimed `.isStaticText`, so VoiceOver announced it as
+  a plain container and `app.staticTexts[…]` could not find it — exactly what
+  `DSValueRow`'s note in the design-system section warns about, in a component
+  that predates it. A fibre test asking for the bar by identifier is what turned
+  it up.
+- **A button in an `HStack(alignment: .firstTextBaseline)` beside a 21pt metric
+  never fired.** XCUITest reported a successful tap on it and the action did not
+  run — indistinguishable from a control that was never wired up, and it survived
+  a rename of the delete predicate and a rewrite of the repository fetch before a
+  probe in the model showed the closure was simply never entered. Moving "Hoàn
+  tác" down into the row with the two quick-adds, laid out like the buttons that
+  always worked, fixed it. **If a button reports taps but does nothing, suspect
+  the layout around it before the code inside it.**
 
 ### Testing conventions
 
@@ -260,6 +359,11 @@ logged-day cards with search and filters) is the one to build; the same page's
 1a and 1c are alternatives that were rejected. Its own reference page is
 `design/HealthClean History.dc.html`.
 
+**The Profile tab follows `design_handoff_healthclean/PROFILE_SPEC.md`, which
+overrides the README's §6.13** and adds a screen the README does not have, "Sửa
+hồ sơ". Reference page: `design/HealthClean Profile.dc.html`. See the Profile
+section for the five places the build departs from it and why.
+
 ### Rules
 
 - Use `DesignTokens.swift` (`DS.*`) for every colour / radius / spacing /
@@ -286,9 +390,130 @@ Insights/Profile → localization. Items 1–5 are done, plus Welcome (§6.1),
 Profile (§6.13), Insights (§6.12) and the tab bar. What remains is real camera
 capture and a real recognition provider (§6.6–6.9), and translating the catalog.
 
-Profile shows a generic avatar rather than §6.13's initials, because nothing in
-the app ever asks for a name. Its five notification switches are now live — see
-the Notifications section.
+**Profile now follows `DesignHandoff/PROFILE_SPEC.md`, which overrides §6.13 for
+that screen and adds "Sửa hồ sơ".** See the Profile section.
+
+### Profile and Sửa hồ sơ — `PROFILE_SPEC.md`
+
+`App/Presentation/Profile/`: `ProfileComponents` (`SectionLabel`,
+`SettingsCard`, `SettingsDivider`, `SettingsRow`, `ProfileType`) /
+`ProfileHeaderCard` / `SegmentedTrack` / `DisplayBlocks` / `NotificationSection`
+(with `PrivacyCard` and `ProfileFooter`) / `EditProfileView` /
+`EditProfileFields` / `EditProfileModel`, over the existing `ProfileModel`.
+Reference page: `design/HealthClean Profile.dc.html`.
+
+Profile shows a generic avatar rather than initials, because nothing in the app
+ever asks for a name.
+
+**The primitives are Profile's, not the design system's**, and the difference
+from `HFCard` is one line of the spec: `SettingsCard` has **no shadow**. On a
+long settings screen, cards stacked a section apart read as a seam rather than
+as lift. `SettingsDivider` is placed by the caller rather than drawn by each row
+— a row does not know its index, and "no divider before the first" is then
+simply what the code looks like.
+
+Four things the screen does that the spec does not draw, each because the spec
+assumes something this app does not have:
+
+- **"Đơn vị đo" has no chevron.** There is no units screen and no units setting;
+  the app is metric and kcal throughout. The row states a fact, and a chevron
+  that opens nothing is the broken control this codebase keeps refusing to ship.
+- **The footer has no "Chính sách riêng tư" link**, for the same reason: there
+  is no policy page. The three commitments above it are the policy this build
+  has.
+- **The eyebrow is "TÔI", not "TÔI · PROFILE".** The other three roots draw one
+  word and the catalog answers the English. The pair is §4's bilingual label,
+  which `AppLanguage` replaced.
+- **The language segmented control keeps three options.** §2 draws two; "Theo hệ
+  thống" already exists, works, and has a UI test.
+
+**The appearance default stays `.light`**, not §2's "Theo hệ thống = bật". The
+control is the spec's in full — Toggle above a segmented that dims and still
+shows what the system chose — but the dark palette in `DesignTokens.swift` is
+derived in this repo, and following the system would hand it to anyone whose
+phone is dark without their asking. `AppAppearance` has carried that reasoning
+since before this screen. The "the dark palette is invented" note under the
+control is shown **only while dark is actually in effect**: a standing
+disclaimer under a light screen is noise.
+
+`AppearanceControls` is split from `AppearanceBlock` so §2's three states can be
+*rendered* rather than described — a preview cannot put `@AppStorage` into a
+chosen state.
+
+#### Sửa hồ sơ (§5)
+
+Push, not a sheet, and it replaces the four onboarding steps Profile used to
+reuse. Those are right for a first run and wrong for an edit, where the user came
+to change one number and needs to see what it does to the target.
+
+- **The save routes through `OnboardingModel`.** Weight history is written from
+  exactly one place — `OnboardingModel.save()`, which records the weighing after
+  the profile lands — so `EditProfileModel` owns the draft and the arithmetic and
+  hands the draft to the one writer there has ever been. A second writer is how a
+  weighing quietly stops being recorded on one of two paths.
+- Three things §5 draws are **deliberately absent**, all of them Domain features
+  rather than layout: the "TỐC ĐỘ" segmented control (`WeightGoal` carries one
+  fixed offset per direction, so all three positions would produce the same
+  target), "Đặt mục tiêu thủ công" (no such screen), and "Ngày sinh"
+  (`UserProfile` stores an age; a birth date is a store migration). A "Hướng mục
+  tiêu" row is added in their place, because without the pace control there would
+  otherwise be no way to change direction from this screen at all.
+- **The reference page's own arithmetic does not hold**, which is worth knowing
+  before that Domain change is designed: it deducts 320 kcal for 0,5 kg a week,
+  and by its own stated conversion (7.700 kcal ≈ 1 kg) that is 550. Its figures
+  are illustrative.
+- **The safety floor is the Domain's, and it is stricter than §5's.** §5 names
+  1.200 kcal (nữ) / 1.500 (nam); `CalculateCalorieGoalUseCase` clamps to
+  `max(BMR, 1200)`, which binds higher for almost everybody. "Cách tính" writes
+  out *which* floor caught a target — read off the result rather than compared
+  against the constant, which is `internal` to Domain, so this screen holds no
+  second copy of a number that can drift. `CalorieGoalTests` pins the floor as a
+  **property** over a sweep of profiles, not only at two points, because that is
+  the claim the screen makes.
+- State **B** (a target below the healthy band) is grey, 1.5pt, offers a weight
+  inside the band, and does not block "Lưu" — the same rule as the over-budget
+  state. State **D** says the new target applies **from today** and that logged
+  days keep theirs, which is HISTORY_SPEC §8 restated where the user can read it.
+- Numeric fields edit a **`String`**, not the `Double`. `TextField(value:format:)`
+  parses against the format's locale while the keyboard comes from the *phone*, so
+  a Vietnamese UI on an English phone offers "." to a parser that wants "," and
+  the field snaps back on every edit. Both separators are accepted; grouping
+  separators are deliberately *not* stripped, since in `vi_VN` that would read a
+  typed "98.5" as 985, and every field here is bounded under a thousand.
+
+#### Three traps this screen paid for
+
+- **`.confirmationDialog` does not present from this screen.** §5 names it and it
+  was tried on the button, on the stack and on the screen: in all three the state
+  flipped and nothing appeared, while the same change to `.alert` worked first
+  time. State C uses `HFDestructiveConfirm`, which is where this app already went
+  for the reason its own header gives — and which is what §5's mock actually
+  draws, a card from the bottom with "Bỏ thay đổi" quiet above "Tiếp tục sửa" in
+  blue. That component gained an `Emphasis` for it; `.destructive` is unchanged.
+- **`accessibilityIdentifier` on a container propagates down and overwrites its
+  children's.** Labelling a whole segmented control took the segments' own
+  identifiers with it and left a row of buttons no test could name; the same
+  thing on the out-of-range note would have hidden the only action in it. Put
+  identifiers on leaves. Ask for `profile.language.en`, never `profile.language`.
+- **A row whose trailing side is a control must not merge its children.**
+  `.accessibilityElement(children: .combine)` plus `.isStaticText` is right for a
+  label and a value — it stops VoiceOver reading every row twice — and it
+  swallows a text field whole, leaving the only way to edit the number
+  unreachable. `SettingsRow(hasInteractiveTrailing:)` is that switch, and the
+  field carries its own label instead. A UI test found it by failing to see
+  `field.weight` at all.
+
+A choice sheet's rows merge name and description into one element, so nothing
+matches them on the title alone — the `LabeledContent` trap in another shape.
+They carry `choice.<field>.<rawValue>`.
+
+**`#Preview` literals land in the string catalog.** A literal written into a
+`LocalizedStringKey` is extracted whether or not the app ever draws it, so
+preview scaffolding both adds keys to translate and keeps dead ones alive — a
+gallery drawing `SectionLabel("TÔI")` kept the old eyebrow's key from ever going
+stale. `find-untranslated.py` now ignores everything from a file's first
+`#Preview` down, which is narrower than the whole-file entries in its `EXEMPT`;
+preview copy uses the `verbatim` initializers.
 
 ### Weight history and Insights (§6.12)
 
@@ -667,12 +892,28 @@ kept: it only passes against a store some earlier build seeded, so in CI it woul
 fail for a reason having nothing to do with the code. A 30th UI test that needs
 manual setup to go green is worse than a documented procedure.
 
-### Notifications (§19, §6.13)
+### Notifications (§19, PROFILE_SPEC §3)
+
+PROFILE_SPEC §3 splits the five into two cards by **when they fire** — four in
+"Trong ngày", one in "Cuối ngày" — rather than the flat list §6.13 draws. The
+split is not cosmetic: the four are consequences of something the user just did,
+and the fifth arrives whether or not they opened the app and is the one that
+excludes the reminder beside it. `NotificationPreference.allCases` is still the
+source of the set; the two arrays in `NotificationSection` only say which card a
+switch is drawn in, so a preference added to Domain cannot silently vanish from
+the screen.
+
+The rows carry no times. §3 prints "· 12:00" and "· 21:00" in the English
+sub-line that went away with §4's bilingual labels, and
+`PlanNotificationsUseCase`'s hours are `private` — a literal here would be a
+second copy of 20:00 that can drift, and the spec's 12:00 is not this app's
+reminder hour anyway.
+
 
 `PlanNotificationsUseCase` (Domain) decides *what* and *when*;
 `NotificationCoordinator` (`App/Notifications/`) does the
 `UNUserNotificationCenter` work; `NotificationCopy` writes the Vietnamese.
-`NotificationSettings` holds §6.13's five switches in `UserDefaults`, for the
+`NotificationSettings` holds the five switches in `UserDefaults`, for the
 reason `AppAppearance` does — except it cannot be an `@AppStorage`, because the
 coordinator is not a view.
 
@@ -1004,7 +1245,11 @@ DerivedData keeps the `.stringsdata` of **deleted** source files. So a sync afte
 deleting a screen quietly reports nothing stale; remove the orphaned
 `<DeletedFile>.stringsdata` (or clean-build) or the dead keys stay.
 
-**The catalog is fully translated: 348 keys, `vi` source and `en`.** It used to
+**The catalog is fully translated, `vi` source and `en`** — 343 keys before
+PROFILE_SPEC, 414 after it (+79 for Profile and Sửa hồ sơ, −8 stale ones the old
+Profile took with it), and 426 with Phase 5's fibre and water. Every key carries an explicit `vi` value equal to
+itself, which is what makes `vi.lproj` exist; `ResolvedLanguage.bundle` records
+why that matters. It used to
 carry no translations at all, deliberately, because §4 made the UI *bilingual* —
 `LabelPair` drew Vietnamese and English at once, so an `en` locale would have
 turned "Bước chân / Step count" into "Step count / Step count". That is no longer
@@ -1157,7 +1402,9 @@ bearing on any calculation, so it is not Domain state.
 
 **The default is `.light`, on purpose**, so nobody gets an invented palette just
 because their phone is dark. `.system` becomes the right default once the dark
-values are real.
+values are real — **including over PROFILE_SPEC §2**, which draws "Theo hệ
+thống" switched on by default. The control is built exactly as §2 specifies; only
+its starting value differs, and the Profile section says so.
 
 The language switch beside it works the same way and is documented in the
 Language section. It is the same shape — `@AppStorage`, three cases, applied at
@@ -1190,9 +1437,12 @@ is verified; Qwen and a representative evaluation dataset are still open. A
 confirmed scan now also **keeps its photo** (§32 stage 2) — nothing else in the
 app does, and no other flow can attach one.
 
-**Phase 5** has calories plus protein/carbohydrate/fat tracking. Fiber and water
-are not present. Deterministic recommendations, personalization, CloudKit and
-on-device inference are also not present.
+**Phase 5 is complete**: calories, protein, carbohydrate, fat, **fibre and
+water**. Fibre is only ever as good as its source, though, and today that source
+is manual entry alone — the gateway returns none, so a user who logs by scanning
+sees no fibre at all rather than a wrong figure. See the Fibre and water section.
+Deterministic recommendations (Phase 6), personalization, CloudKit and on-device
+inference are not present.
 
 **§19's notifications are implemented** — the four budget thresholds, a meal
 reminder and a daily summary, behind §6.13's five switches. See the Notifications
@@ -1228,3 +1478,15 @@ Deviations from `plan.md` already made:
   user repository as well as the meal one. §13's `Meal` is food and a date, which
   cannot answer "was that day over target" once the goal has changed — HISTORY_SPEC
   §8 needs the target of the day, so the day stores it.
+- **Phase 5's water target is this repo's rule of thumb**, not a sourced value:
+  35 ml/kg with a 1.500 ml floor. `plan.md` asks for "optional water tracking"
+  and names no figure, and the published references measure something the app
+  cannot (total water, including what comes from food). The fibre rule (14 g per
+  1.000 kcal) *is* sourced. Both are marked as such in
+  `CalculateCalorieGoalUseCase`.
+- **PROFILE_SPEC §5's weekly pace, manual goal and date of birth are not built**,
+  and neither is its sex-based calorie floor: each needs `UserProfile` or
+  `WeightGoal` to change, and the Domain layer is not reshaped to fit a screen.
+  A "Hướng mục tiêu" row stands in for the pace control so the goal can still be
+  changed. The Profile section has the detail, including the arithmetic error in
+  the spec's own worked example.

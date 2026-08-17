@@ -70,6 +70,65 @@ struct HFNumericField: View {
     }
 }
 
+/// The same field, for a figure that may legitimately be **unknown**.
+///
+/// Blank is `nil`, and `nil` is not zero. It exists for fibre, where the two
+/// have to stay apart all the way down to the store — a food nobody measured
+/// and a food measured at 0 g are different facts, and `FoodItem.fiber` says
+/// why that matters. `HFNumericField` cannot express it: it binds a `Double`
+/// through `TextField(value:format:)`, which has no representation for an empty
+/// field and snaps back to the last value.
+///
+/// Text-backed for the same reason `DecimalRowField` is — the decimal separator
+/// on screen follows the app's language while the keyboard follows the phone's,
+/// so both are accepted.
+struct HFOptionalNumericField: View {
+    @Binding var value: Double?
+    let suffix: String
+    let identifier: String
+    /// What an empty field shows. "—" rather than "0", which is the whole point.
+    var placeholder: String = "—"
+
+    @State private var text = ""
+    @FocusState private var isFocused: Bool
+
+    var body: some View {
+        HStack(spacing: DS.s2) {
+            TextField(placeholder, text: $text)
+                .keyboardType(.decimalPad)
+                .multilineTextAlignment(.trailing)
+                .font(.custom(DSFontName.bold, size: 16))
+                .foregroundStyle(DS.textStrong)
+                .focused($isFocused)
+                .frame(width: 66)
+                .padding(.vertical, 8)
+                .padding(.horizontal, DS.s2)
+                .background(
+                    RoundedRectangle(cornerRadius: DS.rControl, style: .continuous)
+                        .strokeBorder(DS.borderDefault, lineWidth: 1.5)
+                )
+                .accessibilityIdentifier(identifier)
+
+            Text(suffix)
+                .hfStyle(HFType.subLabelSemibold)
+                .foregroundStyle(DS.textSubtle)
+        }
+        .task { text = formatted }
+        .onChange(of: text) {
+            let trimmed = text.trimmingCharacters(in: .whitespaces)
+            // An empty field clears the value rather than leaving the last one
+            // behind — otherwise a user who types a figure and deletes it has
+            // no way back to "not measured".
+            value = trimmed.isEmpty ? nil : Double(trimmed.replacingOccurrences(of: ",", with: "."))
+        }
+        .onChange(of: isFocused) { if !isFocused { text = formatted } }
+    }
+
+    private var formatted: String {
+        value.map { AppNumber.upTo(fractionDigits: 1, $0) } ?? ""
+    }
+}
+
 /// Equal-width segmented control. Selected uses the blue-50 treatment from
 /// §6.2; unselected is white with a subtle border.
 struct HFSegments<Value: Hashable>: View {

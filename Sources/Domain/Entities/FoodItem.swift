@@ -13,6 +13,21 @@ public struct FoodItem: Sendable, Equatable, Identifiable {
     public var carbohydrates: Double
     public var fat: Double
 
+    /// Dietary fibre in grams, **or `nil` when nobody measured it**.
+    ///
+    /// Optional rather than defaulting to zero, and this is the whole of the
+    /// design: the gateway contract (`plan.md` §25) has no fibre field, so every
+    /// scanned food arrives without one. A `0` there would tell a user who logs
+    /// by scanning that they ate no fibre today, when what happened is that
+    /// nothing measured it — the same mistake as a switch that schedules
+    /// nothing, with a number attached.
+    ///
+    /// So `nil` and `0` mean different things here and every reader keeps them
+    /// apart: `Meal.knownFiber` sums only what is known, and
+    /// `DailyNutritionSummary.consumedFiber` is `nil` for a day where nothing
+    /// is. Manual entry is currently the only way a value gets in.
+    public var fiber: Double?
+
     /// Populated only when the item came from image recognition. Always `nil`
     /// for manual entry.
     public var aiConfidence: Double?
@@ -42,6 +57,7 @@ public struct FoodItem: Sendable, Equatable, Identifiable {
         protein: Double,
         carbohydrates: Double,
         fat: Double,
+        fiber: Double? = nil,
         aiConfidence: Double? = nil,
         aiEstimatedWeightGrams: Double? = nil,
         aiEstimatedName: String? = nil,
@@ -57,6 +73,7 @@ public struct FoodItem: Sendable, Equatable, Identifiable {
         self.protein = protein
         self.carbohydrates = carbohydrates
         self.fat = fat
+        self.fiber = fiber
         self.aiConfidence = aiConfidence
         self.aiEstimatedWeightGrams = aiEstimatedWeightGrams
         self.aiEstimatedName = aiEstimatedName

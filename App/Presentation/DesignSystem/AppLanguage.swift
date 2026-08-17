@@ -152,4 +152,19 @@ extension AppLanguage {
         case .system: Text("Theo hệ thống")
         }
     }
+
+    /// The same words as a `String`, for VoiceOver.
+    ///
+    /// A `Text` cannot be read back out, and the picker's segments have to
+    /// carry an accessibility label of their own. It lives here beside `label`
+    /// rather than with the view, so the two can never name a language
+    /// differently — and so the "a language names itself" rule stays in the one
+    /// file `find-untranslated.py` exempts for it.
+    var accessibilityLabel: String {
+        switch self {
+        case .vietnamese: "Tiếng Việt"
+        case .english: "English"
+        case .system: L("Theo hệ thống")
+        }
+    }
 }

@@ -24,6 +24,12 @@ final class UserProfileEntity {
     var goalCarbohydrates: Double
     var goalFat: Double
 
+    /// Optional because the row may predate them, and because a stored `0`
+    /// would be read as a real target of nothing. `nutritionGoal` re-derives
+    /// them instead — see there.
+    var goalFiber: Double?
+    var goalWaterMillilitres: Double?
+
     init(profile: UserProfile, goal: NutritionGoal) {
         self.id = profile.id
         self.age = profile.age
@@ -37,6 +43,8 @@ final class UserProfileEntity {
         self.goalProtein = goal.protein
         self.goalCarbohydrates = goal.carbohydrates
         self.goalFat = goal.fat
+        self.goalFiber = goal.fiber
+        self.goalWaterMillilitres = goal.waterMillilitres
     }
 }
 
@@ -54,12 +62,29 @@ extension UserProfileEntity {
         )
     }
 
+    /// The stored goal, with anything this row predates **re-derived from the
+    /// profile beside it**.
+    ///
+    /// A row written before fibre and water existed cannot know either, and a
+    /// zero would be read as a real target of nothing — the same rule as
+    /// `MealEntity.calorieGoalWhenLogged`, where `nil` is not `0`. The way out
+    /// is different, and simpler, because the goal is a **pure function of the
+    /// profile**: it can just be recomputed from the profile this very row
+    /// carries, which is where every stored goal came from in the first place.
+    ///
+    /// Only the missing halves are taken from the recomputation. The four
+    /// stored figures win even where they disagree — they are what the user was
+    /// shown, and silently re-deriving those would let a formula change rewrite
+    /// history.
     var nutritionGoal: NutritionGoal {
-        NutritionGoal(
+        let derived = CalculateCalorieGoalUseCase().execute(profile: profile)
+        return NutritionGoal(
             calories: goalCalories,
             protein: goalProtein,
             carbohydrates: goalCarbohydrates,
-            fat: goalFat
+            fat: goalFat,
+            fiber: goalFiber ?? derived.fiber,
+            waterMillilitres: goalWaterMillilitres ?? derived.waterMillilitres
         )
     }
 
@@ -78,5 +103,7 @@ extension UserProfileEntity {
         goalProtein = goal.protein
         goalCarbohydrates = goal.carbohydrates
         goalFat = goal.fat
+        goalFiber = goal.fiber
+        goalWaterMillilitres = goal.waterMillilitres
     }
 }

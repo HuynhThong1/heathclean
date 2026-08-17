@@ -81,6 +81,51 @@ struct CalorieGoalTests {
         expectClose(useCase.execute(profile: profile).calories, 1200, "calories")
     }
 
+    /// PROFILE_SPEC §5 asks the edit screen to state the safety floor and to
+    /// clamp to it. The two tests above pin the floor at one point each; this
+    /// one pins it as a **property**, because that is the claim the screen
+    /// makes — "không bao giờ đề xuất dưới mức an toàn" — and a claim about
+    /// every profile cannot be checked by two of them.
+    ///
+    /// The sweep deliberately includes profiles no adult has, at both ends of
+    /// each range: the floor only ever binds where the arithmetic goes low, so a
+    /// sweep of plausible bodies would exercise the branch least.
+    @Test("no profile is ever prescribed below the floor")
+    func floorHoldsAcrossEveryProfile() {
+        for age in [13, 30, 60, 90, 120] {
+            for heightCm in [100.0, 150.0, 171.0, 200.0] {
+                for weightKg in [25.0, 45.0, 80.0, 200.0] {
+                    for sex in [BiologicalSex?.some(.male), .some(.female), .some(.preferNotToSay), nil] {
+                        for level in ActivityLevel.allCases {
+                            for weightGoal in WeightGoal.allCases {
+                                let profile = makeProfile(
+                                    age: age,
+                                    heightCm: heightCm,
+                                    weightKg: weightKg,
+                                    biologicalSex: sex,
+                                    activityLevel: level,
+                                    goal: weightGoal
+                                )
+                                let calories = useCase.execute(profile: profile).calories
+                                let label = "\(age)y \(heightCm)cm \(weightKg)kg \(String(describing: sex)) \(level) \(weightGoal)"
+
+                                #expect(calories >= 1200, "below the absolute floor: \(label)")
+                                // The stricter half, and the one that visibly
+                                // weakens a deficit for sedentary users: a
+                                // prescription never drops below what the body
+                                // spends at rest.
+                                #expect(
+                                    calories >= bmr(profile) - 0.000_1,
+                                    "below the basal rate: \(label)"
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     // MARK: Macros
 
     @Test(

@@ -13,6 +13,7 @@ final class DependencyContainer {
     private let userRepository: any UserRepository
     private let mealRepository: any MealRepository
     private let weightRepository: any WeightRepository
+    private let waterRepository: any WaterRepository
     private let healthRepository: any HealthRepository
     private let recognitionRepository: any FoodRecognitionRepository
     /// The bytes behind `MealPhoto`. Not a repository: Domain has no notion of a
@@ -32,19 +33,21 @@ final class DependencyContainer {
     /// `nonisolated` so it can be built in a stored-property initializer, and
     /// because nothing it touches is main-actor bound.
     nonisolated init(inMemory: Bool = false) {
-        // Three additions have been made after the store shipped, all lightweight:
-        // `MealPhotoEntity` (a new model plus a to-many relationship that is empty
-        // for every meal written before it), `MealEntity.calorieGoalWhenLogged` and
-        // `FoodItemEntity.aiEstimatedName` (new *optional* attributes, so existing
-        // rows read back as `nil`). None needs a `SchemaMigrationPlan`; if one ever
-        // does, the `fatalError` below is how it will announce itself.
+        // Every addition made after the store shipped is lightweight: two new
+        // models (`MealPhotoEntity`, `WaterEntryEntity`) and four new *optional*
+        // attributes (`MealEntity.calorieGoalWhenLogged`,
+        // `FoodItemEntity.aiEstimatedName`, `FoodItemEntity.fiber`, and the pair
+        // `UserProfileEntity.goalFiber` / `goalWaterMillilitres`), so existing
+        // rows read back as `nil`. None needs a `SchemaMigrationPlan`; if one
+        // ever does, the `fatalError` below is how it will announce itself.
         //
-        // All three have been opened against a store an earlier build wrote, rather
-        // than assumed to be fine for being the plainest case SwiftData handles.
-        // CLAUDE.md's meal-photos section has the procedure.
+        // The first three were opened against a store an earlier build wrote,
+        // rather than assumed to be fine for being the plainest case SwiftData
+        // handles. CLAUDE.md's meal-photos section has the procedure; the Phase 5
+        // additions have not had it run against them yet.
         let schema = Schema([
             UserProfileEntity.self, MealEntity.self, FoodItemEntity.self, WeightEntryEntity.self,
-            MealPhotoEntity.self,
+            MealPhotoEntity.self, WaterEntryEntity.self,
         ])
         let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: inMemory)
 
@@ -58,6 +61,7 @@ final class DependencyContainer {
         userRepository = SwiftDataUserRepository(modelContainer: modelContainer)
         mealRepository = SwiftDataMealRepository(modelContainer: modelContainer)
         weightRepository = SwiftDataWeightRepository(modelContainer: modelContainer)
+        waterRepository = SwiftDataWaterRepository(modelContainer: modelContainer)
         healthRepository = HealthKitHealthRepository()
         photoStore = MealPhotoStore()
 
@@ -119,6 +123,20 @@ final class DependencyContainer {
 
     var recordWeight: RecordWeightUseCase {
         RecordWeightUseCase(weightRepository: weightRepository)
+    }
+
+    /// Built with the history calendar for the same reason
+    /// `getMealHistoryMonths` and the notifications are: a 23:30 glass has to
+    /// count towards the day the dashboard is showing, not a different one.
+    var getDailyWater: GetDailyWaterUseCase {
+        GetDailyWaterUseCase(
+            waterRepository: waterRepository,
+            calendar: HistoryCalendar.mondayFirst()
+        )
+    }
+
+    var logWater: LogWaterUseCase {
+        LogWaterUseCase(waterRepository: waterRepository)
     }
 
     var user: any UserRepository { userRepository }
@@ -286,6 +304,8 @@ final class DependencyContainer {
             getDailySummary: getDailySummary,
             evaluateCalorieBudget: evaluateCalorieBudget,
             calculateBMI: calculateBMI,
+            getDailyWater: getDailyWater,
+            logWater: logWater,
             notifications: notifications
         )
     }
@@ -300,6 +320,18 @@ final class DependencyContainer {
             recognitionRepository: recognitionRepository,
             saveMeal: saveMeal,
             photoStore: photoStore
+        )
+    }
+
+    /// The writer it is handed is an `OnboardingModel`, which is not a leftover:
+    /// `OnboardingModel.save()` is the single place a profile and a weighing are
+    /// written together, and `EditProfileModel` hands its draft to it rather
+    /// than becoming a second writer that can forget the weighing.
+    func makeEditProfileModel() -> EditProfileModel {
+        EditProfileModel(
+            writer: makeOnboardingModel(),
+            userRepository: userRepository,
+            calculateCalorieGoal: calculateCalorieGoal
         )
     }
 

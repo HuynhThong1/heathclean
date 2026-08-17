@@ -177,6 +177,20 @@ struct MealEntryView: View {
                     numericRow("Tinh bột", "g", draft.carbohydrates, "field.carbs")
                     separator
                     numericRow("Chất béo", "g", draft.fat, "field.fat")
+                    separator
+                    // Optional, and it looks optional: an empty box showing "—"
+                    // rather than a 0 waiting to be corrected. Most packaging
+                    // does not print fibre, and a required field would make
+                    // people type a zero that is not true.
+                    HStack(spacing: DS.s3) {
+                        HFLabel("Chất xơ", caption: "Để trống nếu không biết")
+                        Spacer(minLength: DS.s2)
+                        HFOptionalNumericField(
+                            value: draft.fiber, suffix: "g", identifier: "field.fiber"
+                        )
+                    }
+                    .padding(.horizontal, DS.s4)
+                    .frame(minHeight: 58)
                 }
             }
         }

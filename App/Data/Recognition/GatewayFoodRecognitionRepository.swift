@@ -97,6 +97,12 @@ private struct AnalyzeResponse: Decodable {
         let protein: Double
         let carbs: Double
         let fat: Double
+        /// Absent from every gateway build so far, and **optional so that stays
+        /// true without breaking**: `Decodable` on a non-optional would fail the
+        /// whole response the moment a field is missing, so a client that
+        /// insisted on fibre could not talk to a gateway that has none. When the
+        /// gateway starts sending it, this decodes it with no client change.
+        let fiber: Double?
         let confidence: Double
         let resolved: Bool
         let nutritionSource: String?
@@ -121,6 +127,7 @@ private struct AnalyzeResponse: Decodable {
                     fat: $0.fat,
                     confidence: $0.confidence,
                     isResolved: $0.resolved,
+                    fiber: $0.fiber,
                     nutritionSource: $0.nutritionSource,
                     nutritionSourceID: $0.nutritionSourceId,
                     nutritionSourceURL: $0.nutritionSourceURL,

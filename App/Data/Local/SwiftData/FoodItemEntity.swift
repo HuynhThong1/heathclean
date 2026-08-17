@@ -13,6 +13,17 @@ final class FoodItemEntity {
     var carbohydrates: Double
     var fat: Double
 
+    /// Grams of fibre, or `nil` where nobody measured it.
+    ///
+    /// The fourth lightweight migration in this store, and the same shape as
+    /// the previous three: a new optional attribute, so every row written
+    /// before it reads back `nil` and needs no conversion. Here the optional is
+    /// not merely convenient — `nil` and `0` are different facts, and
+    /// `FoodItem.fiber` documents why. A non-optional column would need a
+    /// default, and the only available default would claim every meal ever
+    /// logged contained no fibre.
+    var fiber: Double?
+
     /// Always `nil` for manual entry; populated by the scan.
     ///
     /// `aiEstimatedName` is the third lightweight migration in this store (after
@@ -40,6 +51,7 @@ final class FoodItemEntity {
         self.protein = item.protein
         self.carbohydrates = item.carbohydrates
         self.fat = item.fat
+        self.fiber = item.fiber
         self.aiConfidence = item.aiConfidence
         self.aiEstimatedWeightGrams = item.aiEstimatedWeightGrams
         self.aiEstimatedName = item.aiEstimatedName
@@ -60,6 +72,7 @@ extension FoodItemEntity {
             protein: protein,
             carbohydrates: carbohydrates,
             fat: fat,
+            fiber: fiber,
             aiConfidence: aiConfidence,
             aiEstimatedWeightGrams: aiEstimatedWeightGrams,
             aiEstimatedName: aiEstimatedName,

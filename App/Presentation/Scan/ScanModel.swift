@@ -132,7 +132,8 @@ final class ScanModel {
         calories: Double,
         protein: Double,
         carbohydrates: Double,
-        fat: Double
+        fat: Double,
+        fiber: Double? = nil
     ) {
         guard case var .review(result) = state,
               let index = result.foods.firstIndex(where: { $0.id == id })
@@ -141,7 +142,8 @@ final class ScanModel {
             calories: calories,
             protein: protein,
             carbohydrates: carbohydrates,
-            fat: fat
+            fat: fat,
+            fiber: fiber
         )
         state = .review(result)
     }

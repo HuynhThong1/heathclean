@@ -148,6 +148,28 @@ struct MealDetailView: View {
                         background: DS.green100, foreground: DS.green700
                     )
                 }
+
+                // A fourth chip only when this meal has a figure. Three chips
+                // and a gap would be worse than three chips, and a "0 g" chip
+                // would be a claim about food nobody measured.
+                if let fiber = model.totalFiber {
+                    HStack(alignment: .firstTextBaseline, spacing: DS.s2) {
+                        HFLabel("Chất xơ")
+                        Spacer(minLength: DS.s2)
+                        Text(verbatim: "\(AppNumber.int(fiber)) g")
+                            .hfStyle(HFType.rowValue)
+                            .foregroundStyle(DS.textStrong)
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityAddTraits(.isStaticText)
+
+                    if model.itemsMissingFiber > 0 {
+                        Text("\(model.itemsMissingFiber) món trong bữa này chưa có số liệu chất xơ.")
+                            .hfStyle(HFType.subLabel)
+                            .foregroundStyle(DS.textMuted)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
             }
         }
     }

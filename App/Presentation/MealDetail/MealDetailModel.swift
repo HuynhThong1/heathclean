@@ -45,6 +45,15 @@ final class MealDetailModel {
 
     var totalCalories: Double { meals.reduce(0) { $0 + $1.calories } }
     var totalProtein: Double { meals.reduce(0) { $0 + $1.protein } }
+
+    /// `nil` when nothing in this meal carries a fibre figure — the same rule
+    /// the dashboard follows, for the same reason.
+    var totalFiber: Double? {
+        guard meals.contains(where: \.hasAnyFiber) else { return nil }
+        return meals.reduce(0) { $0 + $1.knownFiber }
+    }
+
+    var itemsMissingFiber: Int { meals.reduce(0) { $0 + $1.itemsMissingFiber } }
     var totalCarbohydrates: Double { meals.reduce(0) { $0 + $1.carbohydrates } }
     var totalFat: Double { meals.reduce(0) { $0 + $1.fat } }
 

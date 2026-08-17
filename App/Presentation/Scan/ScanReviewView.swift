@@ -55,13 +55,14 @@ struct ScanReviewView: View {
                 food: food,
                 onChange: { model.updateWeight(of: food.id, to: $0) },
                 onRename: { model.rename(food.id, to: $0) },
-                onSupplyNutrition: { calories, protein, carbs, fat in
+                onSupplyNutrition: { calories, protein, carbs, fat, fiber in
                     model.supplyNutrition(
                         for: food.id,
                         calories: calories,
                         protein: protein,
                         carbohydrates: carbs,
-                        fat: fat
+                        fat: fat,
+                        fiber: fiber
                     )
                 },
                 onRemove: {

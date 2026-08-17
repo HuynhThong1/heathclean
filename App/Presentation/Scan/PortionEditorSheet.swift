@@ -9,7 +9,7 @@ struct PortionEditorSheet: View {
     let onRename: (String) -> Void
     /// Nutrition for a food the database did not have, entered for the portion
     /// currently shown.
-    let onSupplyNutrition: (Double, Double, Double, Double) -> Void
+    let onSupplyNutrition: (Double, Double, Double, Double, Double?) -> Void
     let onRemove: () -> Void
     let onDone: () -> Void
 
@@ -20,6 +20,10 @@ struct PortionEditorSheet: View {
     @State private var proteinText: String = ""
     @State private var carbsText: String = ""
     @State private var fatText: String = ""
+    /// Blank stays blank. Unlike the four above, an empty fibre box means "not
+    /// measured" rather than zero — `FoodItem.fiber` has the reason — and it is
+    /// the field a person typing an unknown dish is least likely to know.
+    @State private var fiberText: String = ""
 
     private let presets: [Double] = [50, 100, 150, 200]
 
@@ -122,7 +126,8 @@ struct PortionEditorSheet: View {
                         Double(caloriesText) ?? 0,
                         Double(proteinText) ?? 0,
                         Double(carbsText) ?? 0,
-                        Double(fatText) ?? 0
+                        Double(fatText) ?? 0,
+                        fiberText.isEmpty ? nil : Double(fiberText)
                     )
                 }
                 onRename(name)
@@ -150,6 +155,17 @@ struct PortionEditorSheet: View {
                 nutrientField("Đạm g", text: $proteinText, id: "protein")
                 nutrientField("Tinh bột g", text: $carbsText, id: "carbs")
                 nutrientField("Béo g", text: $fatText, id: "fat")
+            }
+
+            // On its own line rather than as a fifth box: five numeric fields
+            // across a phone leaves each too narrow to read, and this one is
+            // optional while the other four are what make the food resolvable.
+            HStack(spacing: DS.s2) {
+                nutrientField("Chất xơ g", text: $fiberText, id: "fiber")
+                Text("Để trống nếu không biết")
+                    .hfStyle(HFType.subLabel)
+                    .foregroundStyle(DS.textSubtle)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
             // No "apply" button of its own. There was one, and it was a trap:

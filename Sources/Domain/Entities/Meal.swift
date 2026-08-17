@@ -51,4 +51,26 @@ public struct Meal: Sendable, Equatable, Identifiable {
     public var protein: Double { items.reduce(0) { $0 + $1.protein } }
     public var carbohydrates: Double { items.reduce(0) { $0 + $1.carbohydrates } }
     public var fat: Double { items.reduce(0) { $0 + $1.fat } }
+
+    /// Fibre from the items that have a figure. **Not a total for the meal** —
+    /// see `itemsMissingFiber`, which is what says whether it is one.
+    public var knownFiber: Double {
+        items.compactMap(\.fiber).reduce(0, +)
+    }
+
+    /// How many foods in this meal have no fibre figure at all.
+    ///
+    /// A sum on its own cannot be read: 6 g across a meal means one thing when
+    /// every food was measured and another when two of three were not. Every
+    /// screen that shows fibre shows this too, or it is quietly asserting a
+    /// total it does not have.
+    public var itemsMissingFiber: Int {
+        items.filter { $0.fiber == nil }.count
+    }
+
+    /// `true` when at least one food carries a figure — the condition for
+    /// drawing fibre at all.
+    public var hasAnyFiber: Bool {
+        items.contains { $0.fiber != nil }
+    }
 }

@@ -24,6 +24,29 @@ public struct DailyNutritionSummary: Sendable, Equatable {
     public var remainingCarbohydrates: Double { goal.carbohydrates - consumedCarbohydrates }
     public var remainingFat: Double { goal.fat - consumedFat }
 
+    // MARK: Fibre
+
+    /// The day's fibre, or **`nil` when nothing logged today carries a figure**.
+    ///
+    /// `nil` is not `0`. A day of scanned meals has no fibre data at all — the
+    /// gateway does not return it — and reporting `0 g` there would say the user
+    /// ate none. The dashboard draws the bar only when this is non-`nil`.
+    public var consumedFiber: Double? {
+        guard meals.contains(where: \.hasAnyFiber) else { return nil }
+        return meals.reduce(0) { $0 + $1.knownFiber }
+    }
+
+    /// Foods logged today with no fibre figure. Non-zero means the total above
+    /// is a floor rather than a sum, and the screen has to say so.
+    public var itemsMissingFiber: Int {
+        meals.reduce(0) { $0 + $1.itemsMissingFiber }
+    }
+
+    /// `nil` for the same reason `consumedFiber` is.
+    public var remainingFiber: Double? {
+        consumedFiber.map { goal.fiber - $0 }
+    }
+
     public func meals(of type: MealType) -> [Meal] {
         meals.filter { $0.type == type }
     }

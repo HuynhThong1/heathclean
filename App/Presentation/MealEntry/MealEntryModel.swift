@@ -14,6 +14,11 @@ final class MealEntryModel {
         var protein = 0.0
         var carbohydrates = 0.0
         var fat = 0.0
+        /// `nil` until the user types one — blank means "not measured", which is
+        /// a different fact from 0 g and is stored as one. Manual entry is
+        /// currently the only way any fibre gets into the app at all: the
+        /// gateway contract has no fibre field.
+        var fiber: Double?
 
         var isComplete: Bool {
             !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -29,7 +34,8 @@ final class MealEntryModel {
                 calories: calories,
                 protein: protein,
                 carbohydrates: carbohydrates,
-                fat: fat
+                fat: fat,
+                fiber: fiber
             )
         }
     }
@@ -52,6 +58,13 @@ final class MealEntryModel {
     var totalProtein: Double { drafts.reduce(0) { $0 + $1.protein } }
     var totalCarbohydrates: Double { drafts.reduce(0) { $0 + $1.carbohydrates } }
     var totalFat: Double { drafts.reduce(0) { $0 + $1.fat } }
+
+    /// Only the rows that carry a figure. `nil` when none does, so the summary
+    /// line can stay silent rather than claim a zero.
+    var totalFiber: Double? {
+        let measured = drafts.compactMap(\.fiber)
+        return measured.isEmpty ? nil : measured.reduce(0, +)
+    }
 
     var canSave: Bool {
         !drafts.isEmpty && drafts.allSatisfy(\.isComplete) && hasCalories && !isSaving

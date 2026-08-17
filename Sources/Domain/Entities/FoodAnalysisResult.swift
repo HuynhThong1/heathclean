@@ -31,6 +31,16 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
     public var nutritionSourceURL: String?
     public var nutritionIsReference: Bool
 
+    /// Dietary fibre in grams, or `nil` when the resolver had none.
+    ///
+    /// Optional all the way through for the reason `FoodItem.fiber` gives: a
+    /// nutrition row without a fibre figure is not a food with no fibre. The
+    /// gateway's `/v1/meals/analyze` does not send this field yet, so today it
+    /// is always `nil` on a real scan — and being `Optional` is what lets the
+    /// gateway start sending it without a client release becoming a
+    /// prerequisite.
+    public var fiber: Double?
+
     /// What the model first estimated, kept so a correction can be measured
     /// against it (`plan.md` §22).
     public let originalWeightGrams: Double
@@ -57,6 +67,7 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
         fat: Double,
         confidence: Double,
         isResolved: Bool,
+        fiber: Double? = nil,
         originalWeightGrams: Double? = nil,
         originalName: String? = nil,
         nutritionSource: String? = nil,
@@ -74,6 +85,7 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
         self.fat = fat
         self.confidence = confidence
         self.isResolved = isResolved
+        self.fiber = fiber
         self.originalWeightGrams = originalWeightGrams ?? weightGrams
         self.originalName = originalName ?? name
         self.nutritionSource = nutritionSource
@@ -118,17 +130,23 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
     /// a portion correction against, and `scaled(toWeightGrams:)` already
     /// derives its baseline from the current values — so figures entered here
     /// rescale correctly without pretending the model estimated this weight.
+    ///
+    /// `fiber` stays optional here too, and blank stays `nil`: someone typing a
+    /// dish the database never heard of is the least likely person to know its
+    /// fibre, and a required zero would be a figure they did not mean.
     public func resolved(
         calories: Double,
         protein: Double,
         carbohydrates: Double,
-        fat: Double
+        fat: Double,
+        fiber: Double? = nil
     ) -> RecognizedFood {
         var copy = self
         copy.calories = max(0, calories)
         copy.protein = max(0, protein)
         copy.carbohydrates = max(0, carbohydrates)
         copy.fat = max(0, fat)
+        copy.fiber = fiber.map { max(0, $0) }
         copy.isResolved = true
         copy.nutritionSource = "user_entered"
         copy.nutritionSourceID = nil
@@ -150,6 +168,10 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
         copy.protein = protein / max(weightGrams, .leastNonzeroMagnitude) * newWeight
         copy.carbohydrates = carbohydrates / max(weightGrams, .leastNonzeroMagnitude) * newWeight
         copy.fat = fat / max(weightGrams, .leastNonzeroMagnitude) * newWeight
+        // Scales with the portion like every other figure — and stays `nil` if
+        // it was `nil`. Half of an unknown is still unknown; `map` is what keeps
+        // a missing figure from becoming a zero the moment a portion is edited.
+        copy.fiber = fiber.map { $0 / max(weightGrams, .leastNonzeroMagnitude) * newWeight }
         return copy
     }
 
@@ -162,6 +184,7 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
             protein: protein,
             carbohydrates: carbohydrates,
             fat: fat,
+            fiber: fiber,
             aiConfidence: confidence,
             aiEstimatedWeightGrams: originalWeightGrams,
             aiEstimatedName: originalName,

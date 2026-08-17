@@ -632,6 +632,38 @@
         }
       }
     },
+    "%lld món chưa có số liệu chất xơ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld food with no fibre figure"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld món chưa có số liệu chất xơ"
+          }
+        }
+      }
+    },
+    "%lld món trong bữa này chưa có số liệu chất xơ.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld food in this meal has no fibre figure."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld món trong bữa này chưa có số liệu chất xơ."
+          }
+        }
+      }
+    },
     "%lld ngày ghi · TB %@ kcal": {
       "localizations": {
         "en": {
@@ -990,6 +1022,22 @@
           "stringUnit": {
             "state": "new",
             "value": "BMI %1$@, %2$@"
+          }
+        }
+      }
+    },
+    "BMI chưa có": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BMI unavailable"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BMI chưa có"
           }
         }
       }
@@ -1378,6 +1426,38 @@
         }
       }
     },
+    "Bỏ thay đổi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard changes"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bỏ thay đổi"
+          }
+        }
+      }
+    },
+    "Bỏ thay đổi?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard changes?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bỏ thay đổi?"
+          }
+        }
+      }
+    },
     "Bối cảnh sức khỏe, không dùng để tính calo": {
       "localizations": {
         "en": {
@@ -1626,6 +1706,22 @@
         }
       }
     },
+    "Chai 500 ml": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bottle, 500 ml"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chai 500 ml"
+          }
+        }
+      }
+    },
     "Chiều cao": {
       "localizations": {
         "en": {
@@ -1670,6 +1766,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cho phép truy cập"
+          }
+        }
+      }
+    },
+    "Chưa chọn": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not set"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa chọn"
           }
         }
       }
@@ -1770,6 +1882,22 @@
         }
       }
     },
+    "Chưa có thay đổi nào. Sửa một trường bất kỳ để xem mục tiêu mới.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing has changed yet. Edit any field to see the new target."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa có thay đổi nào. Sửa một trường bất kỳ để xem mục tiêu mới."
+          }
+        }
+      }
+    },
     "Chưa có trong cơ sở dữ liệu": {
       "localizations": {
         "en": {
@@ -1850,6 +1978,38 @@
         }
       }
     },
+    "Chưa đặt cân nặng mục tiêu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No goal weight set"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa đặt cân nặng mục tiêu"
+          }
+        }
+      }
+    },
+    "Chưa đặt mục tiêu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No goal set"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa đặt mục tiêu"
+          }
+        }
+      }
+    },
     "Chạm hai lần để xem chi tiết bữa này.": {
       "localizations": {
         "en": {
@@ -1910,6 +2070,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Chất béo"
+          }
+        }
+      }
+    },
+    "Chất xơ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fibre"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chất xơ"
+          }
+        }
+      }
+    },
+    "Chất xơ g": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fibre g"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chất xơ g"
           }
         }
       }
@@ -2010,6 +2202,38 @@
         }
       }
     },
+    "Cuối ngày": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of day"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cuối ngày"
+          }
+        }
+      }
+    },
+    "Cách tính": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How this is worked out"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cách tính"
+          }
+        }
+      }
+    },
     "Cân nặng": {
       "localizations": {
         "en": {
@@ -2038,6 +2262,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cân nặng & BMI"
+          }
+        }
+      }
+    },
+    "Cân nặng hiện tại": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current weight"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cân nặng hiện tại"
           }
         }
       }
@@ -2112,6 +2352,22 @@
         }
       }
     },
+    "Còn %@ kg tới mục tiêu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kg to go"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Còn %@ kg tới mục tiêu"
+          }
+        }
+      }
+    },
     "Còn %@.": {
       "localizations": {
         "en": {
@@ -2124,22 +2380,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Còn %@."
-          }
-        }
-      }
-    },
-    "Còn lại": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remaining"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Còn lại"
           }
         }
       }
@@ -2204,6 +2444,54 @@
         }
       }
     },
+    "Công việc thể lực, hoặc tập hai buổi mỗi ngày": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Physical work, or two sessions a day"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Công việc thể lực, hoặc tập hai buổi mỗi ngày"
+          }
+        }
+      }
+    },
+    "CƠ BẢN": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BASICS"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CƠ BẢN"
+          }
+        }
+      }
+    },
+    "CƠ THỂ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BODY"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CƠ THỂ"
+          }
+        }
+      }
+    },
     "Cả đĩa ăn nằm trong khung và không bị mờ thì AI nhận diện chính xác hơn.": {
       "localizations": {
         "en": {
@@ -2232,6 +2520,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cần quyền thông báo của hệ thống trước khi bật các tuỳ chọn dưới đây."
+          }
+        }
+      }
+    },
+    "Cập nhật khi bạn muốn — không có nhắc nhở cân hằng ngày.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update it whenever you like — there is no daily weigh-in reminder."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cập nhật khi bạn muốn — không có nhắc nhở cân hằng ngày."
+          }
+        }
+      }
+    },
+    "Cộng để tăng cân": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Added to gain weight"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cộng để tăng cân"
           }
         }
       }
@@ -2284,6 +2604,22 @@
         }
       }
     },
+    "Dùng %@ kg thay vào": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use %@ kg instead"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dùng %@ kg thay vào"
+          }
+        }
+      }
+    },
     "Dùng cho công thức Mifflin-St Jeor": {
       "localizations": {
         "en": {
@@ -2312,6 +2648,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dùng để tính chuyển hóa cơ bản theo công thức Mifflin-St Jeor."
+          }
+        }
+      }
+    },
+    "Dùng để ước lượng mức trao đổi chất cơ bản.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Used to estimate your basal metabolic rate."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dùng để ước lượng mức trao đổi chất cơ bản."
           }
         }
       }
@@ -2364,7 +2716,7 @@
         }
       }
     },
-    "Dữ liệu sức khỏe không bao giờ được bán hay dùng cho quảng cáo.": {
+    "Dữ liệu sức khoẻ không bao giờ được bán hay dùng cho quảng cáo.": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2375,7 +2727,23 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dữ liệu sức khỏe không bao giờ được bán hay dùng cho quảng cáo."
+            "value": "Dữ liệu sức khoẻ không bao giờ được bán hay dùng cho quảng cáo."
+          }
+        }
+      }
+    },
+    "Dữ liệu sức khoẻ được lưu trên thiết bị của bạn.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Health data stays on your device."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dữ liệu sức khoẻ được lưu trên thiết bị của bạn."
           }
         }
       }
@@ -2392,22 +2760,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dữ liệu sức khỏe lưu trên thiết bị"
-          }
-        }
-      }
-    },
-    "Dữ liệu sức khỏe được lưu trên thiết bị của bạn.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Your health data is kept on your device."
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dữ liệu sức khỏe được lưu trên thiết bị của bạn."
           }
         }
       }
@@ -2460,22 +2812,6 @@
         }
       }
     },
-    "Giao diện": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appearance"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Giao diện"
-          }
-        }
-      }
-    },
     "Giảm": {
       "localizations": {
         "en": {
@@ -2508,6 +2844,22 @@
         }
       }
     },
+    "Giới tính": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sex"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giới tính"
+          }
+        }
+      }
+    },
     "Giới tính sinh học": {
       "localizations": {
         "en": {
@@ -2524,6 +2876,54 @@
         }
       }
     },
+    "Giữ cân nặng hiện tại.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stay at your current weight."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giữ cân nặng hiện tại."
+          }
+        }
+      }
+    },
+    "Giữ ở mức trao đổi chất cơ bản": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Held at your basal metabolic rate"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giữ ở mức trao đổi chất cơ bản"
+          }
+        }
+      }
+    },
+    "Giữ ở mức tối thiểu an toàn": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Held at the safe minimum"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giữ ở mức tối thiểu an toàn"
+          }
+        }
+      }
+    },
     "Gần mục tiêu calo hôm nay": {
       "localizations": {
         "en": {
@@ -2536,22 +2936,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Gần mục tiêu calo hôm nay"
-          }
-        }
-      }
-    },
-    "HIỂN THỊ": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DISPLAY"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HIỂN THỊ"
           }
         }
       }
@@ -2600,6 +2984,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hiện tại %@ kg"
+          }
+        }
+      }
+    },
+    "Hoàn tác": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Undo"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hoàn tác"
           }
         }
       }
@@ -2668,6 +3068,22 @@
         }
       }
     },
+    "Hướng mục tiêu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Goal direction"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hướng mục tiêu"
+          }
+        }
+      }
+    },
     "Hồ sơ của bạn": {
       "localizations": {
         "en": {
@@ -2684,18 +3100,18 @@
         }
       }
     },
-    "Hồ sơ của bạn, %@": {
+    "Hồ sơ sẽ giữ nguyên như trước.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your profile, %@"
+            "value": "Your profile will stay as it was."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hồ sơ của bạn, %@"
+            "value": "Hồ sơ sẽ giữ nguyên như trước."
           }
         }
       }
@@ -2792,6 +3208,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Không có giới tính sinh học, mục tiêu sẽ dùng giá trị trung bình nên kém chính xác hơn."
+          }
+        }
+      }
+    },
+    "Không hoàn tác được: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not undo: %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không hoàn tác được: %@"
           }
         }
       }
@@ -2940,6 +3372,22 @@
         }
       }
     },
+    "Không tăng giảm": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No change"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không tăng giảm"
+          }
+        }
+      }
+    },
     "Không tải được bữa ăn hôm nay.": {
       "localizations": {
         "en": {
@@ -3016,22 +3464,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Không xoá được món. Vui lòng thử lại."
-          }
-        }
-      }
-    },
-    "Không đặt": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Not set"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Không đặt"
           }
         }
       }
@@ -3148,6 +3580,22 @@
         }
       }
     },
+    "Ly 250 ml": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glass, 250 ml"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ly 250 ml"
+          }
+        }
+      }
+    },
     "Lưu": {
       "localizations": {
         "en": {
@@ -3160,6 +3608,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lưu"
+          }
+        }
+      }
+    },
+    "Lưu thay đổi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save changes"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lưu thay đổi"
           }
         }
       }
@@ -3260,22 +3724,6 @@
         }
       }
     },
-    "Mỗi ngày": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Per day"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mỗi ngày"
-          }
-        }
-      }
-    },
     "Một tuần của bạn thế nào?": {
       "localizations": {
         "en": {
@@ -3308,6 +3756,54 @@
         }
       }
     },
+    "MỤC TIÊU": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GOAL"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MỤC TIÊU"
+          }
+        }
+      }
+    },
+    "MỤC TIÊU HIỆN TẠI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CURRENT TARGET"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MỤC TIÊU HIỆN TẠI"
+          }
+        }
+      }
+    },
+    "MỤC TIÊU MỚI": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NEW TARGET"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MỤC TIÊU MỚI"
+          }
+        }
+      }
+    },
     "Mục tiêu": {
       "localizations": {
         "en": {
@@ -3320,6 +3816,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mục tiêu"
+          }
+        }
+      }
+    },
+    "Mục tiêu calo sẽ giữ nguyên %@ kcal.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your calorie target will stay at %@ kcal."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mục tiêu calo sẽ giữ nguyên %@ kcal."
           }
         }
       }
@@ -3352,6 +3864,86 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mục tiêu hằng ngày của bạn"
+          }
+        }
+      }
+    },
+    "Mục tiêu mỗi ngày": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Daily target"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mục tiêu mỗi ngày"
+          }
+        }
+      }
+    },
+    "Mục tiêu mỗi ngày %@ kcal": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Daily target %@ kcal"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mục tiêu mỗi ngày %@ kcal"
+          }
+        }
+      }
+    },
+    "Mục tiêu mới %@ kcal áp dụng từ hôm nay. Những ngày đã ghi giữ nguyên mục tiêu cũ của ngày đó.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The new %@ kcal target applies from today. Days you have already logged keep the target they were logged against."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mục tiêu mới %@ kcal áp dụng từ hôm nay. Những ngày đã ghi giữ nguyên mục tiêu cũ của ngày đó."
+          }
+        }
+      }
+    },
+    "Mục tiêu mới %@ ki-lô ca-lo mỗi ngày": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New target %@ kilocalories a day"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mục tiêu mới %@ ki-lô ca-lo mỗi ngày"
+          }
+        }
+      }
+    },
+    "Mục tiêu này thấp hơn mức an toàn thường được khuyến nghị cho chiều cao %@ cm. Bạn có thể vẫn đặt, nhưng nên hỏi bác sĩ trước.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This goal is below the range usually recommended as safe for a height of %@ cm. You can still set it, but it is worth asking a doctor first."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mục tiêu này thấp hơn mức an toàn thường được khuyến nghị cho chiều cao %@ cm. Bạn có thể vẫn đặt, nhưng nên hỏi bác sĩ trước."
           }
         }
       }
@@ -3404,6 +3996,22 @@
         }
       }
     },
+    "Mức vận động": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activity level"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mức vận động"
+          }
+        }
+      }
+    },
     "Mức vận động được nhân với chuyển hóa cơ bản của bạn.": {
       "localizations": {
         "en": {
@@ -3416,6 +4024,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mức vận động được nhân với chuyển hóa cơ bản của bạn."
+          }
+        }
+      }
+    },
+    "NGÔN NGỮ & GIAO DIỆN": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LANGUAGE & APPEARANCE"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NGÔN NGỮ & GIAO DIỆN"
           }
         }
       }
@@ -3528,6 +4152,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ngôn ngữ"
+          }
+        }
+      }
+    },
+    "Ngồi làm việc, đi lại nhẹ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desk work, light walking"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ngồi làm việc, đi lại nhẹ"
+          }
+        }
+      }
+    },
+    "Nhân mức vận động (×%@)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Times your activity level (×%@)"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhân mức vận động (×%@)"
           }
         }
       }
@@ -3756,6 +4412,22 @@
         }
       }
     },
+    "Nước": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Water"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nước"
+          }
+        }
+      }
+    },
     "Nữ": {
       "localizations": {
         "en": {
@@ -3848,6 +4520,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Quay lại"
+          }
+        }
+      }
+    },
+    "Quay lại màn Tôi sau một khoảnh khắc, hoặc chạm để về ngay.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back to Profile in a moment, or tap to go now."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quay lại màn Tôi sau một khoảnh khắc, hoặc chạm để về ngay."
           }
         }
       }
@@ -3948,6 +4636,38 @@
         }
       }
     },
+    "Sửa": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sửa"
+          }
+        }
+      }
+    },
+    "Sửa hồ sơ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit profile"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sửa hồ sơ"
+          }
+        }
+      }
+    },
     "T%lld": {
       "localizations": {
         "en": {
@@ -4040,6 +4760,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Thiếu cân"
+          }
+        }
+      }
+    },
+    "Thêm %@ ml": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add %@ ml"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thêm %@ ml"
           }
         }
       }
@@ -4236,6 +4972,22 @@
         }
       }
     },
+    "Tiếp tục sửa": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep editing"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiếp tục sửa"
+          }
+        }
+      }
+    },
     "Tra cứu dinh dưỡng": {
       "localizations": {
         "en": {
@@ -4248,6 +5000,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tra cứu dinh dưỡng"
+          }
+        }
+      }
+    },
+    "Trao đổi chất cơ bản (BMR)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Basal metabolic rate (BMR)"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trao đổi chất cơ bản (BMR)"
+          }
+        }
+      }
+    },
+    "Trong ngày": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "During the day"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trong ngày"
           }
         }
       }
@@ -4280,6 +5064,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "Trung bình — 3–5 ngày/tuần"
+          }
+        }
+      }
+    },
+    "Trước đây %@ kcal · thay đổi vì bạn vừa sửa %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previously %@ kcal · changed because you just edited %@."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Trước đây %1$@ kcal · thay đổi vì bạn vừa sửa %2$@."
+          }
+        }
+      }
+    },
+    "Trước đây %@ kcal.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previously %@ kcal."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trước đây %@ kcal."
+          }
+        }
+      }
+    },
+    "Trừ để giảm cân": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subtracted to lose weight"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trừ để giảm cân"
           }
         }
       }
@@ -4536,6 +5368,54 @@
         }
       }
     },
+    "Tập 1–3 buổi mỗi tuần": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1–3 sessions a week"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tập 1–3 buổi mỗi tuần"
+          }
+        }
+      }
+    },
+    "Tập 3–5 buổi mỗi tuần": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3–5 sessions a week"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tập 3–5 buổi mỗi tuần"
+          }
+        }
+      }
+    },
+    "Tập 6–7 buổi mỗi tuần": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "6–7 sessions a week"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tập 6–7 buổi mỗi tuần"
+          }
+        }
+      }
+    },
     "Tối": {
       "localizations": {
         "en": {
@@ -4612,6 +5492,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tổng bữa ăn %@ kcal"
+          }
+        }
+      }
+    },
+    "Tự chọn Sáng — app giữ nền sáng kể cả khi máy chuyển sang tối.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light, chosen by you — the app stays light even when your phone switches to dark."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tự chọn Sáng — app giữ nền sáng kể cả khi máy chuyển sang tối."
+          }
+        }
+      }
+    },
+    "Tự chọn Tối — lựa chọn được lưu, không đổi theo máy nữa.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dark, chosen by you — the choice is saved and no longer follows your phone."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tự chọn Tối — lựa chọn được lưu, không đổi theo máy nữa."
           }
         }
       }
@@ -4730,6 +5642,70 @@
           "stringUnit": {
             "state": "translated",
             "value": "Vận động"
+          }
+        }
+      }
+    },
+    "Vận động nhiều": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Very active"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vận động nhiều"
+          }
+        }
+      }
+    },
+    "Vận động nhẹ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lightly active"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vận động nhẹ"
+          }
+        }
+      }
+    },
+    "Vận động rất nhiều": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Extremely active"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vận động rất nhiều"
+          }
+        }
+      }
+    },
+    "Vận động vừa": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moderately active"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vận động vừa"
           }
         }
       }
@@ -4958,6 +5934,54 @@
         }
       }
     },
+    "bật": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "on"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bật"
+          }
+        }
+      }
+    },
+    "chiều cao": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "height"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "chiều cao"
+          }
+        }
+      }
+    },
+    "chưa chọn": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "not selected"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "chưa chọn"
+          }
+        }
+      }
+    },
     "chưa có dữ liệu": {
       "localizations": {
         "en": {
@@ -4986,6 +6010,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "chưa ghi ngày nào"
+          }
+        }
+      }
+    },
+    "cân nặng hiện tại": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "current weight"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cân nặng hiện tại"
+          }
+        }
+      }
+    },
+    "cân nặng mục tiêu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "goal weight"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cân nặng mục tiêu"
           }
         }
       }
@@ -5038,6 +6094,38 @@
         }
       }
     },
+    "giới tính": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sex"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "giới tính"
+          }
+        }
+      }
+    },
+    "hướng mục tiêu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "goal direction"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hướng mục tiêu"
+          }
+        }
+      }
+    },
     "kcal": {
       "localizations": {
         "en": {
@@ -5070,6 +6158,22 @@
         }
       }
     },
+    "kcal / ngày": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kcal / day"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kcal / ngày"
+          }
+        }
+      }
+    },
     "kcal còn lại": {
       "localizations": {
         "en": {
@@ -5082,6 +6186,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "kcal còn lại"
+          }
+        }
+      }
+    },
+    "kcal mỗi ngày": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kcal a day"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kcal mỗi ngày"
           }
         }
       }
@@ -5102,6 +6222,22 @@
         }
       }
     },
+    "kg còn lại": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kg to go"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kg còn lại"
+          }
+        }
+      }
+    },
     "kết quả AI phải sửa": {
       "localizations": {
         "en": {
@@ -5114,6 +6250,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "kết quả AI phải sửa"
+          }
+        }
+      }
+    },
+    "mức vận động": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "activity level"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mức vận động"
           }
         }
       }
@@ -5194,6 +6346,38 @@
         }
       }
     },
+    "tuổi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "age"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tuổi"
+          }
+        }
+      }
+    },
+    "tắt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "off"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tắt"
+          }
+        }
+      }
+    },
     "vs mục tiêu %@ kcal": {
       "localizations": {
         "en": {
@@ -5242,6 +6426,38 @@
         }
       }
     },
+    "Ăn nhiều hơn mức tiêu hao mỗi ngày.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eat more than you burn each day."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ăn nhiều hơn mức tiêu hao mỗi ngày."
+          }
+        }
+      }
+    },
+    "Ăn ít hơn mức tiêu hao mỗi ngày.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eat less than you burn each day."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ăn ít hơn mức tiêu hao mỗi ngày."
+          }
+        }
+      }
+    },
     "Đ %@ · TB %@ · B %@": {
       "localizations": {
         "en": {
@@ -5286,6 +6502,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Đang phân tích ảnh…"
+          }
+        }
+      }
+    },
+    "Đang theo hệ thống — hệ thống chọn %@. Tắt để tự chọn.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Following your phone — it has chosen %@. Turn this off to choose yourself."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang theo hệ thống — hệ thống chọn %@. Tắt để tự chọn."
           }
         }
       }
@@ -5354,6 +6586,22 @@
         }
       }
     },
+    "Đây là ước lượng theo công thức Mifflin-St Jeor, không phải chỉ định y tế.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This is an estimate from the Mifflin-St Jeor formula, not medical advice."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đây là ước lượng theo công thức Mifflin-St Jeor, không phải chỉ định y tế."
+          }
+        }
+      }
+    },
     "Đã dùng 70% ngân sách calo": {
       "localizations": {
         "en": {
@@ -5414,6 +6662,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Đã lưu bữa ăn · %@ kcal"
+          }
+        }
+      }
+    },
+    "Đã lưu hồ sơ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profile saved"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã lưu hồ sơ"
           }
         }
       }
@@ -5530,6 +6794,22 @@
         }
       }
     },
+    "Đơn vị đo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Units"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đơn vị đo"
+          }
+        }
+      }
+    },
     "Đạm": {
       "localizations": {
         "en": {
@@ -5634,6 +6914,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "Để sau"
+          }
+        }
+      }
+    },
+    "Để trống nếu không biết": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leave blank if you do not know"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Để trống nếu không biết"
+          }
+        }
+      }
+    },
+    "đang chọn": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "selected"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "đang chọn"
+          }
+        }
+      }
+    },
+    "đang theo hệ thống": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "following your phone"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "đang theo hệ thống"
           }
         }
       }

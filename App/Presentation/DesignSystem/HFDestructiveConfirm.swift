@@ -19,9 +19,21 @@ import SwiftUI
 /// which is the more conventional reading: the button that looks like the
 /// consequence *is* the consequence.
 struct HFDestructiveConfirm: View {
+    /// Which of the two actions the design puts the weight on.
+    ///
+    /// `.destructive` is the original and the default: red confirm, quiet
+    /// cancel. `.reversible` inverts it — a quiet confirm under an emphasised
+    /// cancel — for a choice that loses only unsaved work. PROFILE_SPEC §5's
+    /// state C draws exactly that, with "Tiếp tục sửa" as the default answer,
+    /// and red there would call abandoning an edit the same kind of act as
+    /// deleting a logged meal.
+    enum Emphasis { case destructive, reversible }
+
     let title: String
     let message: String
     let confirmLabel: String
+    var cancelLabel: String?
+    var emphasis: Emphasis = .destructive
     let onConfirm: () -> Void
     let onCancel: () -> Void
 
@@ -64,34 +76,25 @@ struct HFDestructiveConfirm: View {
             // dress a box the Button does not own: the tap area stays where the
             // glyphs are drawn, so the button only answered on the text itself —
             // the same mistake this file was meant to fix elsewhere.
-            Button(action: onConfirm) {
-                Text(confirmLabel)
-                    .font(.custom(DSFontName.semibold, size: 16))
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(minHeight: 52)
-                    .background(
-                        DS.danger,
-                        in: RoundedRectangle(cornerRadius: DS.rControl, style: .continuous)
-                    )
-                    .contentShape(Rectangle())
+            switch emphasis {
+            case .destructive:
+                filled(confirmLabel, fill: DS.danger, action: onConfirm)
+                    .accessibilityIdentifier("confirm.destructive")
+                // Cancel steps back to a plain text action. Filling both would
+                // put two shouting buttons side by side and leave neither
+                // reading as the consequence — and red carrying the weight is
+                // what was asked for.
+                quiet(cancelLabel ?? L("Huỷ"), action: onCancel)
+                    .accessibilityIdentifier("confirm.cancel")
+            case .reversible:
+                // Reversed, and the order with it: the emphasised button is the
+                // one the design makes the default, so it goes where the thumb
+                // rests. The quiet action still comes first in reading order.
+                quiet(confirmLabel, action: onConfirm)
+                    .accessibilityIdentifier("confirm.destructive")
+                filled(cancelLabel ?? L("Huỷ"), fill: DS.blue, action: onCancel)
+                    .accessibilityIdentifier("confirm.cancel")
             }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("confirm.destructive")
-
-            // Cancel steps back to a plain text action. Filling both would put two
-            // shouting buttons side by side and leave neither reading as the
-            // consequence — and red carrying the weight is what was asked for.
-            Button(action: onCancel) {
-                Text("Huỷ")
-                    .font(.custom(DSFontName.semibold, size: 16))
-                    .foregroundStyle(DS.textMuted)
-                    .frame(maxWidth: .infinity)
-                    .frame(minHeight: 48)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("confirm.cancel")
         }
         .padding(.horizontal, 20)
         .padding(.top, 14)
@@ -124,5 +127,37 @@ struct HFDestructiveConfirm: View {
         .presentationBackground(DS.surfaceCard)
         .presentationDetents([.height(contentHeight)])
         .presentationCornerRadius(DS.rSheet)
+    }
+
+    /// Everything is styled *inside* the label. Outside it the modifiers dress a
+    /// box the Button does not own, so the control answers only where its glyphs
+    /// are drawn — the mistake this file was written to fix elsewhere.
+    private func filled(
+        _ title: String,
+        fill: Color,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            Text(verbatim: title)
+                .font(.custom(DSFontName.semibold, size: 16))
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .frame(minHeight: 52)
+                .background(fill, in: RoundedRectangle(cornerRadius: DS.rControl, style: .continuous))
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func quiet(_ title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(verbatim: title)
+                .font(.custom(DSFontName.semibold, size: 16))
+                .foregroundStyle(DS.textMuted)
+                .frame(maxWidth: .infinity)
+                .frame(minHeight: 48)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 }

@@ -109,6 +109,26 @@ def literals(source):
         yield start_line, "".join(pieces)
 
 
+def preview_line(source):
+    """The line the file's previews start on, or infinity.
+
+    Everything from the first `#Preview` down is developer-facing scaffolding —
+    a preview's own name, and the fixtures the galleries below it feed to the
+    components they show. None of it is copy a user ever reads, and none of it
+    belongs in the catalog: a literal written into a `LocalizedStringKey` is
+    extracted whether or not the app draws it, so preview scaffolding would both
+    add keys to translate and keep dead ones alive.
+
+    Every file in this repo puts its previews last, under a
+    `// MARK: - Previews`. This is deliberately narrower than the whole-file
+    entries in `EXEMPT`, which switch the check off for real UI copy as well.
+    """
+    for number, line in enumerate(source.splitlines(), 1):
+        if line.lstrip().startswith("#Preview"):
+            return number
+    return float("inf")
+
+
 SPECIFIER = re.compile(r"%%|%(\d+\$)?[@a-zA-Z]+")
 
 
@@ -132,7 +152,11 @@ def main():
     for path in sorted(SOURCES.rglob("*.swift")):
         if str(path) in EXEMPT:
             continue
-        for line, text in literals(path.read_text()):
+        source = path.read_text()
+        cutoff = preview_line(source)
+        for line, text in literals(source):
+            if line >= cutoff:
+                continue
             if not any(character in VIETNAMESE for character in text):
                 continue
             if text in keys or collapse(text) in shapes:

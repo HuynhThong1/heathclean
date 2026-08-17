@@ -64,6 +64,10 @@ struct DashboardView: View {
             VStack(alignment: .leading, spacing: DS.s6) {
                 heroCard(model: model, summary: summary)
                 macrosSection(summary: summary)
+                // Absent until the store has answered, rather than drawn at
+                // 0 / 0 while it does — an empty bar that fills a moment later
+                // reads as a figure that changed.
+                if let water = model.water { waterSection(water) }
                 mealsSection(summary: summary)
                 healthSection(model: model)
                 if let bmi = model.bmi { bmiRow(bmi: bmi) }
@@ -248,9 +252,128 @@ struct DashboardView: View {
                         label: "Chất béo", tint: DS.green,
                         consumed: summary.consumedFat, target: summary.goal.fat
                     )
+
+                    // **Drawn only when something today actually carries a
+                    // figure.** The gateway returns no fibre, so a day of
+                    // scanned meals has none — and a bar sitting at 0 g would
+                    // tell the user they ate no fibre when nothing measured it.
+                    if let fiber = summary.consumedFiber {
+                        Divider().overlay(DS.borderSubtle)
+                        MacroBar(
+                            label: "Chất xơ", tint: DS.blue700,
+                            consumed: fiber, target: summary.goal.fiber,
+                            footnote: fiberFootnote(missing: summary.itemsMissingFiber)
+                        )
+                        // The bar merges into one element, so the footnote is
+                        // part of its label rather than a text of its own —
+                        // an identifier is the only way to name it.
+                        .accessibilityIdentifier("macro.fiber")
+                    }
                 }
             }
         }
+    }
+
+    /// Says out loud that the figure above is a floor rather than a total.
+    /// `nil` once everything logged today has been measured.
+    private func fiberFootnote(missing: Int) -> String? {
+        guard missing > 0 else { return nil }
+        return L("\(missing) món chưa có số liệu chất xơ")
+    }
+
+    // MARK: Water
+
+    /// `plan.md` Phase 5's optional water tracking.
+    ///
+    /// Its own card rather than a fourth bar in "Dinh dưỡng": water carries no
+    /// energy, is logged by tapping rather than by eating, and is the only
+    /// figure on this screen the user changes from the screen itself.
+    private func waterSection(_ water: DailyWater) -> some View {
+        VStack(alignment: .leading, spacing: DS.s3) {
+            HFSectionHeader("Nước")
+            HFCard {
+                VStack(alignment: .leading, spacing: DS.s3) {
+                    (Text(AppNumber.int(water.consumed))
+                        .hfStyle(HFType.cardMetric)
+                        .foregroundStyle(DS.textStrong)
+                        + Text(verbatim: " / \(AppNumber.int(water.target)) ml")
+                        .hfStyle(HFType.rowValue)
+                        .foregroundStyle(DS.textMuted))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityAddTraits(.isStaticText)
+
+                    GeometryReader { geometry in
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(DS.trackBg)
+                            Capsule().fill(DS.blue500)
+                                .frame(width: geometry.size.width * water.fraction)
+                        }
+                    }
+                    .frame(height: 7)
+                    .accessibilityHidden(true)
+
+                    // Undo sits with the two adds rather than up beside the
+                    // figure. In the header row it was in an
+                    // `HStack(alignment: .firstTextBaseline)` next to a 21pt
+                    // metric, and its taps went nowhere at all: XCUITest
+                    // reported a successful tap and the action never ran, so it
+                    // behaved exactly like a button that was not wired up. Here
+                    // it is laid out like the buttons that always worked.
+                    HStack(spacing: DS.s2) {
+                        ForEach(WaterServing.allCases, id: \.self) { serving in
+                            waterButton(serving)
+                        }
+                        if water.mostRecent != nil {
+                            Button {
+                                Task { await model?.undoLastDrink() }
+                            } label: {
+                                Text("Hoàn tác")
+                                    .hfStyle(HFType.rowLabel)
+                                    .foregroundStyle(DS.textMuted)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(minHeight: 44)
+                                    .background(
+                                        DS.surfaceSunken,
+                                        in: RoundedRectangle(
+                                            cornerRadius: DS.rControl, style: .continuous
+                                        )
+                                    )
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityIdentifier("water.undo")
+                        }
+                    }
+
+                    if let message = model?.waterErrorMessage {
+                        Text(verbatim: message)
+                            .hfStyle(HFType.subLabel)
+                            .foregroundStyle(DS.danger)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("water.error")
+                    }
+                }
+            }
+            // The figures merge into one element; the buttons keep their own.
+            .accessibilityElement(children: .contain)
+        }
+    }
+
+    private func waterButton(_ serving: WaterServing) -> some View {
+        Button {
+            Task { await model?.drink(serving) }
+        } label: {
+            Text(verbatim: serving.label)
+                .hfStyle(HFType.rowLabel)
+                .foregroundStyle(DS.blue700)
+                .frame(maxWidth: .infinity)
+                .frame(minHeight: 44)
+                .background(DS.blue50, in: RoundedRectangle(cornerRadius: DS.rControl, style: .continuous))
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("water.add.\(Int(serving.millilitres))")
+        .accessibilityLabel(Text(verbatim: L("Thêm \(AppNumber.int(serving.millilitres)) ml")))
     }
 
     // MARK: Meals
@@ -395,6 +518,9 @@ private struct MacroBar: View {
     let tint: Color
     let consumed: Double
     let target: Double
+    /// A qualification on the figure — currently only fibre's "N món chưa có
+    /// số liệu", which is what stops a partial sum reading as a total.
+    var footnote: String?
 
     private var fraction: Double {
         target > 0 ? min(consumed / target, 1) : 0
@@ -420,11 +546,27 @@ private struct MacroBar: View {
                 }
             }
             .frame(height: 7)
+
+            if let footnote {
+                Text(verbatim: footnote)
+                    .hfStyle(HFType.subLabel)
+                    .foregroundStyle(DS.textMuted)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
             Text(label) + Text(", \(AppNumber.int(consumed)) trên \(AppNumber.int(target)) gam")
+                + Text(verbatim: footnote.map { ", " + $0 } ?? "")
         )
+        // **Without this the bar is an `otherElement`, not a static text.**
+        // A merged element with no trait is exposed as a plain container, so
+        // VoiceOver announces it without saying it is text and
+        // `app.staticTexts[…]` cannot find it — the rule CLAUDE.md records for
+        // `DSValueRow`, which this component predates. It had been missing
+        // since the bar was written; a fibre test asking for it by identifier
+        // is what turned it up.
+        .accessibilityAddTraits(.isStaticText)
     }
 }
 

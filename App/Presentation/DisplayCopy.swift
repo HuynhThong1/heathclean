@@ -87,6 +87,22 @@ extension WeightGoal {
     }
 }
 
+extension WaterServing {
+    /// What a quick-add button says. The *sizes* are a product decision and
+    /// live in Domain; only the wording is here, like every other Domain
+    /// value's label.
+    ///
+    /// The volume is in the label rather than only the vessel, because a glass
+    /// is not a unit — "Ly" alone would leave the user guessing what a tap is
+    /// worth, and the total is built out of these.
+    var label: String {
+        switch self {
+        case .glass: L("Ly 250 ml")
+        case .bottle: L("Chai 500 ml")
+        }
+    }
+}
+
 extension BiologicalSex {
     var label: String {
         switch self {
