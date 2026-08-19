@@ -83,7 +83,13 @@ final class DependencyContainer {
             return raw
         }
 
-        if let raw = setting("GATEWAY_URL"), let url = URL(string: raw) {
+        let arguments = ProcessInfo.processInfo.arguments
+        if arguments.contains("-uiTesting"), arguments.contains("-scanFailureFixture") {
+            // The failure branch of the scan, which nothing else can reach: the
+            // mock always succeeds and a real gateway cannot be made to fail on
+            // demand. Double-guarded, like the history and scan-image fixtures.
+            recognitionRepository = FailingFoodRecognitionRepository()
+        } else if let raw = setting("GATEWAY_URL"), let url = URL(string: raw) {
             recognitionRepository = GatewayFoodRecognitionRepository(
                 baseURL: url,
                 providerOverride: ProcessInfo.processInfo.environment["MODEL_PROVIDER"],

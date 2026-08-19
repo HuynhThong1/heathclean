@@ -72,17 +72,25 @@ struct PortionEditorSheet: View {
                     .accessibilityIdentifier("portion.name")
                     .onSubmit { onRename(name) }
                 Spacer(minLength: DS.s2)
-                Text("\(Int((food.confidence * 100).rounded()))%")
-                    .font(.custom(DSFontName.semibold, size: 11.5))
-                    .foregroundStyle(DS.blue700)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
-                    .background(DS.blue50, in: Capsule())
+                // Both of these describe a prediction, so both are absent for a
+                // food the user added themselves on the review screen: there is
+                // no percentage, and the weight it opens on is the editor's own
+                // default rather than anything the AI estimated.
+                if let confidence = food.confidence {
+                    Text(verbatim: "\(Int((confidence * 100).rounded()))%")
+                        .font(.custom(DSFontName.semibold, size: 11.5))
+                        .foregroundStyle(DS.blue700)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(DS.blue50, in: Capsule())
+                }
             }
 
-            Text("AI ước lượng ban đầu: \(AppNumber.int(food.originalWeightGrams)) g")
-                .hfStyle(HFType.subLabel)
-                .foregroundStyle(DS.textSubtle)
+            if food.isFromModel {
+                Text("AI ước lượng ban đầu: \(AppNumber.int(food.originalWeightGrams)) g")
+                    .hfStyle(HFType.subLabel)
+                    .foregroundStyle(DS.textSubtle)
+            }
 
             stepper
 
@@ -138,12 +146,17 @@ struct PortionEditorSheet: View {
         }
     }
 
-    /// Shown only for a food the nutrition database did not have. Without it the
-    /// item can never resolve — renaming does not re-look-it-up — and confirming
-    /// stays blocked, so the scan would be a dead end.
+    /// Shown for a food the nutrition database did not have — and for one the
+    /// user added by hand, which is the same job. Without it neither can ever
+    /// resolve (renaming does not re-look-anything-up) and confirming stays
+    /// blocked, so the scan would be a dead end.
     private var nutritionEntry: some View {
         VStack(alignment: .leading, spacing: DS.s3) {
-            HFLabel("Chưa có trong cơ sở dữ liệu")
+            HFLabel(
+                food.isFromModel
+                    ? "Chưa có trong cơ sở dữ liệu"
+                    : "Số liệu của món này"
+            )
 
             Text("Nhập kcal cho \(AppNumber.int(grams)) g đang hiển thị rồi bấm Xong. Đổi khẩu phần sau đó vẫn tính lại đúng.")
                 .hfStyle(HFType.subLabel)

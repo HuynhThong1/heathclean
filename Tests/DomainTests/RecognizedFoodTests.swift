@@ -76,6 +76,54 @@ struct RecognizedFoodTests {
         #expect(!makeFood(confidence: 0.75).isLowConfidence)
     }
 
+    /// What a food the user adds on the review screen starts as — the way out of
+    /// a failed analysis, where there is a photo and no result.
+    @Test("a hand-typed food starts nameless, unresolved and without a confidence")
+    func typedByHandStartsEmpty() {
+        let typed = RecognizedFood.typedByHand()
+
+        #expect(typed.confidence == nil)
+        #expect(!typed.isFromModel)
+        #expect(!typed.hasName)
+        #expect(!typed.isResolved)
+        expectClose(typed.weightGrams, 100)
+        expectClose(typed.calories, 0)
+
+        // Never "check this": there is no estimate to doubt, and the flag would
+        // put an orange border on the user's own figures.
+        #expect(!typed.isLowConfidence)
+    }
+
+    /// The whole point of it, so the failed-scan path is not a dead end: it
+    /// resolves through the same `resolved(…)` a dish outside the nutrition table
+    /// takes, and then rescales like any other food.
+    @Test("a hand-typed food resolves and rescales like any other")
+    func typedByHandResolvesAndScales() {
+        var typed = RecognizedFood.typedByHand(weightGrams: 200)
+        typed.name = "Bánh cuốn"
+        let resolved = typed.resolved(calories: 300, protein: 12, carbohydrates: 40, fat: 8)
+
+        #expect(resolved.hasName)
+        #expect(resolved.isResolved)
+        #expect(resolved.nutritionSource == "user_entered")
+
+        let doubled = resolved.scaled(toWeightGrams: 400)
+        expectClose(doubled.calories, 600)
+        expectClose(doubled.protein, 24)
+    }
+
+    /// A nameless food must never reach the store — `ScanModel.canConfirm` is
+    /// what enforces it, and this is the value it reads.
+    @Test(
+        "whitespace is not a name",
+        arguments: ["", " ", "\n", "   \t "]
+    )
+    func blankNamesDoNotCount(typed: String) {
+        var food = RecognizedFood.typedByHand()
+        food.name = typed
+        #expect(!food.hasName)
+    }
+
     @Test("correcting the weight rescales nutrition proportionally")
     func rescaling() {
         let corrected = makeFood(weight: 180, calories: 234).scaled(toWeightGrams: 90)

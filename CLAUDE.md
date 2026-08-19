@@ -6,13 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 swift build            # compiles the Domain library
-swift test             # 120 Domain tests (swift-testing) — fast, no simulator
+swift test             # 124 Domain tests (swift-testing) — fast, no simulator
 
 xcodebuild -scheme HeathFirst \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
 
 xcodebuild -scheme HeathFirst \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test   # + 39 UI tests
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test   # + 40 UI tests
 ```
 
 ```bash
@@ -1054,10 +1054,12 @@ The session is stopped on `.background` and restarted on `.active`: iOS stops it
 when the app leaves the foreground and `.task` does not run again on return, so
 without that the viewfinder comes back black after a call or a lock.
 
-**The scan flow is the one place the app goes dark.** §6.6 (camera), §6.7
-(analysing) and §6.7's failure state all sit on `DS.scanSurface`; §6.8 (review)
-returns to the light surface, which is what the handoff draws. `DS.scanSurface`
-and `DS.scanViewfinder` live beside the camera code rather than in
+**The scan flow is the one place the app goes dark.** §6.6 (camera) and §6.7
+(analysing) sit on `DS.scanSurface`; §6.8 (review) returns to the light surface,
+which is what the handoff draws. **§6.7's dark failure screen is gone** — a
+failure now lands on §6.8 with the photo and no items; see "A failed analysis is
+not a dead end". `DS.scanSurface` and `DS.scanViewfinder` live beside the camera
+code rather than in
 `DesignTokens.swift` because nothing else uses them. The `.ds(.ghost)` button
 style is drawn for a light surface, so the dark screens style their text actions
 inline instead of reusing it.
@@ -1104,6 +1106,63 @@ The UI copy is load-bearing here and was wrong at first. It said "sửa tên ho�
 bỏ món này", inviting the one action that cannot work. Anything written next to
 an unresolved item has to point at the nutrition entry or at removing the item.
 
+### A failed analysis is not a dead end
+
+`ScanModel.State` has **no `failed` case**, and that absence is the feature. §6.7's
+dark error screen offered "Thử lại" (back to the camera) and "Nhập tay" (close the
+scan and open `MealEntryView`), and **both threw the photo away** — so a plate the
+gateway could not read could not be logged at all, even though the person holding
+the phone knew exactly what was on it. One unreachable gateway broke the whole
+flow.
+
+A failure now lands on the **review screen** with `analysisFailure` set: the same
+photo, an empty list, and a note where §6.8's blue explainer pill goes. The list is
+filled by `RecognizedFood.typedByHand()`, which resolves through the same
+`resolved(…)` a dish outside the nutrition table takes — so nutrition is typed in
+one place rather than two, and the saved meal keeps the photo because it is the
+ordinary `confirm()` that saves it.
+
+- **`RecognizedFood.confidence` is `Double?` for this**, and the optionality is
+  what keeps §22 honest. A hand-typed food has no prediction behind it, so
+  `foodItem` writes `nil` to `aiConfidence` *and* to both `aiEstimated…` fields —
+  otherwise `originalName`/`originalWeightGrams`, which are `let` and therefore
+  always set, would file the user's own first guess as the model's prediction and
+  every §29 accuracy figure would count rows the model never saw. `isFromModel`
+  (`confidence != nil`) is the marker, mirroring `FoodItem.cameFromScan`, and
+  `wasRenamed`/`wasPortionCorrected` both answer `false` without it — they have to
+  agree with what `FoodItem` says after the save, which `AICorrectionTests` pins.
+  Making it `Optional` rather than passing 0 also means no screen can draw a
+  confidence badge for a figure nobody predicted: the compiler asks first.
+- **"Thêm món bằng tay" is drawn on a successful review too.** A model that reads
+  three dishes off a plate of four leaves the fourth exactly as unreachable, and
+  §4's "always correctable" covers what was missed as well as what was wrong.
+- **Retrying the analysis is offered only while the list is empty.** A retry
+  replaces the whole result, so once anything has been typed there is work to
+  lose, and this app asks before losing work. It re-sends the bytes already in
+  hand rather than the user re-taking a photo that was fine — the quota cost is
+  the same as any scan.
+- **A failed *save* no longer replaces the screen either.** It used to set
+  `.failed`, which discarded every correction the user had just made; it is now
+  `saveError` drawn under the total, with the meal still there and a retry one
+  tap away.
+- The note is **orange, not `DS.danger`**: nothing has gone wrong with the user's
+  day, one request did not come back. Same rule that keeps the over-budget state
+  grey (§0.3).
+- The identifier is on the note's **sentence**, not on the card around it. A
+  container's `accessibilityIdentifier` propagates down and would have taken the
+  retry button's with it — the trap PROFILE_SPEC's segmented control paid for.
+- **`-scanFailureFixture` (with `-uiTesting`) is the seam**, the same double guard
+  as the other fixtures: `FailingFoodRecognitionRepository` throws
+  `.unreachable` for every image. The branch was unreachable otherwise — the mock
+  always succeeds and a real gateway cannot be made to fail to order — and since
+  the whole claim is that *the flow survives*, it had to be walkable or the claim
+  would quietly stop being true.
+  `testAFailedAnalysisKeepsThePhotoAndTakesTheMealByHand` walks it end to end:
+  note, photo, add by hand, name, calories, save.
+- What it deliberately does **not** do is fall back to `MealEntryView`. That
+  screen cannot carry a photo — `MealEntryModel` has no photo store and building a
+  second path that could is how two writers of the same thing start disagreeing.
+
 Reaching §6.8 means driving the system Photos sheet, which the suite avoids for
 the same reason it avoids the HealthKit sheet — so the path had no UI test at
 all. **`-scanFixtureImage` is the seam**: under the same double launch-argument
@@ -1112,7 +1171,10 @@ guard as the history fixture, `ScanFlowView` generates a frame and hands it to
 recognition repository and the review screen are the real ones. The portion
 editor and the nutrition entry are still hand-only.
 `MockFoodRecognitionRepository` does return one unresolved food, so that half is
-exercisable by hand on a simulator.
+exercisable by hand on a simulator — and the portion editor's name field and its
+nutrition box are now driven by a test as well, through
+`-scanFailureFixture` (below), which is the one path that has to type a whole
+food in from nothing.
 
 Sending meal photos to a hosted service is what `plan.md` §20 and §21 already
 describe — the image is analysed and deleted, never persisted server-side. The
@@ -1185,6 +1247,10 @@ same three answers.
 - **`nil` is not "the model was right."** Rows written before the field read back
   `nil`, and `wasRenamed` reads that as "nothing to report". A `nil` treated as a
   match would quietly count every pre-existing meal as a success.
+- **A food typed in on the review screen is not in any denominator**, the same as
+  one typed into `MealEntryView`. It reaches the store with `aiConfidence` and
+  both `aiEstimated…` fields `nil`, which is what `RecognizedFood.confidence`
+  being `Optional` buys — see "A failed analysis is not a dead end".
 - Rates are counted **per food, not per meal**: a plate read as three dishes with
   one wrong is one correction in three, and rolling it up to the meal would
   report a total failure.
@@ -1247,7 +1313,9 @@ deleting a screen quietly reports nothing stale; remove the orphaned
 
 **The catalog is fully translated, `vi` source and `en`** — 343 keys before
 PROFILE_SPEC, 414 after it (+79 for Profile and Sửa hồ sơ, −8 stale ones the old
-Profile took with it), and 426 with Phase 5's fibre and water. Every key carries an explicit `vi` value equal to
+Profile took with it), 426 with Phase 5's fibre and water, and **438** once a
+failed analysis became a screen the user can finish (+13, −1 the deleted error
+screen took with it). Every key carries an explicit `vi` value equal to
 itself, which is what makes `vi.lproj` exist; `ResolvedLanguage.bundle` records
 why that matters. It used to
 carry no translations at all, deliberately, because §4 made the UI *bilingual* —
@@ -1432,7 +1500,10 @@ opt-in; the default 88-row Vietnamese table is explicitly marked as unsourced
 reference data and must be replaced by a licensed, cited dataset before release.
 
 **Phase 4** is implemented through capture/picker, normalized upload, gateway,
-review/correction and confirmed save, and has run on a physical iPhone. Gemini
+review/correction and confirmed save, and has run on a physical iPhone. A scan
+that *fails* stays on the review screen with its photo and is finished by hand,
+rather than ending on an error screen — that is a deviation from §6.7 and is
+listed below. Gemini
 is verified; Qwen and a representative evaluation dataset are still open. A
 confirmed scan now also **keeps its photo** (§32 stage 2) — nothing else in the
 app does, and no other flow can attach one.
@@ -1484,6 +1555,11 @@ Deviations from `plan.md` already made:
   cannot (total water, including what comes from food). The fibre rule (14 g per
   1.000 kcal) *is* sourced. Both are marked as such in
   `CalculateCalorieGoalUseCase`.
+- **§6.7's failure screen is deleted rather than restyled.** The handoff draws a
+  dark screen with "Thử lại" and "Nhập tay"; both discarded the photo, so a
+  failed analysis could not be logged at all. A failure now lands on §6.8's review
+  screen with the photo, no items and a note, and the meal is typed in there. See
+  "A failed analysis is not a dead end".
 - **PROFILE_SPEC §5's weekly pace, manual goal and date of birth are not built**,
   and neither is its sex-based calorie floor: each needs `UserProfile` or
   `WeightGoal` to change, and the Domain layer is not reshaped to fit a screen.

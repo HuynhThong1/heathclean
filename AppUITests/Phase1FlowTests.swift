@@ -151,6 +151,85 @@ final class Phase1FlowTests: XCTestCase {
         )
     }
 
+    /// A failed analysis must not be a dead end, and it used to be one: §6.7's
+    /// dark error screen offered "Thử lại" (back to the camera) and "Nhập tay"
+    /// (close the scan), and **both threw the photo away** — so a plate the
+    /// gateway could not read could not be logged at all, even though the person
+    /// holding the phone knew exactly what was on it.
+    ///
+    /// `-scanFailureFixture` is the only way to reach that branch: the mock always
+    /// succeeds and a real gateway cannot be made to fail to order.
+    func testAFailedAnalysisKeepsThePhotoAndTakesTheMealByHand() {
+        app.terminate()
+        app.launchArguments = ["-uiTesting", "-scanFixtureImage", "-scanFailureFixture"]
+        app.launch()
+        startOnboarding()
+        reachDashboard()
+
+        app.buttons["tab.scan"].tap()
+        let use = app.buttons["captured.use"]
+        XCTAssertTrue(use.waitForExistence(timeout: 30))
+        use.tap()
+
+        // The review screen, not an error screen: the note explains, and the
+        // photo that was analysed is still on it.
+        XCTAssertTrue(
+            app.staticTexts["scan.analysisFailed"].waitForExistence(timeout: 30),
+            "a failed analysis did not land on the review screen"
+        )
+        XCTAssertTrue(app.images["scan.photo"].exists, "the photo was thrown away")
+
+        app.buttons["scan.addByHand"].tap()
+
+        // The editor opens on the new food straight away — a nameless card with
+        // no figures is not something to leave sitting on screen.
+        let name = app.textFields["portion.name"]
+        XCTAssertTrue(name.waitForExistence(timeout: 10))
+        name.tap()
+        name.typeText("Banh cuon")
+
+        // Nutrition goes in through the same box a dish outside the nutrition
+        // table uses. It starts empty, so it is typed into rather than selected.
+        let calories = app.textFields["portion.field.calories"]
+        calories.tap()
+        calories.typeText("320")
+        app.buttons["portion.done"].tap()
+
+        let card = app.buttons["scan.item.Banh cuon"]
+        XCTAssertTrue(card.waitForExistence(timeout: 10))
+        XCTAssertTrue(card.label.contains("320"))
+        // Nothing predicted this, so nothing may claim a confidence for it.
+        XCTAssertFalse(
+            card.label.contains("Tin cậy") || card.label.contains("Nên kiểm tra"),
+            "a hand-typed food was presented as an AI estimate"
+        )
+        XCTAssertEqual(
+            app.staticTexts["scan.sources"].label,
+            "Không có kết quả AI · số liệu do bạn nhập",
+            "typed figures were attributed to a model that returned nothing"
+        )
+
+        let confirm = app.buttons["scan.confirm"]
+        XCTAssertTrue(confirm.isEnabled, "a complete hand-typed meal could not be saved")
+        confirm.tap()
+
+        XCTAssertTrue(
+            app.staticTexts["Đã lưu bữa ăn · \(vn(320)) kcal"].waitForExistence(timeout: 30),
+            "the meal did not save"
+        )
+
+        // And it kept the photo, which is what the note on the failed screen
+        // promised ("bữa ăn sẽ giữ ảnh này"). The day card counts them.
+        app.buttons["tab.history"].tap()
+        let dayWithPhoto = app.buttons
+            .matching(NSPredicate(format: "label CONTAINS %@", "Có \(vn(1)) ảnh"))
+            .firstMatch
+        XCTAssertTrue(
+            dayWithPhoto.waitForExistence(timeout: 30),
+            "the meal saved without the photo it was analysed from"
+        )
+    }
+
     func testTabBarReachesEveryRootAndBack() {
         reachDashboard()
 

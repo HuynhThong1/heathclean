@@ -131,6 +131,36 @@ struct AICorrectionTests {
         #expect(!item.wasCorrected)
     }
 
+    /// The other way a food reaches a meal without a prediction behind it: the
+    /// user added it *inside the scan flow*, after the analysis failed or came
+    /// back empty. It carries an `originalName` and an `originalWeightGrams`
+    /// because those are `let` and always set — so if `foodItem` wrote them out
+    /// regardless, the user's own first guess would be filed as the model's
+    /// prediction and every §29 accuracy figure would count rows the model never
+    /// saw.
+    @Test("a food typed into the scan flow is not a prediction either")
+    func handTypedFoodInTheScanFlowIsNotMeasured() {
+        let typed = RecognizedFood.typedByHand()
+            .resolved(calories: 320, protein: 12, carbohydrates: 40, fat: 11)
+        var named = typed
+        named.name = "Bánh cuốn"
+        let item = named.scaled(toWeightGrams: 250).foodItem
+
+        #expect(!named.isFromModel)
+        #expect(item.aiConfidence == nil)
+        #expect(item.aiEstimatedName == nil)
+        #expect(item.aiEstimatedWeightGrams == nil)
+        #expect(!item.cameFromScan)
+
+        // Naming it and changing the portion are how it gets filled in at all,
+        // so neither may read as a correction — on either type.
+        #expect(!named.wasRenamed)
+        #expect(!named.wasPortionCorrected)
+        #expect(!named.wasCorrected)
+        #expect(named.wasCorrected == named.foodItem.wasCorrected)
+        #expect(!item.wasCorrected)
+    }
+
     /// Rows written before the field existed read back `nil`, and `nil` is "not
     /// recorded" — never "the model was right", which would quietly count old
     /// meals as successes.

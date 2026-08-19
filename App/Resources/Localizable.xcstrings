@@ -322,6 +322,22 @@
         }
       }
     },
+    "%@, %@ gam, %@ kcal": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@ grams, %@ kcal"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, %@ gam, %@ kcal"
+          }
+        }
+      }
+    },
     "%@, %@ gam, %@ kcal, %@": {
       "localizations": {
         "en": {
@@ -1394,6 +1410,22 @@
         }
       }
     },
+    "Bỏ bữa ăn chưa lưu?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard this unsaved meal?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bỏ bữa ăn chưa lưu?"
+          }
+        }
+      }
+    },
     "Bỏ kết quả": {
       "localizations": {
         "en": {
@@ -1594,6 +1626,34 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bữa ăn chưa được lưu. %lld món AI nhận diện và mọi chỉnh sửa của bạn sẽ mất."
+          }
+        }
+      }
+    },
+    "Bữa ăn chưa được lưu. %lld món trên màn hình sẽ mất.": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "This meal has not been saved. The %lld item on screen will be lost."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "This meal has not been saved. The %lld items on screen will be lost."
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bữa ăn chưa được lưu. %lld món trên màn hình sẽ mất."
           }
         }
       }
@@ -1926,6 +1986,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Chưa có trong cơ sở dữ liệu — mở món này để nhập dinh dưỡng."
+          }
+        }
+      }
+    },
+    "Chưa có tên": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No name yet"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa có tên"
           }
         }
       }
@@ -3212,6 +3288,22 @@
         }
       }
     },
+    "Không có kết quả AI · số liệu do bạn nhập": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No AI result · figures you entered"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không có kết quả AI · số liệu do bạn nhập"
+          }
+        }
+      }
+    },
     "Không hoàn tác được: %@": {
       "localizations": {
         "en": {
@@ -3292,18 +3384,18 @@
         }
       }
     },
-    "Không nhận ra món nào. Thử chụp lại hoặc nhập tay.": {
+    "Không nhận ra món nào. Thử chụp lại hoặc thêm món bằng tay.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No dish was recognised. Retake the photo or enter it by hand."
+            "value": "No dish was recognised. Retake the photo, or add one by hand."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Không nhận ra món nào. Thử chụp lại hoặc nhập tay."
+            "value": "Không nhận ra món nào. Thử chụp lại hoặc thêm món bằng tay."
           }
         }
       }
@@ -3756,6 +3848,22 @@
         }
       }
     },
+    "Mở món này để nhập khối lượng và calo.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open this dish to enter its weight and calories."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở món này để nhập khối lượng và calo."
+          }
+        }
+      }
+    },
     "MỤC TIÊU": {
       "localizations": {
         "en": {
@@ -4204,6 +4312,22 @@
         }
       }
     },
+    "Nhập bữa ăn": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Log a meal"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhập bữa ăn"
+          }
+        }
+      }
+    },
     "Nhập calo trước khi lưu": {
       "localizations": {
         "en": {
@@ -4636,6 +4760,22 @@
         }
       }
     },
+    "Số liệu của món này": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This dish's figures"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Số liệu của món này"
+          }
+        }
+      }
+    },
     "Sửa": {
       "localizations": {
         "en": {
@@ -4796,6 +4936,22 @@
         }
       }
     },
+    "Thêm món bằng tay": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a dish by hand"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thêm món bằng tay"
+          }
+        }
+      }
+    },
     "Thêm món khác": {
       "localizations": {
         "en": {
@@ -4904,6 +5060,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Thử lại"
+          }
+        }
+      }
+    },
+    "Thử phân tích lại ảnh này": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Analyse this photo again"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thử phân tích lại ảnh này"
           }
         }
       }
@@ -6998,6 +7170,22 @@
         }
       }
     },
+    "ẢNH ĐÃ CHỤP · bạn nhập số liệu": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PHOTO TAKEN · you enter the figures"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ẢNH ĐÃ CHỤP · bạn nhập số liệu"
+          }
+        }
+      }
+    },
     "Ảnh bữa ăn chỉ dùng tạm để phân tích rồi xoá.": {
       "localizations": {
         "en": {
@@ -7074,6 +7262,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ảnh chỉ dùng để phân tích rồi xoá."
+          }
+        }
+      }
+    },
+    "Ảnh vẫn ở đây — nhập món bằng tay rồi lưu, bữa ăn sẽ giữ ảnh này.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The photo is still here — add the dishes by hand, and the saved meal keeps it."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ảnh vẫn ở đây — nhập món bằng tay rồi lưu, bữa ăn sẽ giữ ảnh này."
           }
         }
       }

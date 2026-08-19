@@ -7,16 +7,44 @@ final class ScanModel {
     /// §10's state machine. `review` holds the model's proposal — nothing is
     /// written until the user confirms it (§10, "Nothing is written until the
     /// user confirms").
+    ///
+    /// **There is no `failed` case, and that is the point.** A failed analysis
+    /// used to replace the whole screen with a dark error state whose only exits
+    /// threw the photo away — so a photo that could not be analysed could not be
+    /// logged at all, even though the user had already taken it and knew
+    /// perfectly well what was on the plate. A failure now lands on `review`
+    /// with no foods and `analysisFailure` set: same photo, same confirm button,
+    /// and the items are typed in instead of proposed.
     enum State: Equatable {
         case idle
         case analyzing
         case review(FoodAnalysisResult)
-        case failed(String)
     }
 
     private(set) var state: State = .idle
     private(set) var isSaving = false
     var editingFoodID: RecognizedFood.ID?
+
+    /// Why the analysis produced nothing, when it did — the sentence the review
+    /// screen shows above the photo. `nil` after a successful analysis, so it is
+    /// also what tells the two kinds of review screen apart.
+    private(set) var analysisFailure: String?
+
+    /// A save that did not land. Shown *on* the review screen rather than
+    /// replacing it: the corrections and the typed-in figures are all still
+    /// there, and a retry is one tap. Losing them to an error screen is the same
+    /// mistake the deleted `failed` state made.
+    private(set) var saveError: String?
+
+    /// Whether re-running the analysis on the photo already in hand is offered.
+    ///
+    /// Only while nothing is on the list. A retry replaces the whole result, so
+    /// once anything has been typed in there is work to lose — and this app asks
+    /// before losing work rather than after. Retaking the photo (`Quét lại`)
+    /// still goes through the review screen's own confirmation.
+    var canRetryAnalysis: Bool {
+        analysisFailure != nil && foods.isEmpty && analyzedImage != nil
+    }
 
     /// `var` because §6.8 lets the review screen change it. It has to be
     /// changeable there: the scan opens on `MealType.suggestedForNow()`, so a
@@ -64,15 +92,25 @@ final class ScanModel {
     }
 
     /// Confirming is blocked while anything is unresolved — its nutrition is
-    /// zero, so saving would quietly under-count the meal.
+    /// zero, so saving would quietly under-count the meal — and while anything
+    /// is nameless, which only a hand-typed food can be.
     var canConfirm: Bool {
         guard let result, !result.foods.isEmpty, !isSaving else { return false }
-        return result.foods.allSatisfy(\.isResolved)
+        return result.foods.allSatisfy { $0.isResolved && $0.hasName }
     }
 
     var blockedReason: String? {
         guard let result, !isSaving else { return nil }
-        if result.foods.isEmpty { return L("Không nhận ra món nào. Thử chụp lại hoặc nhập tay.") }
+        if result.foods.isEmpty {
+            // After a failure the note above the photo already says what
+            // happened and offers the one action there is, so a second red line
+            // under the total would only repeat it.
+            guard analysisFailure == nil else { return nil }
+            return L("Không nhận ra món nào. Thử chụp lại hoặc thêm món bằng tay.")
+        }
+        if result.foods.contains(where: { !$0.hasName }) {
+            return L("Nhập tên món trước khi lưu")
+        }
         if result.foods.contains(where: { !$0.isResolved }) {
             // Names the action that actually works. It used to say "sửa", which
             // invited renaming — and renaming never resolves anything.
@@ -83,15 +121,45 @@ final class ScanModel {
 
     func analyze(image: Data, mimeType: String = "image/jpeg") async {
         analyzedImage = image
+        analysisFailure = nil
+        saveError = nil
         state = .analyzing
         do {
             let result = try await recognitionRepository.analyze(image: image, mimeType: mimeType)
             state = .review(result)
         } catch let error as FoodRecognitionError {
-            state = .failed(Self.message(for: error))
+            failAnalysis(Self.message(for: error))
         } catch {
-            state = .failed(L("Không phân tích được ảnh. Vui lòng thử lại."))
+            failAnalysis(L("Không phân tích được ảnh. Vui lòng thử lại."))
         }
+    }
+
+    /// The photo survives the failure, so the flow does too: an empty review is
+    /// a screen the user can still finish, and `provider` is blank because no
+    /// model contributed anything to it.
+    private func failAnalysis(_ message: String) {
+        analysisFailure = message
+        state = .review(FoodAnalysisResult(foods: [], provider: ""))
+    }
+
+    /// Spends another analysis on the bytes already in hand, rather than sending
+    /// the user back to the camera to re-take a photo that was fine.
+    func retryAnalysis() async {
+        guard canRetryAnalysis, let analyzedImage else { return }
+        await analyze(image: analyzedImage)
+    }
+
+    /// Adds an empty food for the user to fill in, and opens the editor on it.
+    ///
+    /// It is unresolved and nameless, so `canConfirm` stays false until both are
+    /// supplied — and the editor opens straight away because a card with no name
+    /// and no figures is not something to leave sitting on the screen.
+    func addFoodByHand() {
+        guard case var .review(result) = state else { return }
+        let food = RecognizedFood.typedByHand()
+        result.foods.append(food)
+        state = .review(result)
+        editingFoodID = food.id
     }
 
     private static func message(for error: FoodRecognitionError) -> String {
@@ -166,6 +234,8 @@ final class ScanModel {
         state = .idle
         editingFoodID = nil
         analyzedImage = nil
+        analysisFailure = nil
+        saveError = nil
     }
 
     private func storedPhoto(capturedAt: Date) async -> MealPhoto? {
@@ -177,6 +247,7 @@ final class ScanModel {
     func confirm() async -> Double? {
         guard canConfirm, let result else { return nil }
         isSaving = true
+        saveError = nil
         defer { isSaving = false }
 
         let now = Date()
@@ -198,7 +269,9 @@ final class ScanModel {
             // The row never landed, so the bytes must not stay: nothing would
             // ever point at them again.
             await photoStore.delete(ids: photos.map(\.id))
-            state = .failed(L("Không lưu được bữa ăn. Vui lòng thử lại."))
+            // Stays on the review screen with everything intact — see
+            // `saveError`.
+            saveError = L("Không lưu được bữa ăn. Vui lòng thử lại.")
             return nil
         }
     }

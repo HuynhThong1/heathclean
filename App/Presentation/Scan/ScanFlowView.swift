@@ -60,6 +60,9 @@ struct ScanFlowView: View {
                     }
                 case .analyzing:
                     AnalyzingView()
+                // Also where a *failed* analysis lands — with the photo, no
+                // items and a note saying so, rather than on an error screen
+                // whose only exits threw the photo away. See `ScanModel.State`.
                 case .review:
                     ScanReviewView(
                         model: model,
@@ -70,8 +73,6 @@ struct ScanFlowView: View {
                         },
                         onCancel: { dismiss() }
                     )
-                case let .failed(message):
-                    failure(message: message, model: model)
                 }
             } else {
                 ProgressView()
@@ -178,37 +179,6 @@ struct ScanFlowView: View {
         .padding(.horizontal, 20)
         .padding(.top, DS.s3)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    }
-
-    /// §6.7: a failure stays on the analysing screen — so on its dark surface —
-    /// with a neutral message and the two ways out.
-    private func failure(message: String, model: ScanModel) -> some View {
-        VStack(spacing: DS.s4) {
-            Spacer()
-            Image(systemName: "exclamationmark.triangle")
-                .font(.system(size: 28, weight: .semibold))
-                .foregroundStyle(.white.opacity(0.45))
-            Text(message)
-                .hfStyle(HFType.body)
-                .foregroundStyle(.white.opacity(0.82))
-                .multilineTextAlignment(.center)
-                .accessibilityIdentifier("scan.error")
-            Spacer()
-
-            Button("Thử lại") { model.reset() }
-                .buttonStyle(.ds(.primary, size: .large, fullWidth: true))
-            // The ghost style is drawn for a light surface, so the text action
-            // is styled here rather than reused.
-            Button("Nhập tay") { dismiss() }
-                .buttonStyle(.plain)
-                .font(.custom(DSFontName.semibold, size: 15))
-                .foregroundStyle(.white.opacity(0.72))
-                .frame(height: 44)
-        }
-        .padding(.horizontal, 20)
-        .padding(.bottom, 34)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(DS.scanSurface.ignoresSafeArea())
     }
 }
 

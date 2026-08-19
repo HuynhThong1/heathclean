@@ -18,8 +18,19 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
     public var carbohydrates: Double
     public var fat: Double
 
-    /// 0…1 as reported by the model.
-    public var confidence: Double
+    /// 0…1 as reported by the model, or **`nil` for a food the user typed in
+    /// themselves**.
+    ///
+    /// The scan flow lets them add one when the analysis fails or comes back
+    /// with nothing, so the photo they just took is still a meal they can log —
+    /// and a number here would be the model's opinion about a dish it never
+    /// reported. `nil` is what keeps the two apart everywhere it matters:
+    /// `foodItem` leaves `aiConfidence` and both `aiEstimated…` fields `nil`, so
+    /// a hand-typed food stays out of every §22 denominator
+    /// (`FoodItem.cameFromScan`), and being `Optional` means no screen can draw
+    /// a confidence badge for a figure nobody predicted without saying what to
+    /// do when there is none.
+    public var confidence: Double?
 
     /// `false` when the food was not found in the nutrition database. Its
     /// nutrition is zero and the user has to supply it — showing zeros as fact
@@ -65,7 +76,7 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
         protein: Double,
         carbohydrates: Double,
         fat: Double,
-        confidence: Double,
+        confidence: Double?,
         isResolved: Bool,
         fiber: Double? = nil,
         originalWeightGrams: Double? = nil,
@@ -97,19 +108,63 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
     /// Below this the UI flags the item for checking (§4).
     public static let lowConfidenceThreshold: Double = 0.75
 
-    public var isLowConfidence: Bool { confidence < Self.lowConfidenceThreshold }
+    /// A hand-typed food is never flagged: there is no estimate to doubt.
+    public var isLowConfidence: Bool {
+        guard let confidence else { return false }
+        return confidence < Self.lowConfidenceThreshold
+    }
+
+    /// This food is the model's proposal, rather than one the user typed into
+    /// the scan flow themselves. `confidence` is the marker because it is the
+    /// one field only the recognition path can supply — the same rule
+    /// `FoodItem.cameFromScan` uses on the other side of the boundary.
+    public var isFromModel: Bool { confidence != nil }
+
+    /// A food typed in by hand starts nameless, and a nameless food must not be
+    /// saved. The check lives here rather than in the view because
+    /// `ScanModel.canConfirm` is what reads it.
+    public var hasName: Bool {
+        !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    /// A food the user adds themselves on the review screen — the way out when
+    /// the analysis fails or reports nothing, so the photo they just took is
+    /// still the meal they log rather than something to throw away.
+    ///
+    /// Unresolved on purpose: its nutrition arrives through `resolved(…)`, the
+    /// same path a dish outside the nutrition table takes, so figures are typed
+    /// in one place rather than two.
+    public static func typedByHand(weightGrams: Double = 100) -> RecognizedFood {
+        RecognizedFood(
+            name: "",
+            weightGrams: weightGrams,
+            calories: 0,
+            protein: 0,
+            carbohydrates: 0,
+            fat: 0,
+            confidence: nil,
+            isResolved: false
+        )
+    }
 
     /// **Named to match `FoodItem`'s**, and it was not: this used to be
     /// `wasCorrected`, which on `FoodItem` means *either* correction. Two
     /// closely related types answering the same question differently under the
     /// same name is how a §22 rate quietly starts counting the wrong thing.
+    ///
+    /// A hand-typed food answers `false` to both halves, because there was no
+    /// prediction to correct — the same answer `FoodItem` gives once it is
+    /// saved, where the `aiEstimated…` fields are `nil`. The two types have to
+    /// agree here; `AICorrectionTests` pins that they do.
     public var wasPortionCorrected: Bool {
-        abs(weightGrams - originalWeightGrams) > 0.5
+        guard isFromModel else { return false }
+        return abs(weightGrams - originalWeightGrams) > 0.5
     }
 
     /// The user gave the dish a different name than the model did.
     public var wasRenamed: Bool {
-        !VietnameseTextComparison.areSameName(name, originalName)
+        guard isFromModel else { return false }
+        return !VietnameseTextComparison.areSameName(name, originalName)
     }
 
     /// Either half, the same as `FoodItem.wasCorrected`.
@@ -186,8 +241,13 @@ public struct RecognizedFood: Sendable, Equatable, Identifiable {
             fat: fat,
             fiber: fiber,
             aiConfidence: confidence,
-            aiEstimatedWeightGrams: originalWeightGrams,
-            aiEstimatedName: originalName,
+            // Only when a model actually proposed something. A hand-typed food
+            // carries an `originalName` and an `originalWeightGrams` because
+            // they are `let` and always set, and writing them here would report
+            // the user's own first guess as the model's prediction — inflating
+            // every §29 accuracy figure with rows the model never saw.
+            aiEstimatedWeightGrams: isFromModel ? originalWeightGrams : nil,
+            aiEstimatedName: isFromModel ? originalName : nil,
             nutritionSource: nutritionSource,
             nutritionSourceID: nutritionSourceID,
             nutritionSourceURL: nutritionSourceURL,
